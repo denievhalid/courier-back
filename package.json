@@ -5,8 +5,7 @@
   "main": "src/index.ts",
   "scripts": {
     "build": "tsc",
-    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q ./dist/index.js\"",
-    "myscript": "tsc --module 'CommonJS' && TS_NODE_BASEURL=./dist node -r tsconfig-paths/register dist/index.js"
+    "dev": "tsc --module 'CommonJS' && TS_NODE_BASEURL=./dist node -r tsconfig-paths/register dist/index.js"
   },
   "keywords": [],
   "author": "",
