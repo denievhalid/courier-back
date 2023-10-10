@@ -1,17 +1,32 @@
 import _ from "lodash";
 import { SortType } from "@/controllers/ad/types";
 import type { FilterQuery, PipelineStage } from "mongoose";
+import { isValidObjectId } from "@/utils/isValidObjectId";
+
+const MATCH_PARAM_SEPARATOR = ":";
 
 export const getAttributes = (data: Record<string, any>) =>
-  _.pick(data, ["sort", "user"]);
+  _.pick(data, ["match", "sort"]);
 
-export const getMatchAggregatePipeline = (items: Record<string, any>) => {
+export const getMatchAggregatePipeline = (match: Record<string, any>) => {
   const stage: PipelineStage.Match = {
     $match: {},
   };
 
-  _.forIn(items, (item) => {
-    stage["$match"][item] = items[item];
+  if (_.isString(match)) {
+    match = [match];
+  }
+
+  _.forEach(match, (item) => {
+    const [param, value] = parseMatchParam(item);
+
+    if (isValidObjectId(value)) {
+      stage["$match"]["$expr"] = {
+        $eq: [`$${param}`, { $toObjectId: value }],
+      };
+    } else {
+      stage["$match"][param] = value;
+    }
   });
 
   return stage;
@@ -42,4 +57,8 @@ export const getInitialAggregatePipeline = (limit: number): PipelineStage[] => {
       },
     },
   ];
+};
+
+export const parseMatchParam = (param: string): string[] => {
+  return _.split(param, MATCH_PARAM_SEPARATOR);
 };

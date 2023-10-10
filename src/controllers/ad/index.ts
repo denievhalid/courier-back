@@ -27,8 +27,8 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
 
   const query: PipelineStage[] = getInitialAggregatePipeline(LIMIT);
 
-  if (_.has(attributes, "user")) {
-    query.push(getMatchAggregatePipeline(attributes.user));
+  if (_.has(attributes, "match")) {
+    query.push(getMatchAggregatePipeline(attributes.match));
   }
 
   if (_.has(attributes, "sort")) {
