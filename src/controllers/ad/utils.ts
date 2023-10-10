@@ -32,3 +32,14 @@ export const getLimitAggregatePipeline = (
     $limit: limit,
   };
 };
+
+export const getInitialAggregatePipeline = (limit: number): PipelineStage[] => {
+  return [
+    getLimitAggregatePipeline(limit),
+    {
+      $sort: {
+        _id: 1,
+      },
+    },
+  ];
+};

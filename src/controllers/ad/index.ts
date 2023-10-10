@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import { getResponse } from "@/utils/getResponse";
 import {
   getAttributes,
+  getInitialAggregatePipeline,
   getLimitAggregatePipeline,
   getMatchAggregatePipeline,
   getSortAggregatePipeline,
@@ -11,6 +12,7 @@ import _ from "lodash";
 import { getService } from "@/lib/container";
 import { getParam } from "@/utils/getParam";
 import { LIMIT } from "@/controllers/ad/const";
+import { PipelineStage } from "mongoose";
 
 export const getById = asyncHandler(async (req: Request, res: Response) => {
   const id = getParam(req.params, "id");
@@ -23,7 +25,7 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
 export const getList = asyncHandler(async (req: Request, res: Response) => {
   const attributes = getAttributes(req.query);
 
-  const query = [];
+  const query: PipelineStage[] = getInitialAggregatePipeline(LIMIT);
 
   if (_.has(attributes, "user")) {
     query.push(getMatchAggregatePipeline(attributes.user));
@@ -32,8 +34,6 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
   if (_.has(attributes, "sort")) {
     query.push(getSortAggregatePipeline(attributes.sort));
   }
-
-  query.push(getLimitAggregatePipeline(LIMIT));
 
   const data = await getService("ad").getList(query);
 
