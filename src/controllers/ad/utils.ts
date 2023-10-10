@@ -21,7 +21,7 @@ export const getSortAggregatePipeline = (
   sort: SortType
 ): PipelineStage.Sort => {
   return {
-    $sort: { [sort]: 1 },
+    $sort: { [sort]: -1 },
   };
 };
 
