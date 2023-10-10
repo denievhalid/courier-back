@@ -1,3 +1,1 @@
-export type QueryType = {
-  sort?: string;
-};
+export type SortType = "price" | "weight";

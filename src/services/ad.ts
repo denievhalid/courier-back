@@ -1,6 +1,10 @@
-import { QueryType } from "@/controllers/ad/types";
 import { getModel } from "@/lib/container";
+import type { PipelineStage } from "mongoose";
 
-export const getList = (query: QueryType) => {
-  return getModel("ad").find(query);
+export const getList = (pipeline: PipelineStage[]) => {
+  return getModel("ad").aggregate(pipeline);
+};
+
+export const getById = (_id: string) => {
+  return getModel("ad").findOne({ _id });
 };

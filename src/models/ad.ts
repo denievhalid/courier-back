@@ -13,4 +13,8 @@ const schema = new Schema({
   },
 });
 
-export default model("Ad", schema);
+const m = model("Ad", schema);
+
+m.aggregate();
+
+export default m;
