@@ -56,6 +56,14 @@ export const getInitialAggregatePipeline = (limit: number): PipelineStage[] => {
         _id: 1,
       },
     },
+    {
+      $lookup: {
+        from: "users",
+        localField: "user",
+        foreignField: "_id",
+        as: "user",
+      },
+    },
   ];
 };
 
