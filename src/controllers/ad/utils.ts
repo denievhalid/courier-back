@@ -40,6 +40,20 @@ export const getSortAggregatePipeline = (
   };
 };
 
+export const getProjectAggregatePipeline = (): PipelineStage.Project => {
+  return {
+    $project: {
+      _id: 1,
+      date: 1,
+      title: 1,
+      price: 1,
+      weight: 1,
+      route: 1,
+      user: { $first: "$user" },
+    },
+  };
+};
+
 export const getLimitAggregatePipeline = (
   limit: number
 ): PipelineStage.Limit => {

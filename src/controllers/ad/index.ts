@@ -6,6 +6,7 @@ import {
   getInitialAggregatePipeline,
   getLimitAggregatePipeline,
   getMatchAggregatePipeline,
+  getProjectAggregatePipeline,
   getSortAggregatePipeline,
 } from "@/controllers/ad/utils";
 import _ from "lodash";
@@ -34,6 +35,8 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
   if (_.has(attributes, "sort")) {
     query.push(getSortAggregatePipeline(attributes.sort));
   }
+
+  query.push(getProjectAggregatePipeline());
 
   const data = await getService("ad").getList(query);
 
