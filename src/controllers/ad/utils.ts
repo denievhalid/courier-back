@@ -44,6 +44,7 @@ export const getProjectAggregatePipeline = (): PipelineStage.Project => {
   return {
     $project: {
       _id: 1,
+      cover: 1,
       date: 1,
       images: 1,
       title: 1,
