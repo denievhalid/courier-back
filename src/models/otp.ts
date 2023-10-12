@@ -1,23 +1,19 @@
 import { model, Schema } from "mongoose";
 
 const schema = new Schema({
-  title: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  date: {
+  deadline: {
     type: Date,
     required: true,
   },
-  weight: {
+  otp: {
     type: Number,
     required: true,
+    trim: true,
   },
-  route: {
-    type: Schema.Types.ObjectId,
-    ref: "Route",
+  secret: {
+    type: String,
     required: true,
+    trim: true,
   },
   user: {
     type: Schema.Types.ObjectId,
@@ -26,4 +22,4 @@ const schema = new Schema({
   },
 });
 
-export default model("Ad", schema);
+export default model("Otp", schema);

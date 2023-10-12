@@ -5,19 +5,20 @@ import { getEnv } from "@/utils/env";
 import { createRoutes } from "@/lib/createRoutes";
 import { initDatabase } from "@/lib/database";
 import { closeApp } from "@/utils/closeApp";
+import { errorHandler } from "@/middlewares/errorHandler";
 
 const app = express();
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 app.use(bodyParser.json({ limit: "35mb" }));
 app.use(
   bodyParser.urlencoded({
+    extended: false,
     limit: "35mb",
     parameterLimit: 50000,
   })
 );
+app.use(errorHandler);
 
 createRoutes(app);
 
