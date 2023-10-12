@@ -10,15 +10,14 @@ import { errorHandler } from "@/middlewares/errorHandler";
 const app = express();
 
 app.use(cors());
-app.use(bodyParser.json({ limit: "35mb" }));
+app.use(bodyParser.json());
 app.use(
   bodyParser.urlencoded({
-    extended: false,
+    extended: true,
     limit: "35mb",
     parameterLimit: 50000,
   })
 );
-app.use(errorHandler);
 
 createRoutes(app);
 

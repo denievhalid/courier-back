@@ -3,10 +3,10 @@ export const sendOtpSchema = yup
   .object({
     phoneNumber: yup.number().required(),
   })
-  .noUnknown();
+  .required();
 
 export const validateOtpSchema = yup
   .object({
-    otp: yup.number().required(),
+    phoneNumber: yup.number().required(),
   })
-  .noUnknown();
+  .required();
