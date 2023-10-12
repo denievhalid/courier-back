@@ -11,9 +11,7 @@ import { StatusCodes } from "http-status-codes";
 import dayjs from "dayjs";
 
 export const sendOtp = asyncHandler(async (req: Request, res: Response) => {
-  await sendOtpSchema.validate(req.body, {
-    abortEarly: false,
-  });
+  await sendOtpSchema.validate(req.body, { abortEarly: false });
 
   const otpService = getService("otp");
   const userService = getService("user");

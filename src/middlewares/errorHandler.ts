@@ -1,16 +1,18 @@
 import type { ErrorRequestHandler } from "express";
 import { ValidationError } from "yup";
-import { isYupError } from "@/lib/error";
+import { isYupError, mapYupTErrors } from "@/lib/error";
 
-export const errorHandler: ErrorRequestHandler = (error, req, res, next) => {
+export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   const payload: any = {
     errors: [],
   };
 
   res.status(500);
 
-  if (isYupError(error)) {
-    payload.errors = error.errors;
+  console.log(err instanceof ValidationError);
+
+  if (isYupError(err)) {
+    payload.errors = mapYupTErrors(err);
     res.status(400);
   }
 
