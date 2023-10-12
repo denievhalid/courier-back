@@ -1,9 +1,7 @@
 import * as yup from "yup";
 export const sendOtpSchema = yup
-  .object()
-  .shape({
+  .object({
     phoneNumber: yup.number().required("Обязательное поле"),
-    login: yup.number().required("Обязательное поле"),
   })
   .noUnknown();
 
