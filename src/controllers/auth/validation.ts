@@ -1,7 +1,7 @@
 import * as yup from "yup";
 export const sendOtpSchema = yup
   .object({
-    phoneNumber: yup.number().required("Обязательное поле"),
+    phoneNumber: yup.number().required("Некорректный номер телефона"),
   })
   .noUnknown();
 

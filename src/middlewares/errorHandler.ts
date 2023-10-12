@@ -1,15 +1,20 @@
 import type { ErrorRequestHandler } from "express";
+import { MongooseError } from "mongoose";
 import { ValidationError } from "yup";
 import { isYupError, mapYupTErrors } from "@/lib/error";
 
 export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   const payload: any = {
-    errors: [],
+    errors: {
+      name: err.name,
+      message: err.message,
+      details: err.details,
+    },
   };
 
   res.status(500);
 
-  console.log(err instanceof ValidationError);
+  console.log(err.message);
 
   if (isYupError(err)) {
     payload.errors = mapYupTErrors(err);
