@@ -5,45 +5,32 @@ import {
   validateOtpSchema,
 } from "@/controllers/auth/validation";
 import { getService } from "@/lib/container";
-import { getParam } from "@/utils/getParam";
 import { getResponse } from "@/utils/getResponse";
 import { StatusCodes } from "http-status-codes";
-import dayjs from "dayjs";
+import { getAttributes } from "@/utils/getAttributes";
 
 export const sendOtp = asyncHandler(async (req: Request, res: Response) => {
   await sendOtpSchema.validate(req.body, { abortEarly: false });
 
-  const phoneNumber = getParam(req.body, "phoneNumber", "number");
-
+  const attributes = getAttributes(req.body, ["phoneNumber", "otp"]);
   const otpService = getService("otp");
-  const userService = getService("user");
 
-  const userExists = await userService.exists({
-    phoneNumber,
+  let otpDoc = await otpService.findOne({
+    phoneNumber: attributes.phoneNumber,
+    deadline: {
+      $gt: new Date(),
+    },
   });
 
-  if (!userExists) {
-    const user = await userService.create({ phoneNumber });
-
-    let otpDoc = await otpService.findOne({
-      user: user._id,
-      deadline: {
-        $gt: dayjs().toDate(),
-      },
+  if (!otpDoc) {
+    otpDoc = await otpService.create({
+      ...otpService.generateOtp(),
+      deadline: otpService.getDeadline(),
+      phoneNumber: attributes.phoneNumber,
     });
   }
 
-  // if (!otpDoc) {
-  //   otpDoc = await otpService.create({
-  //     ...otpService.generateOtp(),
-  //     deadline: otpService.getDeadline(),
-  //     user,
-  //   });
-  // }
-  //
-  // const payload = otpService.getOtpPayload(otpDoc);
-
-  return getResponse(res, {}, StatusCodes.OK);
+  return getResponse(res, otpService.getOtpPayload(otpDoc), StatusCodes.OK);
 });
 
 export const validateOtp = asyncHandler(async (req: Request, res: Response) => {

@@ -15,10 +15,10 @@ const schema = new Schema({
     required: true,
     trim: true,
   },
-  user: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
+  phoneNumber: {
+    type: Number,
     required: true,
+    trim: true,
   },
 });
 

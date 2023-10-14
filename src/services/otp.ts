@@ -4,6 +4,11 @@ import { getModel } from "@/lib/container";
 import dayjs from "dayjs";
 import _ from "lodash";
 
+type VerifyType = {
+  otp: string;
+  secret: string;
+};
+
 export const options = {
   digits: 4,
   epoch: 60,
@@ -32,8 +37,12 @@ export const findOne = (payload: OtpType) => {
   return getModel("otp").findOne(payload);
 };
 
-export const remove = ({ user }: OtpType) => {
-  return getModel("otp").findOneAndRemove({ user: user._id });
+export const remove = ({ phoneNumber }: OtpType) => {
+  return getModel("otp").findOneAndRemove({ phoneNumber });
+};
+
+export const verify = ({ otp, secret }: VerifyType) => {
+  return authenticator.verify({ secret, token: otp });
 };
 
 export const getDeadline = () => {

@@ -32,7 +32,7 @@ export type MessageType = {
 export type OtpType = {
   _id: string;
   deadline: Date;
-  user: UserType;
+  phoneNumber: number;
 };
 
 export type UserType = {

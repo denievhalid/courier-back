@@ -9,7 +9,6 @@ export const exists = (filter: FilterQuery<UserType>) => {
 };
 
 export const create = (payload: UserType) => {
-  console.log(payload);
   return getModel("user").create(payload);
 };
 
