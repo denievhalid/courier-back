@@ -40,8 +40,8 @@ export const sendOtp = asyncHandler(async (req: Request, res: Response) => {
   //     user,
   //   });
   // }
-
-  //const payload = otpService.getOtpPayload(otpDoc);
+  //
+  // const payload = otpService.getOtpPayload(otpDoc);
 
   return getResponse(res, {}, StatusCodes.OK);
 });

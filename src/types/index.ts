@@ -18,6 +18,17 @@ export type AdType = {
   route: DaDataRouteType;
 };
 
+export type DialogType = {
+  users: UserType[];
+  type: "pending" | "sent" | "read";
+};
+
+export type MessageType = {
+  message: string;
+  user: UserType;
+  status: string;
+};
+
 export type OtpType = {
   _id: string;
   deadline: Date;
