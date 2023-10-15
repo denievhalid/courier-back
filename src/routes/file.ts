@@ -4,6 +4,6 @@ import multer from "@/lib/multer";
 
 const router = Router();
 
-router.post("/upload", multer.array("files"), upload);
+router.post("/upload", multer.array("files", 5), upload);
 
 export default router;
