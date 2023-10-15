@@ -48,6 +48,8 @@ export const getProjectPipeline = (): PipelineStage.Project => {
     $project: {
       _id: 1,
       cover: 1,
+      from: 1,
+      to: 1,
       comment: 1,
       date: 1,
       images: 1,
@@ -80,6 +82,22 @@ export const getInitialPipeline = (limit: number): PipelineStage[] => {
         localField: "user",
         foreignField: "_id",
         as: "user",
+      },
+    },
+    {
+      $lookup: {
+        from: "routes",
+        localField: "from",
+        foreignField: "_id",
+        as: "from",
+      },
+    },
+    {
+      $lookup: {
+        from: "routes",
+        localField: "to",
+        foreignField: "_id",
+        as: "to",
       },
     },
   ];
