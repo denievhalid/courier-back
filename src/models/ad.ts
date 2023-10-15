@@ -14,10 +14,17 @@ const schema = new Schema({
     type: String,
     required: true,
   },
-  route: {
-    type: Schema.Types.ObjectId,
-    ref: "Route",
-    required: true,
+  routes: {
+    from: {
+      type: Schema.Types.ObjectId,
+      ref: "Route",
+      required: true,
+    },
+    to: {
+      type: Schema.Types.ObjectId,
+      ref: "Route",
+      required: true,
+    },
   },
   user: {
     type: Schema.Types.ObjectId,

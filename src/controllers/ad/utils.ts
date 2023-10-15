@@ -54,7 +54,7 @@ export const getProjectPipeline = (): PipelineStage.Project => {
       title: 1,
       price: 1,
       weight: 1,
-      route: 1,
+      routes: 1,
       user: { $first: "$user" },
     },
   };
