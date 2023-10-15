@@ -11,7 +11,7 @@ const schema = new Schema({
     required: true,
   },
   weight: {
-    type: Number,
+    type: String,
     required: true,
   },
   route: {
