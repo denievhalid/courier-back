@@ -4,7 +4,11 @@ import * as process from "process";
 const UPLOADS_FOLDER = `${process.cwd()}/src/uploads`;
 
 const storage = multer.diskStorage({
-  destination: function (_, file: Express.Multer.File, cb) {
+  destination: function (
+    _,
+    __,
+    cb: (error: Error | null, filename: string) => void
+  ) {
     cb(null, UPLOADS_FOLDER);
   },
   filename: function (
