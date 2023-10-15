@@ -48,8 +48,6 @@ export const getProjectPipeline = (): PipelineStage.Project => {
     $project: {
       _id: 1,
       cover: 1,
-      from: 1,
-      to: 1,
       comment: 1,
       date: 1,
       images: 1,
@@ -57,6 +55,8 @@ export const getProjectPipeline = (): PipelineStage.Project => {
       price: 1,
       weight: 1,
       routes: 1,
+      from: { $first: "$from" },
+      to: { $first: "$to" },
       user: { $first: "$user" },
     },
   };
