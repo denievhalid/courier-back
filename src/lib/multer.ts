@@ -4,18 +4,10 @@ import * as process from "process";
 const UPLOADS_FOLDER = `${process.cwd()}/src/uploads`;
 
 const storage = multer.diskStorage({
-  destination: function (
-    _,
-    __,
-    cb: (error: Error | null, filename: string) => void
-  ) {
+  destination: function (req, file, cb) {
     cb(null, UPLOADS_FOLDER);
   },
-  filename: function (
-    req,
-    file,
-    cb: (error: Error | null, filename: string) => void
-  ) {
+  filename: function (req, file, cb) {
     cb(null, Date.now() + " - " + file.originalname);
   },
 });
