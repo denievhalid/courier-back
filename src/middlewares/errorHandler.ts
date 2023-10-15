@@ -4,7 +4,6 @@ import { ValidationError } from "yup";
 import { isYupError, mapYupTErrors } from "@/lib/error";
 
 export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
-  console.log(111);
   const payload: any = {
     errors: {
       name: err.name,
@@ -14,8 +13,6 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   };
 
   res.status(500);
-
-  console.log(err.message);
 
   if (isYupError(err)) {
     payload.errors = mapYupTErrors(err);

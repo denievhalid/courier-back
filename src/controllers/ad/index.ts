@@ -13,8 +13,11 @@ import { getService } from "@/lib/container";
 import { getParam } from "@/utils/getParam";
 import { LIMIT } from "@/controllers/ad/const";
 import { PipelineStage } from "mongoose";
+import { createFormSchema } from "@/controllers/ad/validation";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
+  await createFormSchema.validate(req.body, { abortEarly: false });
+
   const data = await getService("ad").create({});
 
   return getResponse(res, { data });
