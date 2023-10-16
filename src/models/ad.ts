@@ -1,4 +1,5 @@
 import { model, Schema } from "mongoose";
+import { AdStatus } from "@/types";
 
 const schema = new Schema({
   title: {
@@ -45,6 +46,11 @@ const schema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "User",
     required: true,
+  },
+  status: {
+    type: String,
+    enum: [AdStatus.APPROVED, AdStatus.PENDING, AdStatus.REJECTED],
+    default: AdStatus.PENDING,
   },
 });
 

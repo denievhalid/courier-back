@@ -46,3 +46,9 @@ export interface IService {
   getById: (id: string) => Query<any, any>;
   getList: (pipeline: PipelineStage[]) => Aggregate<Array<any>>;
 }
+
+export enum AdStatus {
+  APPROVED = "approved",
+  PENDING = "pending",
+  REJECTED = "rejected",
+}
