@@ -57,6 +57,14 @@ export const getProjectPipeline = (): PipelineStage.Project => {
   };
 };
 
+export const getAddFieldsPipeline = (): PipelineStage.AddFields => {
+  return {
+    $addFields: {
+      cover: { $first: "$images" },
+    },
+  };
+};
+
 export const getLimitPipeline = (limit: number): PipelineStage.Limit => {
   return {
     $limit: limit,
