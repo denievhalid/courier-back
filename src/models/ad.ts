@@ -14,10 +14,11 @@ const schema = new Schema({
     type: String,
     required: true,
   },
-  images: {
-    type: Array,
-    required: true,
-  },
+  files: [
+    {
+      uri: String,
+    },
+  ],
   from: {
     city_name: {
       type: String,

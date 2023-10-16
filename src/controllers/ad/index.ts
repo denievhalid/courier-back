@@ -14,6 +14,7 @@ import { getParam } from "@/utils/getParam";
 import { LIMIT } from "@/controllers/ad/const";
 import { PipelineStage } from "mongoose";
 import { createFormSchema } from "@/controllers/ad/validation";
+import { array } from "yup";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   await createFormSchema.validate(req.body, { abortEarly: false });
