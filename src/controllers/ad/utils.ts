@@ -84,22 +84,6 @@ export const getInitialPipeline = (limit: number): PipelineStage[] => {
         as: "user",
       },
     },
-    {
-      $lookup: {
-        from: "routes",
-        localField: "from",
-        foreignField: "_id",
-        as: "from",
-      },
-    },
-    {
-      $lookup: {
-        from: "routes",
-        localField: "to",
-        foreignField: "_id",
-        as: "to",
-      },
-    },
   ];
 };
 
