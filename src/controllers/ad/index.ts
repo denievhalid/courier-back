@@ -2,6 +2,7 @@ import { asyncHandler } from "@/utils/asyncHandler";
 import { Request, Response } from "express";
 import { getResponse } from "@/utils/getResponse";
 import {
+  getAddFieldsPipeline,
   getAttributes,
   getInitialPipeline,
   getMatchPipeline,
@@ -58,6 +59,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
   }
 
   query.push(getProjectPipeline());
+  query.push(getAddFieldsPipeline());
 
   const data = await getService("ad").getList(query);
 
