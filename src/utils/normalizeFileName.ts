@@ -3,5 +3,5 @@ import path from "path";
 import type { Express } from "express";
 
 export const normalizeFileName = (file: Express.Multer.File) => {
-  return `${uuid()}${path.extname(file.originalname)}`;
+  return `${uuid()}${path.extname(file.filename)}`;
 };
