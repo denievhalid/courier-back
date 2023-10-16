@@ -2,7 +2,7 @@ import multer from "multer";
 import * as process from "process";
 import { normalizeFileName } from "@/utils/normalizeFileName";
 
-export const UPLOADS_FOLDER = `${process.cwd()}/uploads`;
+export const UPLOADS_FOLDER = `uploads`;
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
