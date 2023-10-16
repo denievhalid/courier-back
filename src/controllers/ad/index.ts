@@ -24,7 +24,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     "date",
     "to",
     "from",
-    "files",
+    "images",
     "weight",
   ]);
 
