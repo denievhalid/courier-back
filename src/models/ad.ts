@@ -15,14 +15,28 @@ const schema = new Schema({
     required: true,
   },
   from: {
-    type: Schema.Types.ObjectId,
-    ref: "Route",
-    required: true,
+    city_name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    city_kladr: {
+      type: String,
+      required: true,
+      trim: true,
+    },
   },
   to: {
-    type: Schema.Types.ObjectId,
-    ref: "Route",
-    required: true,
+    city_name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    city_kladr: {
+      type: String,
+      required: true,
+      trim: true,
+    },
   },
   user: {
     type: Schema.Types.ObjectId,

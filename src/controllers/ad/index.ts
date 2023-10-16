@@ -18,7 +18,12 @@ import { createFormSchema } from "@/controllers/ad/validation";
 export const create = asyncHandler(async (req: Request, res: Response) => {
   await createFormSchema.validate(req.body, { abortEarly: false });
 
-  const data = await getService("ad").create({});
+  const attributes = getAttributes(req.body);
+
+  const data = await getService("ad").create({
+    ...attributes,
+    user: "652a81c89e9c58e546819346",
+  });
 
   return getResponse(res, { data });
 });
