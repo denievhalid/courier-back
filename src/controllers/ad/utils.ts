@@ -27,11 +27,6 @@ export const getMatchPipeline = (match: Record<string, any>) => {
         $eq: [`$${param}`, { $toObjectId: value }],
       };
     }
-
-    if (routeTypes.has(param)) {
-    }
-
-    //stage["$match"][param] = value;
   });
 
   return stage;
@@ -49,14 +44,14 @@ export const getProjectPipeline = (): PipelineStage.Project => {
       _id: 1,
       cover: 1,
       comment: 1,
+      from: 1,
+      to: 1,
       date: 1,
       images: 1,
       title: 1,
       price: 1,
       weight: 1,
       routes: 1,
-      from: { $first: "$from" },
-      to: { $first: "$to" },
       user: { $first: "$user" },
     },
   };
