@@ -27,7 +27,6 @@ const schema = new Schema({
     },
     city_kladr: {
       type: String,
-      required: true,
       trim: true,
     },
   },
@@ -39,7 +38,6 @@ const schema = new Schema({
     },
     city_kladr: {
       type: String,
-      required: true,
       trim: true,
     },
   },
