@@ -8,6 +8,7 @@ import { closeApp } from "@/utils/closeApp";
 import { errorHandler } from "@/middlewares/errorHandler";
 import dayjs from "dayjs";
 import _ from "lodash";
+import path from "path";
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(
   })
 );
 app.use(bodyParser.json());
+app.use("/uploads", express.static(path.resolve(__dirname, "..", "uploads")));
 
 createRoutes(app);
 
