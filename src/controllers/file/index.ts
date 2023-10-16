@@ -5,7 +5,7 @@ import { getParam } from "@/utils/getParam";
 import { getUploadPayload } from "@/controllers/file/utils";
 
 export const upload = asyncHandler(async (req: Request, res: Response) => {
-  const files = getParam(req, "files.files") || [];
+  const files = getParam(req, "files") || [];
 
   console.log(files);
 
