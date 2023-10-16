@@ -18,7 +18,14 @@ import { createFormSchema } from "@/controllers/ad/validation";
 export const create = asyncHandler(async (req: Request, res: Response) => {
   await createFormSchema.validate(req.body, { abortEarly: false });
 
-  const attributes = _.pick(req.body, ["title", "date", "to", "from", "files"]);
+  const attributes = _.pick(req.body, [
+    "title",
+    "date",
+    "to",
+    "from",
+    "files",
+    "weight",
+  ]);
 
   const data = await getService("ad").create({
     ...attributes,
