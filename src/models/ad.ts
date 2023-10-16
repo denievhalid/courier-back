@@ -14,6 +14,10 @@ const schema = new Schema({
     type: String,
     required: true,
   },
+  images: {
+    type: Array,
+    required: true,
+  },
   from: {
     city_name: {
       type: String,
