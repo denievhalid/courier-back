@@ -34,21 +34,24 @@ export const verifyOtp = asyncHandler(async (req: Request, res: Response) => {
     throw new Error("Неверный код");
   }
 
+  const credentials = {
+    phoneNumber: attributes.phoneNumber,
+  };
+
   await otpService.remove({
     otp: attributes.otp,
-    phoneNumber: attributes.phoneNumber,
+    ...credentials,
   });
 
-  const user = await userService.findOne({
-    phoneNumber: attributes.phoneNumber,
-  });
+  const userExists = await userService.exists(credentials);
+
+  if (!userExists) {
+    await userExists.create(credentials);
+  }
 
   const payload = {
-    accessToken: tokenService.create(
-      { phoneNumber: attributes.phoneNumber },
-      getEnv("JWT_SECRET")
-    ),
-    userExists: Boolean(user),
+    accessToken: tokenService.create(credentials, getEnv("JWT_SECRET")),
+    userExists,
   };
 
   return getResponse(res, payload, StatusCodes.OK);

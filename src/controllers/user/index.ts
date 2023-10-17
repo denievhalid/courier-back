@@ -5,7 +5,17 @@ import { getResponse } from "@/utils/getResponse";
 import { StatusCodes } from "http-status-codes";
 import { getService } from "@/lib/container";
 import { getAttributes } from "@/utils/getAttributes";
-import { at } from "lodash";
+import { getParam } from "@/utils/getParam";
+
+export const me = asyncHandler(async (req: Request, res: Response) => {
+  return getResponse(
+    res,
+    {
+      user: getParam(req, "user"),
+    },
+    StatusCodes.OK
+  );
+});
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   await createUserValidation.validate(req.body);
