@@ -20,7 +20,11 @@ export const me = asyncHandler(async (req: Request, res: Response) => {
 export const create = asyncHandler(async (req: Request, res: Response) => {
   await createUserValidation.validate(req.body);
 
-  const attributes = getAttributes(req.body, ["phoneNumber"]);
+  const attributes = getAttributes(req.body, [
+    "gender",
+    "firstname",
+    "phoneNumber",
+  ]);
 
   const useService = getService("user");
 
