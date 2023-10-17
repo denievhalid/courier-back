@@ -1,6 +1,12 @@
 import { model, Schema } from "mongoose";
+import { Gender } from "@/types";
 
 const schema = new Schema({
+  gender: {
+    type: String,
+    enum: [Gender.MALE, Gender.FEMALE],
+    required: true,
+  },
   phoneNumber: {
     type: Number,
     required: true,
@@ -9,6 +15,7 @@ const schema = new Schema({
   firstname: {
     type: String,
     trim: true,
+    required: true,
   },
 });
 

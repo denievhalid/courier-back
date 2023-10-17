@@ -52,3 +52,8 @@ export enum AdStatus {
   PENDING = "pending",
   REJECTED = "rejected",
 }
+
+export enum Gender {
+  MALE = "male",
+  FEMALE = "female",
+}
