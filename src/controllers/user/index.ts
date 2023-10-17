@@ -31,10 +31,8 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   const userExists = await useService.exists(payload);
 
   if (userExists) {
-    throw new Error("User exists");
+    await useService.create(attributes);
   }
-
-  await useService.create(attributes);
 
   return getResponse(res, {}, StatusCodes.CREATED);
 });
