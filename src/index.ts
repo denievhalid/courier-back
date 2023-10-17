@@ -5,10 +5,8 @@ import { getEnv } from "@/utils/env";
 import { createRoutes } from "@/lib/createRoutes";
 import { initDatabase } from "@/lib/database";
 import { closeApp } from "@/utils/closeApp";
-import { errorHandler } from "@/middlewares/errorHandler";
-import dayjs from "dayjs";
-import _ from "lodash";
 import path from "path";
+import { extractToken } from "@/middlewares/extractToken";
 
 const app = express();
 
@@ -20,6 +18,7 @@ app.use(
 );
 app.use(bodyParser.json());
 app.use("/uploads", express.static(path.resolve(__dirname, "..", "uploads")));
+app.use(extractToken);
 
 createRoutes(app);
 

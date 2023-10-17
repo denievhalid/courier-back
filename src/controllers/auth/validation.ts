@@ -5,8 +5,9 @@ export const sendOtpSchema = yup
   })
   .noUnknown();
 
-export const validateOtpSchema = yup
+export const verifyOtpSchema = yup
   .object({
+    otp: yup.number().required(),
     phoneNumber: yup.number().required(),
   })
-  .required();
+  .noUnknown();

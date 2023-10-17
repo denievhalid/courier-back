@@ -8,6 +8,7 @@ import * as FileService from "@/services/file";
 import * as DialogService from "@/services/dialog";
 import * as MessageService from "@/services/message";
 import * as OtpService from "@/services/otp";
+import * as TokenService from "@/services/token";
 import * as UserService from "@/services/user";
 import type { Model } from "mongoose";
 
@@ -19,6 +20,7 @@ services.set("dialog", DialogService);
 services.set("file", FileService);
 services.set("message", MessageService);
 services.set("otp", OtpService);
+services.set("token", TokenService);
 services.set("user", UserService);
 
 models.set("ad", AdModel);

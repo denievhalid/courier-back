@@ -16,7 +16,7 @@ export const options = {
 
 authenticator.options = {
   digits: options.digits,
-  epoch: options.digits,
+  epoch: options.epoch,
 };
 
 export const generateOtp = () => {
@@ -41,8 +41,8 @@ export const remove = ({ phoneNumber }: OtpType) => {
   return getModel("otp").findOneAndRemove({ phoneNumber });
 };
 
-export const verify = ({ otp, secret }: VerifyType) => {
-  return authenticator.verify({ secret, token: otp });
+export const verify = (otp: string, secret: string) => {
+  return authenticator.check(otp, secret);
 };
 
 export const getDeadline = () => {

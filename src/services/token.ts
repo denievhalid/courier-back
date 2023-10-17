@@ -1,5 +1,7 @@
 import jwt from "jsonwebtoken";
 
-export const createJwtToken = () => {};
+export const create = (payload: Record<string, any>, secret: string) => {
+  return jwt.sign(payload, secret);
+};
 
-export const decodeJwtToken = () => {};
+export const decode = () => {};
