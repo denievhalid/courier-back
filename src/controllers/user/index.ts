@@ -38,7 +38,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     throw new Error("Пользователь уже существует");
   }
 
-  await useService.create(attributes);
+  const user = await useService.create(attributes);
 
-  return getResponse(res, {}, StatusCodes.CREATED);
+  return getResponse(res, { user }, StatusCodes.CREATED);
 });
