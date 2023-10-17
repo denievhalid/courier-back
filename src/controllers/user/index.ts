@@ -6,6 +6,7 @@ import { StatusCodes } from "http-status-codes";
 import { getService } from "@/lib/container";
 import { getAttributes } from "@/utils/getAttributes";
 import { getParam } from "@/utils/getParam";
+import { getEnv } from "@/utils/env";
 
 export const me = asyncHandler(async (req: Request, res: Response) => {
   return getResponse(
@@ -38,7 +39,14 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     throw new Error("Пользователь уже существует");
   }
 
+  const tokenService = getService("token");
+
   const user = await useService.create(attributes);
 
-  return getResponse(res, { user }, StatusCodes.CREATED);
+  const accessToken = tokenService.create(
+    { phoneNumber: attributes.phoneNumber },
+    getEnv("JWT_SECRET")
+  );
+
+  return getResponse(res, { accessToken, user }, StatusCodes.CREATED);
 });
