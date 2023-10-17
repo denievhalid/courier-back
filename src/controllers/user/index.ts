@@ -31,8 +31,10 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   const userExists = await useService.exists(payload);
 
   if (userExists) {
-    await useService.create(attributes);
+    throw new Error("Пользователь уже существует");
   }
+
+  await useService.create(attributes);
 
   return getResponse(res, {}, StatusCodes.CREATED);
 });

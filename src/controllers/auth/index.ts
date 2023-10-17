@@ -45,14 +45,16 @@ export const verifyOtp = asyncHandler(async (req: Request, res: Response) => {
 
   const userExists = await userService.exists(credentials);
 
-  if (!userExists) {
-    await userService.create(credentials);
-  }
-
-  const payload = {
-    accessToken: tokenService.create(credentials, getEnv("JWT_SECRET")),
+  let payload: { accessToken?: string; userExists: boolean } = {
     userExists,
   };
+
+  if (userExists) {
+    payload.accessToken = tokenService.create(
+      credentials,
+      getEnv("JWT_SECRET")
+    );
+  }
 
   return getResponse(res, payload, StatusCodes.OK);
 });
