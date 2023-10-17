@@ -46,7 +46,7 @@ export const verifyOtp = asyncHandler(async (req: Request, res: Response) => {
   const userExists = await userService.exists(credentials);
 
   if (!userExists) {
-    await userExists.create(credentials);
+    await userService.create(credentials);
   }
 
   const payload = {
