@@ -20,6 +20,8 @@ import { array } from "yup";
 export const create = asyncHandler(async (req: Request, res: Response) => {
   await createFormSchema.validate(req.body, { abortEarly: false });
 
+  const user = getParam(req, "user");
+
   const attributes = _.pick(req.body, [
     "title",
     "date",
@@ -31,7 +33,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
   const data = await getService("ad").create({
     ...attributes,
-    user: "652a81c89e9c58e546819346",
+    user,
   });
 
   return getResponse(res, { data });
