@@ -22,7 +22,7 @@ export const getMatchPipeline = (match: Record<string, any>) => {
 
     if (_.isObject(value) && _.has(value, "_id")) {
       stage["$match"]["$expr"] = {
-        $eq: [`$${param}`, { $toObjectId: value }],
+        $eq: [`$${param}`, { $toObjectId: _.get(value, "_id") }],
       };
     } else {
       stage["$match"][param] = value;
