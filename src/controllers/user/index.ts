@@ -8,6 +8,7 @@ import { getAttributes } from "@/utils/getAttributes";
 import { getParam } from "@/utils/getParam";
 import { getEnv } from "@/utils/env";
 import _ from "lodash";
+import { sanitizeUser } from "@/controllers/user/utils";
 
 export const me = asyncHandler(async (req: Request, res: Response) => {
   return getResponse(
@@ -51,7 +52,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
   return getResponse(
     res,
-    { accessToken, user: { ...user, deliveries: 0 } },
+    { accessToken, user: _.assign(sanitizeUser(user), { deliveries: 0 }) },
     StatusCodes.CREATED
   );
 });
