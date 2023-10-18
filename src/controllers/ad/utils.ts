@@ -90,5 +90,5 @@ export const getInitialPipeline = (limit: number): PipelineStage[] => {
 };
 
 export const parseMatchParam = (param: string): string[] => {
-  return _.split(param, MATCH_PARAM_SEPARATOR);
+  return _.split(decodeURIComponent(param), MATCH_PARAM_SEPARATOR);
 };
