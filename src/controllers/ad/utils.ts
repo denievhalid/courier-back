@@ -72,7 +72,6 @@ export const getLimitPipeline = (limit: number): PipelineStage.Limit => {
 
 export const getInitialPipeline = (limit: number): PipelineStage[] => {
   return [
-    getLimitPipeline(limit),
     {
       $sort: {
         _id: 1,

@@ -5,6 +5,7 @@ import {
   getAddFieldsPipeline,
   getAttributes,
   getInitialPipeline,
+  getLimitPipeline,
   getMatchPipeline,
   getProjectPipeline,
   getSortPipeline,
@@ -65,8 +66,9 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
 
   query.push(getProjectPipeline());
   query.push(getAddFieldsPipeline());
+  query.push(getLimitPipeline(LIMIT));
 
-  console.log(query);
+  console.log(attributes.match);
 
   const data = await getService("ad").getList(query);
 
