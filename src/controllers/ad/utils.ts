@@ -19,6 +19,7 @@ export const getMatchPipeline = (match: Record<string, any>) => {
 
   _.forEach(match, (item) => {
     const [param, value] = parseMatchParam(item);
+    console.log(parseMatchParam(item));
 
     if (isValidObjectId(value)) {
       stage["$match"]["$expr"] = {
