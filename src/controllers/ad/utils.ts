@@ -21,9 +21,7 @@ export const getMatchPipeline = (match: Record<string, any>) => {
     const [param, value] = parseMatchParam(item);
 
     if (isValidObjectId(value)) {
-      stage["$match"]["$expr"] = {
-        $eq: [`$${param}`, { $toObjectId: value }],
-      };
+      stage["$match"]["$expr"]["$eq"] = [`$${param}`, { $toObjectId: value }];
     } else {
       stage["$match"][param] = value;
     }
@@ -74,11 +72,6 @@ export const getLimitPipeline = (limit: number): PipelineStage.Limit => {
 
 export const getInitialPipeline = (limit: number): PipelineStage[] => {
   return [
-    {
-      $sort: {
-        _id: 1,
-      },
-    },
     {
       $lookup: {
         from: "users",

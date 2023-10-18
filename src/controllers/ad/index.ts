@@ -54,7 +54,7 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
 export const getList = asyncHandler(async (req: Request, res: Response) => {
   const attributes = getAttributes(req.query);
 
-  const query: PipelineStage[] = getInitialPipeline(LIMIT);
+  const query: PipelineStage[] = [];
 
   if (_.has(attributes, "match")) {
     query.push(getMatchPipeline(attributes.match));
@@ -67,7 +67,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
   query.push(getProjectPipeline());
   query.push(getAddFieldsPipeline());
   query.push(getLimitPipeline(LIMIT));
-  console.log(query);
+
   const data = await getService("ad").getList(query);
 
   return getResponse(res, { data });
