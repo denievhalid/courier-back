@@ -10,7 +10,7 @@ export const create = (payload: UserType) => {
   return getModel("user").create(payload);
 };
 
-export const aggregate = async (payload: PipelineStage[]) => {
+export const aggregate = (payload: PipelineStage[]) => {
   return getModel("user").aggregate(payload);
 };
 

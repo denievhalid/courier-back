@@ -26,7 +26,7 @@ export const authenticate = asyncHandler(async (req, res, next) => {
   const user = await userService.aggregate([
     {
       $match: {
-        phoneNumber: verified.phoneNumber,
+        phoneNumber: +verified.phoneNumber,
       },
     },
     {

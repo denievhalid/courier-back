@@ -7,12 +7,13 @@ import { getService } from "@/lib/container";
 import { getAttributes } from "@/utils/getAttributes";
 import { getParam } from "@/utils/getParam";
 import { getEnv } from "@/utils/env";
+import _ from "lodash";
 
 export const me = asyncHandler(async (req: Request, res: Response) => {
   return getResponse(
     res,
     {
-      user: getParam(req, "user"),
+      user: _.first(getParam(req, "user")),
     },
     StatusCodes.OK
   );

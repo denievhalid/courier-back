@@ -4,3 +4,7 @@ import { getModel } from "@/lib/container";
 export const getList = (pipeline: PipelineStage[]) => {
   return getModel("favorite").aggregate(pipeline);
 };
+
+export const aggregate = (pipeline: PipelineStage[]) => {
+  return getModel("favorite").aggregate(pipeline);
+};
