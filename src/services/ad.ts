@@ -11,5 +11,5 @@ export const getList = (pipeline: PipelineStage[]) => {
 };
 
 export const getById = (_id: string) => {
-  return getModel("ad").findOne({ _id });
+  return getModel("ad").findOne({ _id }).populate("user");
 };
