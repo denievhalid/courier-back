@@ -21,9 +21,17 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
     },
     {
       $lookup: {
+        from: "ad",
+        localField: "ad",
+        foreignField: "_id",
+        as: "ad",
+      },
+    },
+    {
+      $lookup: {
         from: "user",
-        localField: "_user",
-        foreignField: "user",
+        localField: "user",
+        foreignField: "_id",
         as: "user",
       },
     },
