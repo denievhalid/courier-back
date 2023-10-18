@@ -15,7 +15,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
     {
       $match: {
         $expr: {
-          $eq: ["$user", { $toObjectId: user }],
+          $eq: ["$user", { $toObjectId: user._id }],
         },
       },
     },
