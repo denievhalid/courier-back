@@ -33,7 +33,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
   const data = await getService("ad").create({
     ...attributes,
-    user,
+    user: user._id,
   });
 
   return getResponse(res, { data });
