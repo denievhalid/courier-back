@@ -19,6 +19,17 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
         },
       },
     },
+    {
+      $lookup: {
+        from: "user",
+        localField: "_user",
+        foreignField: "user",
+        as: "user",
+      },
+    },
+    {
+      $limit: 20,
+    },
   ];
 
   const data = await favoriteService.getList(query);
