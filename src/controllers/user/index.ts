@@ -10,6 +10,7 @@ import { getEnv } from "@/utils/env";
 import _ from "lodash";
 import { sanitizeUser } from "@/controllers/user/utils";
 import { UserType } from "@/types";
+import { getFilename } from "@/controllers/file/utils";
 
 export const me = asyncHandler(async (req: Request, res: Response) => {
   return getResponse(
@@ -71,7 +72,7 @@ export const updateAvatar = asyncHandler(
       },
       {
         avatar: {
-          uri: avatar.path,
+          uri: getFilename(avatar.path),
         },
       }
     );

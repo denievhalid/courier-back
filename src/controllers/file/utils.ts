@@ -7,3 +7,7 @@ export const getUploadPayload = (files: Express.Multer.File[]) => {
     uri: `https://findcourier.ru/${UPLOADS_FOLDER}/${file.filename}`,
   }));
 };
+
+export const getFilename = (name: string) => {
+  return `https://findcourier.ru/${name}`;
+};
