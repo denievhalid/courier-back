@@ -1,5 +1,6 @@
 import AdModel from "@/models/ad";
 import DialogModel from "@/models/dialog";
+import FavoriteModel from "@/models/favorite";
 import FileModel from "@/models/file";
 import OtpModel from "@/models/otp";
 import UserModel from "@/models/user";
@@ -27,6 +28,7 @@ services.set("user", UserService);
 
 models.set("ad", AdModel);
 models.set("dialog", DialogModel);
+models.set("favorite", FavoriteModel);
 models.set("file", FileModel);
 models.set("otp", OtpModel);
 models.set("user", UserModel);
