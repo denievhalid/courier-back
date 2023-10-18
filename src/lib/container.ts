@@ -4,6 +4,7 @@ import FileModel from "@/models/file";
 import OtpModel from "@/models/otp";
 import UserModel from "@/models/user";
 import * as AdService from "@/services/ad";
+import * as FavoriteService from "@/services/favorite";
 import * as FileService from "@/services/file";
 import * as DialogService from "@/services/dialog";
 import * as MessageService from "@/services/message";
@@ -17,6 +18,7 @@ const services = new Map();
 
 services.set("ad", AdService);
 services.set("dialog", DialogService);
+services.set("favorite", FavoriteService);
 services.set("file", FileService);
 services.set("message", MessageService);
 services.set("otp", OtpService);
