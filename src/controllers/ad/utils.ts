@@ -19,11 +19,10 @@ export const getMatchPipeline = (match: Record<string, any>) => {
 
   _.forEach(match, (item) => {
     const [param, value] = parseMatchParam(item);
-    console.log(_.isObject(value));
-    console.log(_.has(value, "_id"));
-    if (_.isObject(value) && _.has(value, "_id")) {
+
+    if (isValidObjectId(value)) {
       stage["$match"]["$expr"] = {
-        $eq: [`$${param}`, { $toObjectId: _.get(value, "_id") }],
+        $eq: [`$${param}`, { $toObjectId: value }],
       };
     } else {
       stage["$match"][param] = value;
@@ -91,6 +90,6 @@ export const getInitialPipeline = (limit: number): PipelineStage[] => {
   ];
 };
 
-export const parseMatchParam = (param: string): any[] => {
+export const parseMatchParam = (param: string): string[] => {
   return _.split(decodeURIComponent(param), MATCH_PARAM_SEPARATOR);
 };
