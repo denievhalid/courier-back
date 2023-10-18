@@ -7,6 +7,7 @@ import { initDatabase } from "@/lib/database";
 import { closeApp } from "@/utils/closeApp";
 import path from "path";
 import { extractToken } from "@/middlewares/extractToken";
+import { getService } from "@/lib/container";
 
 const app = express();
 

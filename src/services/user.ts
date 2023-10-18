@@ -1,8 +1,6 @@
 import { getModel } from "@/lib/container";
 import { UserType } from "@/types";
-import { FilterQuery } from "mongoose";
-
-export const register = () => {};
+import { FilterQuery, PipelineStage } from "mongoose";
 
 export const exists = (filter: FilterQuery<UserType>) => {
   return getModel("user").exists(filter);
@@ -10,6 +8,10 @@ export const exists = (filter: FilterQuery<UserType>) => {
 
 export const create = (payload: UserType) => {
   return getModel("user").create(payload);
+};
+
+export const aggregate = async (payload: PipelineStage[]) => {
+  return getModel("user").aggregate(payload);
 };
 
 export const findOne = (query: FilterQuery<UserType>) => {

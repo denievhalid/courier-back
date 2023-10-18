@@ -38,10 +38,12 @@ export const authenticate = asyncHandler(async (req, res, next) => {
       },
     },
     {
-      $group: {
-        _id: "$deliveries",
-        numOfStudent: { $sum: 1 },
-        listOfStudents: { $push: "$name" },
+      $project: {
+        firstname: 1,
+        avatar: 1,
+        gender: 1,
+        phoneNumber: 1,
+        deliveries: { $size: "$deliveries" },
       },
     },
   ]);
