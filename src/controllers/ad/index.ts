@@ -30,6 +30,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     "from",
     "images",
     "weight",
+    "comment",
   ]);
 
   const data = await getService("ad").create({
