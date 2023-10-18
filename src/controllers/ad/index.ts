@@ -20,7 +20,7 @@ import { array } from "yup";
 export const create = asyncHandler(async (req: Request, res: Response) => {
   await createFormSchema.validate(req.body, { abortEarly: false });
 
-  const user = getParam(req, "user");
+  const user = _.first(getParam(req, "user"));
 
   const attributes = _.pick(req.body, [
     "title",
