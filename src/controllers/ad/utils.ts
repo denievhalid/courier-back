@@ -9,6 +9,7 @@ export const getAttributes = (data: Record<string, any>) =>
   _.pick(data, ["match", "sort"]);
 
 export const getMatchPipeline = (match: Record<string, any>) => {
+  console.log(match);
   const stage: PipelineStage.Match = {
     $match: {},
   };
