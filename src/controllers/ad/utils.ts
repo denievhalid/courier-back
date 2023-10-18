@@ -21,6 +21,7 @@ export const getMatchPipeline = (match: Record<string, any>) => {
     const [param, value] = parseMatchParam(item);
 
     if (isValidObjectId(value)) {
+      console.log(value);
       stage["$match"]["$expr"] = {
         $eq: [`$${param}`, { $toObjectId: value }],
       };
