@@ -2,6 +2,9 @@ import { model, Schema } from "mongoose";
 import { Gender } from "@/types";
 
 const schema = new Schema({
+  avatar: {
+    uri: String,
+  },
   gender: {
     type: String,
     enum: [Gender.MALE, Gender.FEMALE],

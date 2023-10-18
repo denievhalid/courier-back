@@ -9,6 +9,7 @@ import { getParam } from "@/utils/getParam";
 import { getEnv } from "@/utils/env";
 import _ from "lodash";
 import { sanitizeUser } from "@/controllers/user/utils";
+import { UserType } from "@/types";
 
 export const me = asyncHandler(async (req: Request, res: Response) => {
   return getResponse(
@@ -56,3 +57,25 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     StatusCodes.CREATED
   );
 });
+
+export const updateAvatar = asyncHandler(
+  async (req: Request, res: Response) => {
+    const avatar = getParam(req, "file");
+    const user = _.first(getParam(req, "user")) as UserType;
+
+    const userService = getService("user");
+
+    await userService.update(
+      {
+        phoneNumber: user?.phoneNumber,
+      },
+      {
+        avatar: {
+          uri: avatar.path,
+        },
+      }
+    );
+
+    return getResponse(res, {}, StatusCodes.OK);
+  }
+);

@@ -1,6 +1,6 @@
 import { getModel } from "@/lib/container";
 import { UserType } from "@/types";
-import { FilterQuery, PipelineStage } from "mongoose";
+import { FilterQuery, PipelineStage, UpdateQuery } from "mongoose";
 
 export const exists = (filter: FilterQuery<UserType>) => {
   return getModel("user").exists(filter);
@@ -16,4 +16,12 @@ export const aggregate = (payload: PipelineStage[]) => {
 
 export const findOne = (query: FilterQuery<UserType>) => {
   return getModel("user").findOne(query);
+};
+
+export const update = (
+  filter: FilterQuery<UserType>,
+  update: UpdateQuery<UserType>
+) => {
+  console.log(filter, update);
+  return getModel("user").findOneAndUpdate(filter, update);
 };
