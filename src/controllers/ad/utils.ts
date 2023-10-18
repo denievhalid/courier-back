@@ -19,7 +19,7 @@ export const getMatchPipeline = (match: Record<string, any>) => {
 
   _.forEach(match, (item) => {
     const [param, value] = parseMatchParam(item);
-    console.log(value);
+    console.log(_.isObject(value) && _.has(value, "_id"));
     if (_.isObject(value) && _.has(value, "_id")) {
       stage["$match"]["$expr"] = {
         $eq: [`$${param}`, { $toObjectId: _.get(value, "_id") }],
