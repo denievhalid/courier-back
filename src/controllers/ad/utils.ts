@@ -9,7 +9,6 @@ export const getAttributes = (data: Record<string, any>) =>
   _.pick(data, ["match", "sort"]);
 
 export const getMatchPipeline = (match: Record<string, any>) => {
-  console.log(match);
   const stage: PipelineStage.Match = {
     $match: {},
   };
@@ -21,7 +20,7 @@ export const getMatchPipeline = (match: Record<string, any>) => {
   _.forEach(match, (item) => {
     const [param, value] = parseMatchParam(item);
 
-    if (isValidObjectId(value)) {
+    if (_.isObject(value) && _.has(value, "_id")) {
       stage["$match"]["$expr"] = {
         $eq: [`$${param}`, { $toObjectId: value }],
       };
@@ -91,6 +90,6 @@ export const getInitialPipeline = (limit: number): PipelineStage[] => {
   ];
 };
 
-export const parseMatchParam = (param: string): string[] => {
+export const parseMatchParam = (param: string): any[] => {
   return _.split(decodeURIComponent(param), MATCH_PARAM_SEPARATOR);
 };
