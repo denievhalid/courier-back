@@ -27,6 +27,8 @@ export const getMatchPipeline = (match: Record<string, any>) => {
     }
   });
 
+  console.log(stage);
+
   return stage;
 };
 
