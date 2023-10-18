@@ -23,7 +23,28 @@ export const authenticate = asyncHandler(async (req, res, next) => {
     throw new InvalidCredentialsException();
   }
 
-  const user = await userService.findOne({ phoneNumber: verified.phoneNumber });
+  const user = await userService.aggregate([
+    {
+      $match: {
+        phoneNumber: verified.phoneNumber,
+      },
+    },
+    {
+      $lookup: {
+        from: "deliveries",
+        localField: "_id",
+        foreignField: "user",
+        as: "deliveries",
+      },
+    },
+    {
+      $group: {
+        _id: "$deliveries",
+        numOfStudent: { $sum: 1 },
+        listOfStudents: { $push: "$name" },
+      },
+    },
+  ]);
 
   if (!user) {
     throw new InvalidCredentialsException();

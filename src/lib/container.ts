@@ -1,5 +1,6 @@
 import AdModel from "@/models/ad";
 import DialogModel from "@/models/dialog";
+import DeliveryModel from "@/models/delivery";
 import FavoriteModel from "@/models/favorite";
 import FileModel from "@/models/file";
 import OtpModel from "@/models/otp";
@@ -8,6 +9,7 @@ import * as AdService from "@/services/ad";
 import * as FavoriteService from "@/services/favorite";
 import * as FileService from "@/services/file";
 import * as DialogService from "@/services/dialog";
+import * as DeliveryService from "@/services/delivery";
 import * as MessageService from "@/services/message";
 import * as OtpService from "@/services/otp";
 import * as TokenService from "@/services/token";
@@ -19,6 +21,7 @@ const services = new Map();
 
 services.set("ad", AdService);
 services.set("dialog", DialogService);
+services.set("delivery", DeliveryService);
 services.set("favorite", FavoriteService);
 services.set("file", FileService);
 services.set("message", MessageService);
@@ -27,6 +30,7 @@ services.set("token", TokenService);
 services.set("user", UserService);
 
 models.set("ad", AdModel);
+models.set("delivery", DeliveryModel);
 models.set("dialog", DialogModel);
 models.set("favorite", FavoriteModel);
 models.set("file", FileModel);
