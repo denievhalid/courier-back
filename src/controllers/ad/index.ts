@@ -68,6 +68,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
   query.push(getAddFieldsPipeline());
   query.push(getLimitPipeline(LIMIT));
 
+  console.log(attributes.sort);
   console.log(attributes.match);
 
   const data = await getService("ad").getList(query);
