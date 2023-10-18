@@ -42,7 +42,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
   const tokenService = getService("token");
 
-  const user = await useService.create(attributes).exec();
+  const user = await useService.create(attributes);
 
   const accessToken = tokenService.create(
     { phoneNumber: attributes.phoneNumber },
