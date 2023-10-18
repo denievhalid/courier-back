@@ -47,6 +47,9 @@ const schema = new Schema({
     ref: "User",
     required: true,
   },
+  comment: {
+    type: String,
+  },
   status: {
     type: String,
     enum: [AdStatus.APPROVED, AdStatus.PENDING, AdStatus.REJECTED],
