@@ -2,6 +2,7 @@ import type { ErrorRequestHandler } from "express";
 import { MongooseError } from "mongoose";
 import { ValidationError } from "yup";
 import { isYupError, mapYupTErrors } from "@/lib/error";
+import { StatusCodes } from "http-status-codes";
 
 export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   const payload: any = {
@@ -12,7 +13,7 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
     },
   };
 
-  res.status(500);
+  res.status(err.status || StatusCodes.INTERNAL_SERVER_ERROR);
 
   if (isYupError(err)) {
     payload.errors = mapYupTErrors(err);

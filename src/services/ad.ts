@@ -8,8 +8,6 @@ export const create = (payload: AdType) => {
 
 export const getList = (pipeline: PipelineStage[]) => {
   return getModel("ad").aggregate(pipeline);
-
-  //return getModel("ad").aggregate([{}]);
 };
 
 export const getById = (_id: string) => {
