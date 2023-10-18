@@ -31,7 +31,7 @@ export const authenticate = asyncHandler(async (req, res, next) => {
     },
     {
       $lookup: {
-        from: "deliveries",
+        from: "delivery",
         localField: "_id",
         foreignField: "user",
         as: "deliveries",
