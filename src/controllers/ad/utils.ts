@@ -5,8 +5,6 @@ import { isValidObjectId } from "@/utils/isValidObjectId";
 
 const MATCH_PARAM_SEPARATOR = ":";
 
-const routeTypes = new Set(["from", "to"]);
-
 export const getAttributes = (data: Record<string, any>) =>
   _.pick(data, ["match", "sort"]);
 
