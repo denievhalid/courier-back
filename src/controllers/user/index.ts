@@ -42,12 +42,16 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
   const tokenService = getService("token");
 
-  const user = await useService.create(attributes);
+  const user = await useService.create(attributes).exec();
 
   const accessToken = tokenService.create(
     { phoneNumber: attributes.phoneNumber },
     getEnv("JWT_SECRET")
   );
 
-  return getResponse(res, { accessToken, user }, StatusCodes.CREATED);
+  return getResponse(
+    res,
+    { accessToken, user: { ...user, deliveries: 0 } },
+    StatusCodes.CREATED
+  );
 });
