@@ -16,11 +16,12 @@ import { LIMIT } from "@/controllers/ad/const";
 import { PipelineStage } from "mongoose";
 import { createFormSchema } from "@/controllers/ad/validation";
 import { array } from "yup";
+import { UserType } from "@/types";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   await createFormSchema.validate(req.body, { abortEarly: false });
 
-  const user = _.first(getParam(req, "user"));
+  const user = _.first(getParam(req, "user")) as UserType;
 
   const attributes = _.pick(req.body, [
     "title",
@@ -33,7 +34,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
   const data = await getService("ad").create({
     ...attributes,
-    user: user._id,
+    user: user?._id,
   });
 
   return getResponse(res, { data });
