@@ -28,6 +28,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   const attributes = getAttributes(req.body, [
     "gender",
     "firstname",
+    "location",
     "phoneNumber",
   ]);
 
