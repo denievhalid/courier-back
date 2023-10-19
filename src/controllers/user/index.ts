@@ -26,6 +26,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   await createUserValidation.validate(req.body);
 
   const attributes = getAttributes(req.body, [
+    "avatar",
     "gender",
     "firstname",
     "location",
