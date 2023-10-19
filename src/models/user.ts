@@ -21,8 +21,7 @@ const schema = new Schema({
     required: true,
   },
   location: {
-    uri: String,
-    required: true,
+    city_name: String,
   },
 });
 
