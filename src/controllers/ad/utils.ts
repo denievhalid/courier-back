@@ -41,7 +41,6 @@ export const getProjectPipeline = (): PipelineStage.Project => {
   return {
     $project: {
       _id: 1,
-      cover: 1,
       comment: 1,
       from: 1,
       to: 1,

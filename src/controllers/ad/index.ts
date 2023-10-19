@@ -66,6 +66,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
 
   query.push(getLookupPipeline());
   query.push(getProjectPipeline());
+  query.push(getAddFieldsPipeline());
 
   const data = await getService("ad").getList(query);
 
