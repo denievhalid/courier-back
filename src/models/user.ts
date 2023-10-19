@@ -5,6 +5,10 @@ const schema = new Schema({
   avatar: {
     uri: String,
   },
+  active: {
+    type: Boolean,
+    default: true,
+  },
   gender: {
     type: String,
     enum: [Gender.MALE, Gender.FEMALE],
