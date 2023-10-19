@@ -102,3 +102,21 @@ export const removeAvatar = asyncHandler(
     return getResponse(res, {}, StatusCodes.NO_CONTENT);
   }
 );
+
+export const update = asyncHandler(async (req: Request, res: Response) => {
+  const updatePayload = getParam(req.body, "payload");
+  const user = _.first(getParam(req, "user")) as UserType;
+
+  const userService = getService("user");
+
+  await userService.update(
+    {
+      phoneNumber: user?.phoneNumber,
+    },
+    {
+      ...updatePayload,
+    }
+  );
+
+  return getResponse(res, {}, StatusCodes.OK);
+});
