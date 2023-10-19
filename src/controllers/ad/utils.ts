@@ -1,6 +1,7 @@
 import _ from "lodash";
 import { SortType } from "@/controllers/ad/types";
 import type { FilterQuery, PipelineStage } from "mongoose";
+import * as mongoose from "mongoose";
 import { isValidObjectId } from "@/utils/isValidObjectId";
 
 const MATCH_PARAM_SEPARATOR = ":";
@@ -18,17 +19,14 @@ export const getMatchPipeline = (match: Record<string, any>) => {
   }
 
   _.forEach(match, (item) => {
-    const [param, value] = parseMatchParam(item);
+    let [param, value] = parseMatchParam(item);
 
     if (isValidObjectId(value)) {
-      console.log(111);
-      stage["$match"]["$expr"]["$eq"] = [`$${param}`, { $toObjectId: value }];
-    } else {
-      stage["$match"][param] = value;
+      value = new mongoose.Types.ObjectId(value);
     }
-  });
 
-  console.log(stage);
+    stage["$match"][param] = value;
+  });
 
   return stage;
 };
@@ -73,19 +71,17 @@ export const getLimitPipeline = (limit: number): PipelineStage.Limit => {
   };
 };
 
-export const getInitialPipeline = (limit: number): PipelineStage[] => {
-  return [
-    {
-      $lookup: {
-        from: "users",
-        localField: "user",
-        foreignField: "_id",
-        as: "user",
-      },
+export const getLookupPipeline = (): PipelineStage.Lookup => {
+  return {
+    $lookup: {
+      from: "users",
+      localField: "user",
+      foreignField: "_id",
+      as: "user",
     },
-  ];
+  };
 };
 
-export const parseMatchParam = (param: string): string[] => {
+export const parseMatchParam = (param: string): any[] => {
   return _.split(decodeURIComponent(param), MATCH_PARAM_SEPARATOR);
 };
