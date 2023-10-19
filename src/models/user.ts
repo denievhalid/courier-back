@@ -20,6 +20,10 @@ const schema = new Schema({
     trim: true,
     required: true,
   },
+  location: {
+    uri: String,
+    required: true,
+  },
 });
 
 export default model("User", schema);
