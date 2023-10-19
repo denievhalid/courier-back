@@ -18,6 +18,7 @@ import { PipelineStage } from "mongoose";
 import { createFormSchema } from "@/controllers/ad/validation";
 import { array } from "yup";
 import { UserType } from "@/types";
+import { StatusCodes } from "http-status-codes";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   await createFormSchema.validate(req.body, { abortEarly: false });
@@ -72,4 +73,10 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
   const data = await getService("ad").getList(query);
 
   return getResponse(res, { data });
+});
+
+export const remove = asyncHandler(async (req: Request, res: Response) => {
+  await getService("ad").remove(getParam(req.params, "id"));
+
+  return getResponse(res, {}, StatusCodes.NO_CONTENT);
 });

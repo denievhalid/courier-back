@@ -13,3 +13,7 @@ export const getList = (pipeline: PipelineStage[]) => {
 export const getById = (_id: string) => {
   return getModel("ad").findOne({ _id }).populate("user");
 };
+
+export const remove = (id: string) => {
+  return getModel("ad").findByIdAndRemove(id);
+};
