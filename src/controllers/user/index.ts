@@ -80,3 +80,24 @@ export const updateAvatar = asyncHandler(
     return getResponse(res, {}, StatusCodes.OK);
   }
 );
+
+export const removeAvatar = asyncHandler(
+  async (req: Request, res: Response) => {
+    const user = _.first(getParam(req, "user")) as UserType;
+
+    const userService = getService("user");
+
+    await userService.update(
+      {
+        phoneNumber: user?.phoneNumber,
+      },
+      {
+        avatar: {
+          uri: null,
+        },
+      }
+    );
+
+    return getResponse(res, {}, StatusCodes.NO_CONTENT);
+  }
+);

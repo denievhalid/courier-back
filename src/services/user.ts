@@ -22,6 +22,5 @@ export const update = (
   filter: FilterQuery<UserType>,
   update: UpdateQuery<UserType>
 ) => {
-  console.log(filter, update);
   return getModel("user").findOneAndUpdate(filter, update);
 };
