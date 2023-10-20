@@ -42,6 +42,7 @@ export const getMatchPipeline = (match: Record<string, any>) => {
 
 export const getSortPipeline = (sort: SortType): PipelineStage.Sort => {
   const sortValues: Record<string, 1 | -1> = {
+    _id: -1,
     date: 1,
     price: 1,
     weight: -1,
