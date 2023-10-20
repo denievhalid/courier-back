@@ -65,7 +65,7 @@ const schema = new Schema({
       AdStatus.PENDING,
       AdStatus.REJECTED,
     ],
-    default: AdStatus.PENDING,
+    default: AdStatus.DRAFT,
   },
 });
 
