@@ -50,6 +50,7 @@ export interface IService {
 
 export enum AdStatus {
   APPROVED = "approved",
+  DRAFT = "draft",
   PENDING = "pending",
   REJECTED = "rejected",
 }

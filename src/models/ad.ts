@@ -54,9 +54,17 @@ const schema = new Schema({
     type: Number,
     default: 0,
   },
+  rejectedReason: {
+    type: String,
+  },
   status: {
     type: String,
-    enum: [AdStatus.APPROVED, AdStatus.PENDING, AdStatus.REJECTED],
+    enum: [
+      AdStatus.APPROVED,
+      AdStatus.DRAFT,
+      AdStatus.PENDING,
+      AdStatus.REJECTED,
+    ],
     default: AdStatus.PENDING,
   },
 });
