@@ -1,1 +1,1 @@
-export type SortType = "price" | "weight";
+export type SortType = "date" | "price" | "weight";

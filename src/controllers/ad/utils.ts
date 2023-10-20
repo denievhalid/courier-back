@@ -41,8 +41,14 @@ export const getMatchPipeline = (match: Record<string, any>) => {
 };
 
 export const getSortPipeline = (sort: SortType): PipelineStage.Sort => {
+  const sortValues: Record<string, 1 | -1> = {
+    date: 1,
+    price: 1,
+    weight: -1,
+  };
+
   return {
-    $sort: { [sort]: -1 },
+    $sort: { [sort]: sortValues[sort] },
   };
 };
 
