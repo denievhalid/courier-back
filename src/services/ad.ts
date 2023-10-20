@@ -6,6 +6,10 @@ export const create = (payload: AdType) => {
   return getModel("ad").create(payload);
 };
 
+export const update = ({ _id, ...update }: AdType) => {
+  return getModel("ad").findOneAndUpdate({ _id }, { ...update });
+};
+
 export const getList = (pipeline: PipelineStage[]) => {
   return getModel("ad").aggregate(pipeline);
 };

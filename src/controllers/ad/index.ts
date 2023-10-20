@@ -44,6 +44,30 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   return getResponse(res, { data });
 });
 
+export const update = asyncHandler(async (req: Request, res: Response) => {
+  await createFormSchema.validate(req.body, { abortEarly: false });
+
+  const user = _.first(getParam(req, "user")) as UserType;
+
+  const attributes = _.pick(req.body, [
+    "title",
+    "date",
+    "to",
+    "price",
+    "from",
+    "images",
+    "weight",
+    "comment",
+  ]);
+
+  const data = await getService("ad").update({
+    ...attributes,
+    user: user._id,
+  });
+
+  return getResponse(res, { data });
+});
+
 export const getById = asyncHandler(async (req: Request, res: Response) => {
   const id = getParam(req.params, "id");
 
