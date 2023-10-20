@@ -8,7 +8,7 @@ const MATCH_PARAM_SEPARATOR = ":";
 
 const routesFilter = {
   from: "from.city_name",
-  to: "from.city_name",
+  to: "to.city_name",
 };
 
 export const getAttributes = (data: Record<string, any>) =>
