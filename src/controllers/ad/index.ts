@@ -15,13 +15,13 @@ import { getService } from "@/lib/container";
 import { getParam } from "@/utils/getParam";
 import { LIMIT } from "@/controllers/ad/const";
 import { PipelineStage } from "mongoose";
-import { createFormSchema } from "@/controllers/ad/validation";
+import { adFormSchema, createFormSchema } from "@/controllers/ad/validation";
 import { array } from "yup";
 import { UserType } from "@/types";
 import { StatusCodes } from "http-status-codes";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
-  await createFormSchema.validate(req.body, { abortEarly: false });
+  await adFormSchema.validate(req.body, { abortEarly: false });
 
   const user = _.first(getParam(req, "user")) as UserType;
 
@@ -45,9 +45,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const update = asyncHandler(async (req: Request, res: Response) => {
-  await createFormSchema.validate(req.body, { abortEarly: false });
-
-  const user = _.first(getParam(req, "user")) as UserType;
+  await adFormSchema.validate(req.body, { abortEarly: false });
 
   const attributes = _.pick(req.body, [
     "title",
@@ -60,9 +58,7 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
     "comment",
   ]);
 
-  const data = await getService("ad").update({
-    ...attributes,
-  });
+  const data = await getService("ad").update(attributes);
 
   return getResponse(res, { data });
 });
