@@ -38,6 +38,12 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
   const data = await getService("ad").create({
     ...attributes,
+    from: {
+      city_name: attributes.from,
+    },
+    to: {
+      city_name: attributes.from,
+    },
     user: user?._id,
   });
 
