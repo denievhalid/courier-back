@@ -50,6 +50,10 @@ const schema = new Schema({
   comment: {
     type: String,
   },
+  price: {
+    type: Number,
+    default: 0,
+  },
   status: {
     type: String,
     enum: [AdStatus.APPROVED, AdStatus.PENDING, AdStatus.REJECTED],
