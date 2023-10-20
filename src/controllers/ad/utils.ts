@@ -6,6 +6,11 @@ import { isValidObjectId } from "@/utils/isValidObjectId";
 
 const MATCH_PARAM_SEPARATOR = ":";
 
+const routesFilter = {
+  from: "from.city_name",
+  to: "from.city_name",
+};
+
 export const getAttributes = (data: Record<string, any>) =>
   _.pick(data, ["match", "sort"]);
 
@@ -23,6 +28,10 @@ export const getMatchPipeline = (match: Record<string, any>) => {
 
     if (isValidObjectId(value)) {
       value = new mongoose.Types.ObjectId(value);
+    }
+
+    if (_.has(routesFilter, param)) {
+      param = _.get(routesFilter, param);
     }
 
     stage["$match"][param] = value;
