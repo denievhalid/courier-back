@@ -7,7 +7,7 @@ export const create = (payload: AdType) => {
 };
 
 export const update = ({ _id, ...update }: AdType) => {
-  return getModel("ad").findOneAndUpdate({ _id }, { ...update });
+  return getModel("ad").findOneAndUpdate({ _id }, { ...update }, { new: true });
 };
 
 export const getList = (pipeline: PipelineStage[]) => {
