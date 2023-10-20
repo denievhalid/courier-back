@@ -62,7 +62,6 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
 
   const data = await getService("ad").update({
     ...attributes,
-    user: user._id,
   });
 
   return getResponse(res, { data });
