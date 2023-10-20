@@ -21,26 +21,14 @@ const schema = new Schema({
     },
   ],
   from: {
-    city_name: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    city_kladr: {
-      type: String,
-      trim: true,
-    },
+    type: String,
+    required: true,
+    trim: true,
   },
   to: {
-    city_name: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    city_kladr: {
-      type: String,
-      trim: true,
-    },
+    type: String,
+    required: true,
+    trim: true,
   },
   user: {
     type: Schema.Types.ObjectId,
