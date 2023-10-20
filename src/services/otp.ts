@@ -59,6 +59,7 @@ export const getOtpPayload = (payload: OtpType) => {
   }
 
   return {
+    otpLength: payload.otp.toString().length,
     timeout,
   };
 };

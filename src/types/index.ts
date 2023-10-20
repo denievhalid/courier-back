@@ -32,6 +32,7 @@ export type MessageType = {
 export type OtpType = {
   _id: string;
   deadline: Date;
+  otp: number;
   phoneNumber: number;
 };
 
