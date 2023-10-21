@@ -15,13 +15,13 @@ import { getService } from "@/lib/container";
 import { getParam } from "@/utils/getParam";
 import { LIMIT } from "@/controllers/ad/const";
 import { PipelineStage } from "mongoose";
-import { adFormSchema } from "@/controllers/ad/validation";
+import { createAdSchema } from "@/controllers/ad/validation";
 import { array } from "yup";
 import { UserType } from "@/types";
 import { StatusCodes } from "http-status-codes";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
-  await adFormSchema.validate(req.body, { abortEarly: false });
+  await createAdSchema.validate(req.body, { abortEarly: false });
 
   const user = _.first(getParam(req, "user")) as UserType;
 
@@ -45,8 +45,6 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const update = asyncHandler(async (req: Request, res: Response) => {
-  //await adFormSchema.validate(req.body, { abortEarly: false });
-
   const id = getParam(req.params, "id");
 
   const attributes = _.pick(req.body, [

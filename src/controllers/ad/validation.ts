@@ -1,5 +1,5 @@
 import * as yup from "yup";
-export const adFormSchema = yup
+export const createAdSchema = yup
   .object({
     title: yup.string().required("Обязятельное поле"),
     weight: yup.string().required("Обязятельное поле"),
