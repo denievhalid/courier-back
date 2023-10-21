@@ -16,6 +16,8 @@ export const getMatchPipeline = (match: Record<string, any>) => {
     $match: {},
   };
 
+  let date: { $gte?: Date; $lte?: Date } = {};
+
   if (_.isString(match)) {
     match = [match];
   }
@@ -28,8 +30,6 @@ export const getMatchPipeline = (match: Record<string, any>) => {
     }
 
     if (dateSet.has(param)) {
-      let date: { $gte?: Date; $lte?: Date } = {};
-
       if (param === "startDate") {
         date["$gte"] = new Date(value);
       }
