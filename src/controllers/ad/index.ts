@@ -52,6 +52,7 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
     "date",
     "to",
     "price",
+    "status",
     "from",
     "images",
     "weight",
