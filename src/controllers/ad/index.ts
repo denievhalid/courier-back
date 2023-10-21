@@ -26,7 +26,8 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
   const attributes = _.pick(req.body, [
     "title",
-    "date",
+    "startDate",
+    "endDate",
     "to",
     "price",
     "from",

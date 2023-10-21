@@ -7,9 +7,12 @@ const schema = new Schema({
     required: true,
     trim: true,
   },
-  date: {
+  startDate: {
     type: Date,
     required: true,
+  },
+  endDate: {
+    type: Date,
   },
   weight: {
     type: String,
