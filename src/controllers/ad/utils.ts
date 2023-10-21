@@ -83,10 +83,14 @@ export const getAddFieldsPipeline = (): PipelineStage.AddFields => {
 };
 
 export const getLimitPipeline = (limit: number, skip: number) => {
-  return {
-    $limit: limit,
-    $skip: skip,
-  };
+  return [
+    {
+      $limit: limit,
+    },
+    {
+      $skip: skip,
+    },
+  ];
 };
 
 export const getLookupPipeline = (): PipelineStage.Lookup => {

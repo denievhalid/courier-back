@@ -87,7 +87,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
     query.push(getSortPipeline(attributes.sort));
   }
 
-  query.push(getLimitPipeline(LIMIT, (page - 1) * LIMIT));
+  query.push(...getLimitPipeline(LIMIT, (page - 1) * LIMIT));
   query.push(getLookupPipeline());
   query.push(getProjectPipeline());
   query.push(getAddFieldsPipeline());
