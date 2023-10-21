@@ -76,7 +76,7 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
 export const getList = asyncHandler(async (req: Request, res: Response) => {
   const attributes = getAttributes(req.query);
 
-  const page = getParam(attributes, "page");
+  const page = attributes.page || 1;
 
   const query: PipelineStage[] = [];
 
