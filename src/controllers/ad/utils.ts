@@ -60,6 +60,8 @@ export const getProjectPipeline = (): PipelineStage.Project => {
       comment: 1,
       from: 1,
       to: 1,
+      startDate: 1,
+      endDate: 1,
       date: 1,
       status: 1,
       images: 1,
