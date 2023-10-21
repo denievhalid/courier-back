@@ -4,12 +4,9 @@ import type { FilterQuery, PipelineStage } from "mongoose";
 import * as mongoose from "mongoose";
 import { isValidObjectId } from "@/utils/isValidObjectId";
 
-const MATCH_PARAM_SEPARATOR = ":";
+const dateSet = new Set(["startDate", "endDate"]);
 
-const routesFilter = {
-  from: "from.city_name",
-  to: "to.city_name",
-};
+const MATCH_PARAM_SEPARATOR = ":";
 
 export const getAttributes = (data: Record<string, any>) =>
   _.pick(data, ["match", "sort"]);
@@ -30,7 +27,21 @@ export const getMatchPipeline = (match: Record<string, any>) => {
       value = new mongoose.Types.ObjectId(value);
     }
 
-    stage["$match"][param] = value;
+    if (dateSet.has(param)) {
+      if (param === "startDate") {
+        stage["$match"]["date"] = {
+          $gte: new Date(value),
+        };
+      }
+
+      if (param === "endDate") {
+        stage["$match"]["date"] = {
+          $lte: new Date(value),
+        };
+      }
+    } else {
+      stage["$match"][param] = value;
+    }
   });
 
   return stage;
