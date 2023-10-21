@@ -30,10 +30,6 @@ export const getMatchPipeline = (match: Record<string, any>) => {
       value = new mongoose.Types.ObjectId(value);
     }
 
-    if (_.has(routesFilter, param)) {
-      param = _.get(routesFilter, param);
-    }
-
     stage["$match"][param] = value;
   });
 

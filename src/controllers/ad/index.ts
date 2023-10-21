@@ -16,7 +16,6 @@ import { getParam } from "@/utils/getParam";
 import { LIMIT } from "@/controllers/ad/const";
 import { PipelineStage } from "mongoose";
 import { createAdSchema } from "@/controllers/ad/validation";
-import { array } from "yup";
 import { UserType } from "@/types";
 import { StatusCodes } from "http-status-codes";
 
@@ -89,6 +88,8 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
   query.push(getLookupPipeline());
   query.push(getProjectPipeline());
   query.push(getAddFieldsPipeline());
+
+  console.log(query);
 
   const data = await getService("ad").getList(query);
 
