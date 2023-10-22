@@ -1,9 +1,14 @@
 import { getModel } from "@/lib/container";
 import type { FilterQuery, PipelineStage, UpdateQuery } from "mongoose";
 import type { AdType } from "@/types";
+import { DeliveryType } from "@/types";
 
 export const create = (payload: AdType) => {
   return getModel("ad").create(payload);
+};
+
+export const findOne = (filter: FilterQuery<DeliveryType>) => {
+  return getModel("ad").findOne(filter);
 };
 
 export const update = (

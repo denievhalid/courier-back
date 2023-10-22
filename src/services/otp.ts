@@ -4,11 +4,6 @@ import { getModel } from "@/lib/container";
 import dayjs from "dayjs";
 import _ from "lodash";
 
-type VerifyType = {
-  otp: string;
-  secret: string;
-};
-
 export const options = {
   digits: 4,
   epoch: 60,

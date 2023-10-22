@@ -2,6 +2,7 @@ import AdModel from "@/models/ad";
 import DialogModel from "@/models/dialog";
 import DeliveryModel from "@/models/delivery";
 import FavoriteModel from "@/models/favorite";
+import MessageModel from "@/models/message";
 import FileModel from "@/models/file";
 import OtpModel from "@/models/otp";
 import UserModel from "@/models/user";
@@ -16,31 +17,42 @@ import * as TokenService from "@/services/token";
 import * as UserService from "@/services/user";
 import type { Model } from "mongoose";
 
-const models = new Map<string, Model<any>>();
-const services = new Map();
+let container: { services: any; models: any } | null = null;
 
-services.set("ad", AdService);
-services.set("dialog", DialogService);
-services.set("delivery", DeliveryService);
-services.set("favorite", FavoriteService);
-services.set("file", FileService);
-services.set("message", MessageService);
-services.set("otp", OtpService);
-services.set("token", TokenService);
-services.set("user", UserService);
+export const createContainer = () => {
+  if (container) return container;
 
-models.set("ad", AdModel);
-models.set("delivery", DeliveryModel);
-models.set("dialog", DialogModel);
-models.set("favorite", FavoriteModel);
-models.set("file", FileModel);
-models.set("otp", OtpModel);
-models.set("user", UserModel);
+  container = {
+    models: new Map<string, Model<any>>(),
+    services: new Map(),
+  };
+
+  container.services.set("ad", AdService);
+  container.services.set("dialog", DialogService);
+  container.services.set("delivery", DeliveryService);
+  container.services.set("favorite", FavoriteService);
+  container.services.set("file", FileService);
+  container.services.set("message", MessageService);
+  container.services.set("otp", OtpService);
+  container.services.set("token", TokenService);
+  container.services.set("user", UserService);
+
+  container.models.set("ad", AdModel);
+  container.models.set("delivery", DeliveryModel);
+  container.models.set("dialog", DialogModel);
+  container.models.set("favorite", FavoriteModel);
+  container.models.set("message", MessageModel);
+  container.models.set("file", FileModel);
+  container.models.set("otp", OtpModel);
+  container.models.set("user", UserModel);
+
+  return container;
+};
 
 export const getService = (name: string) => {
-  return services.get(name);
+  return createContainer().services.get(name);
 };
 
 export const getModel = (name: string): Model<any> => {
-  return models.get(name) as Model<any>;
+  return createContainer().models.get(name) as Model<any>;
 };

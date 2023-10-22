@@ -55,7 +55,30 @@ export enum AdStatus {
   REJECTED = "rejected",
 }
 
+export enum DeliveryStatus {
+  APPROVED = "approved",
+  PENDING = "pending",
+  REJECTED = "rejected",
+}
+
+export enum MessageStatus {
+  SEND = "sent",
+  PENDING = "pending",
+  READ = "read",
+}
+
 export enum Gender {
   MALE = "male",
   FEMALE = "female",
 }
+
+export type DeliveryType = {
+  ad: AdType;
+  user: UserType;
+  status: string;
+};
+
+export type VerifyType = {
+  otp: string;
+  secret: string;
+};

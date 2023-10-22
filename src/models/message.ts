@@ -1,9 +1,15 @@
 import { model, Schema } from "mongoose";
+import { MessageStatus } from "@/types";
 
 const schema = new Schema(
   {
+    dialog: {
+      type: Schema.Types.ObjectId,
+      ref: "Dialog",
+      required: true,
+    },
     message: {
-      type: Schema,
+      type: String,
       required: true,
       trim: true,
     },
@@ -12,11 +18,15 @@ const schema = new Schema(
       ref: "User",
       required: true,
     },
+    isSystemMessage: {
+      type: Boolean,
+      default: false,
+    },
     status: {
       type: String,
-      enum: ["pending", "sent", "read"],
+      enum: [MessageStatus.PENDING, MessageStatus.READ, MessageStatus.SEND],
       required: true,
-      default: "pending",
+      default: MessageStatus.PENDING,
     },
   },
   {
