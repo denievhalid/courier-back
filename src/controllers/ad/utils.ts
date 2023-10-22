@@ -69,6 +69,7 @@ export const getProjectPipeline = (): PipelineStage.Project => {
       price: 1,
       weight: 1,
       routes: 1,
+      delivery: { $first: "$delivery.status" },
       user: { $first: "$user" },
     },
   };
@@ -94,15 +95,25 @@ export const getSkipPipeline = (skip: number): PipelineStage.Skip => {
   };
 };
 
-export const getLookupPipeline = (): PipelineStage.Lookup => {
-  return {
-    $lookup: {
-      from: "users",
-      localField: "user",
-      foreignField: "_id",
-      as: "user",
+export const getLookupPipeline = (): PipelineStage.Lookup[] => {
+  return [
+    {
+      $lookup: {
+        from: "users",
+        localField: "user",
+        foreignField: "_id",
+        as: "user",
+      },
     },
-  };
+    {
+      $lookup: {
+        from: "deliveries",
+        localField: "_id",
+        foreignField: "ad",
+        as: "delivery",
+      },
+    },
+  ];
 };
 
 export const parseMatchParam = (param: string): any[] => {
