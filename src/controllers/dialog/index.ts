@@ -32,34 +32,27 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
   const data = await dialogService.getList([
     {
       $match: {
-        users: {
-          $in: [user._id],
-        },
+        user: user._id,
       },
     },
     {
       $lookup: {
-        from: "users",
-        localField: "users",
+        from: "ads",
+        localField: "ad",
         foreignField: "_id",
-        as: "users",
+        as: "ad",
       },
     },
     {
       $lookup: {
         from: "messages",
-        let: { idToSearchFor: "$_id" },
+        let: { id: "$_id" },
         pipeline: [
           {
             $match: {
               $expr: {
-                $and: [{ $eq: ["$$idToSearchFor", "$dialog"] }],
+                $and: [{ $eq: ["$$id", "$dialog"] }],
               },
-            },
-          },
-          {
-            $sort: {
-              _id: -1,
             },
           },
           { $limit: 1 },
@@ -69,7 +62,23 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
     },
     {
       $project: {
+        ad: { $first: "$ad" },
         message: { $first: "$messages" },
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "ad.user",
+        foreignField: "_id",
+        as: "user",
+      },
+    },
+    {
+      $project: {
+        image: { $first: "$ad.images" },
+        message: 1,
+        user: 1,
       },
     },
   ]);

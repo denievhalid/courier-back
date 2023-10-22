@@ -41,13 +41,12 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   const dialogService = getService("dialog");
 
   let dialog = await dialogService.findOne({
-    users: {
-      $in: [ad._id, user._id],
-    },
+    ad: ad._id,
+    user: user._id,
   });
 
   if (!dialog) {
-    dialog = await dialogService.create({ users: [ad._id, user._id] });
+    dialog = await dialogService.create({ ad: ad._id, user: user._id });
   }
 
   const messageService = getService("message");
