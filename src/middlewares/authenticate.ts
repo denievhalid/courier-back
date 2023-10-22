@@ -44,7 +44,7 @@ export const authenticate = asyncHandler(async (req, res, next) => {
         avatar: 1,
         gender: 1,
         phoneNumber: 1,
-        location: 1,
+        city: 1,
         deliveries: { $size: "$deliveries" },
       },
     },
