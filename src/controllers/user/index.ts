@@ -29,7 +29,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     "avatar",
     "gender",
     "firstname",
-    "location",
+    "city",
     "phoneNumber",
   ]);
 
