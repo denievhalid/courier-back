@@ -4,10 +4,10 @@ import type { UserType } from "@/types";
 export const sanitizeUser = (user: UserType) => {
   return _.pick(user, [
     "_id",
+    "city",
     "gender",
     "firstname",
     "phoneNumber",
-    "location",
     "avatar",
   ]);
 };
