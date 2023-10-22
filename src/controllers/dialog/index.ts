@@ -78,7 +78,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
       $project: {
         image: { $first: "$ad.images" },
         message: 1,
-        user: 1,
+        user: { $first: "$user" },
       },
     },
   ]);
