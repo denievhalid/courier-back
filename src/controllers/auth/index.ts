@@ -6,7 +6,6 @@ import { getResponse } from "@/utils/getResponse";
 import { StatusCodes } from "http-status-codes";
 import { getAttributes } from "@/utils/getAttributes";
 import { getEnv } from "@/utils/env";
-import { remove } from "@/services/otp";
 
 export const verifyOtp = asyncHandler(async (req: Request, res: Response) => {
   await verifyOtpSchema.validate(req.body);

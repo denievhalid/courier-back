@@ -24,8 +24,9 @@ const schema = new Schema({
     trim: true,
     required: true,
   },
-  location: {
-    city_name: String,
+  city: {
+    type: String,
+    required: true,
   },
 });
 
