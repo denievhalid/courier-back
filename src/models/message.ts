@@ -26,7 +26,7 @@ const schema = new Schema(
       type: String,
       enum: [MessageStatus.PENDING, MessageStatus.READ, MessageStatus.SEND],
       required: true,
-      default: MessageStatus.PENDING,
+      default: MessageStatus.SEND,
     },
   },
   {

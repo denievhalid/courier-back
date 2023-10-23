@@ -136,3 +136,19 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
 
   return getResponse(res, { data }, StatusCodes.OK);
 });
+
+export const sendMessage = asyncHandler(async (req: Request, res: Response) => {
+  const dialogId = getParam(req.params, "dialogId");
+  const message = getParam(req.body, "message");
+  const user = _.first(getParam(req, "user")) as UserType;
+
+  const messageService = getService("message");
+
+  await messageService.create({
+    dialog: dialogId,
+    message,
+    user: user._id,
+  });
+
+  return getResponse(res, {}, StatusCodes.CREATED);
+});
