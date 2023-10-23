@@ -32,9 +32,7 @@ initDatabase()
       serveClient: false,
     });
 
-    io.on("connection", (socket) => {
-      console.log(socket);
-    });
+    io.on("connection", (socket) => {});
 
     server.listen(getEnv("port"));
   })
