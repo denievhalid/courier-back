@@ -63,10 +63,64 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     isSystemMessage: true,
   });
 
-  io.emit(
-    "newDialogs",
-    _.assign({}, dialog, { isNew: true, isSystemMessage: true })
-  );
+  const dialogDoc = await dialogService.aggregate([
+    {
+      $match: {
+        _id: dialog._id,
+      },
+    },
+    {
+      $limit: 1,
+    },
+    {
+      $lookup: {
+        from: "ads",
+        localField: "ad",
+        foreignField: "_id",
+        as: "ad",
+      },
+    },
+    {
+      $lookup: {
+        from: "messages",
+        let: { id: "$_id" },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [{ $eq: ["$$id", "$dialog"] }],
+              },
+            },
+          },
+          { $limit: 1 },
+        ],
+        as: "messages",
+      },
+    },
+    {
+      $project: {
+        ad: { $first: "$ad" },
+        message: { $first: "$messages" },
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "ad.user",
+        foreignField: "_id",
+        as: "user",
+      },
+    },
+    {
+      $project: {
+        image: { $first: "$ad.images" },
+        message: 1,
+        user: { $first: "$user" },
+      },
+    },
+  ]);
+
+  io.emit("newDialogs", dialogDoc);
 
   return getResponse(res, {}, StatusCodes.CREATED);
 });
