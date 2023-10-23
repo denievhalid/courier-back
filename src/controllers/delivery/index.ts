@@ -63,7 +63,10 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     isSystemMessage: true,
   });
 
-  io.emit("newDialogs", [{ isNew: true }]);
+  io.emit(
+    "newDialogs",
+    _.assign(dialog, { isNew: true, isSystemMessage: true })
+  );
 
   return getResponse(res, {}, StatusCodes.CREATED);
 });
