@@ -74,7 +74,51 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     user,
   });
 
-  const data = await messageService.findOne({ _id: doc._id }).populate("user");
+  const data = await messageService.aggregate([
+    {
+      $match: {
+        _id: new mongoose.Types.ObjectId(doc._id),
+      },
+    },
+    {
+      $lookup: {
+        from: "dialogs",
+        localField: "dialog",
+        foreignField: "_id",
+        as: "dialog",
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "user",
+        foreignField: "_id",
+        as: "user",
+      },
+    },
+    {
+      $project: {
+        ad: { $first: "$dialog.ad" },
+        message: 1,
+        user: { $first: "$user" },
+      },
+    },
+    {
+      $lookup: {
+        from: "ads",
+        localField: "ad",
+        foreignField: "_id",
+        as: "ad",
+      },
+    },
+    {
+      $project: {
+        ad: { $first: "$ad" },
+        user: 1,
+        message: 1,
+      },
+    },
+  ]);
 
   return getResponse(res, { data }, StatusCodes.CREATED);
 });
