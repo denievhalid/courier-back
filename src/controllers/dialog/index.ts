@@ -6,6 +6,8 @@ import { StatusCodes } from "http-status-codes";
 import type { Request, Response } from "express";
 import { UserType } from "@/types";
 import _ from "lodash";
+import { me } from "@/controllers/user";
+import mongoose from "mongoose";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   const user = _.first(getParam(req.body, "user")) as UserType;
@@ -19,10 +21,34 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const dialog = await getService("dialog").create({
-    users: [user, getParam(req, "user")],
+    users: [user._id],
   });
 
   return getResponse(res, { data: dialog }, StatusCodes.CREATED);
+});
+
+export const getById = asyncHandler(async (req: Request, res: Response) => {
+  const dialogId = getParam(req.params, "dialogId");
+
+  const dialogService = getService("dialog");
+
+  const data = await dialogService.aggregate([
+    {
+      $match: {
+        _id: new mongoose.Types.ObjectId(dialogId),
+      },
+    },
+    {
+      $lookup: {
+        from: "messages",
+        localField: "_id",
+        foreignField: "dialog",
+        as: "messages",
+      },
+    },
+  ]);
+
+  return getResponse(res, { data }, StatusCodes.OK);
 });
 
 export const getList = asyncHandler(async (req: Request, res: Response) => {
