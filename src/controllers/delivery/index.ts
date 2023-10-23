@@ -118,6 +118,11 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
         user: { $first: "$user" },
       },
     },
+    {
+      $addFields: {
+        isNew: true,
+      },
+    },
   ]);
 
   io.emit("newDialogs", dialogDoc);
