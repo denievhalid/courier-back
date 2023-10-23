@@ -63,6 +63,14 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
       },
     },
     {
+      $lookup: {
+        from: "users",
+        localField: "messages.user",
+        foreignField: "_id",
+        as: "user",
+      },
+    },
+    {
       $project: {
         _id: 1,
         ad: { $first: "$ad" },
@@ -157,20 +165,11 @@ export const sendMessage = asyncHandler(async (req: Request, res: Response) => {
       },
     },
     {
-      $lookup: {
-        from: "users",
-        localField: "user",
-        foreignField: "_id",
-        as: "user",
-      },
-    },
-    {
       $project: {
         _id: 1,
         message: 1,
         status: 1,
         isSystemMessage: 1,
-        user: { $first: "$user" },
       },
     },
   ]);
