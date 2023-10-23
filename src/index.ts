@@ -3,6 +3,8 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import path from "path";
 import { getEnv } from "@/utils/env";
+import { Server } from "socket.io";
+const http = require("http");
 import { createRoutes } from "@/lib/createRoutes";
 import { initDatabase } from "@/lib/database";
 import { closeApp } from "@/utils/closeApp";
@@ -24,6 +26,16 @@ createRoutes(app);
 
 initDatabase()
   .then(() => {
-    app.listen(getEnv("port"));
+    const server = http.createServer(app);
+
+    const io = new Server(server, {
+      serveClient: false,
+    });
+
+    io.on("connection", (socket) => {
+      console.log(socket);
+    });
+
+    server.listen(getEnv("port"));
   })
   .catch(closeApp);
