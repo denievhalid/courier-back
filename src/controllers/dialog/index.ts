@@ -165,11 +165,28 @@ export const sendMessage = asyncHandler(async (req: Request, res: Response) => {
       },
     },
     {
+      $lookup: {
+        from: "dialogs",
+        localField: "dialog",
+        foreignField: "_id",
+        as: "message",
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "user",
+        foreignField: "_id",
+        as: "user",
+      },
+    },
+    {
       $project: {
         _id: 1,
         message: 1,
         status: 1,
         isSystemMessage: 1,
+        user: { $first: "$user" },
       },
     },
   ]);
