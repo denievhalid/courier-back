@@ -16,6 +16,7 @@ export type AdType = {
   title: string;
   weight: number;
   route: DaDataRouteType;
+  courier?: UserType;
 };
 
 export type DialogType = {

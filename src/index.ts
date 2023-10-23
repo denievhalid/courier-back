@@ -9,6 +9,7 @@ import { createRoutes } from "@/lib/createRoutes";
 import { initDatabase } from "@/lib/database";
 import { closeApp } from "@/utils/closeApp";
 import { extractToken } from "@/middlewares/extractToken";
+import _ from "lodash";
 
 const app = express();
 
@@ -22,8 +23,6 @@ app.use(bodyParser.json());
 app.use("/uploads", express.static(path.resolve(__dirname, "..", "uploads")));
 app.use(extractToken);
 
-createRoutes(app);
-
 initDatabase()
   .then(() => {
     const server = http.createServer(app);
@@ -32,11 +31,14 @@ initDatabase()
       serveClient: false,
     });
 
-    io.on("connection", (socket) => {
-      setTimeout(() => {
-        io.emit("newDialogs");
-      }, 2000);
+    app.use((req, res, next) => {
+      _.set(req, "io", io);
+      next();
     });
+
+    createRoutes(app);
+
+    //io.on("connection", (socket) => {});
 
     server.listen(getEnv("port"));
   })

@@ -1,4 +1,4 @@
-import _ from "lodash";
+import _, { get } from "lodash";
 import { asyncHandler } from "@/utils/asyncHandler";
 import { getResponse } from "@/utils/getResponse";
 import { getParam } from "@/utils/getParam";
@@ -10,6 +10,7 @@ import type { Request, Response } from "express";
 const deliveryService = getService("delivery");
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
+  const io = getParam(req, "io");
   const user = _.first(getParam(req, "user")) as UserType;
 
   const adService = getService("ad");
@@ -23,6 +24,10 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
   if (!ad) {
     throw new Error("Объявление не найдено");
+  }
+
+  if (ad.courier) {
+    throw new Error("Извините, курьер уже найден");
   }
 
   const payload = { ad: ad._id, user: user._id };
@@ -57,6 +62,8 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     user: user._id,
     isSystemMessage: true,
   });
+
+  io.emit("newDialogs", _.assign(dialog, { isNew: true }));
 
   return getResponse(res, {}, StatusCodes.CREATED);
 });

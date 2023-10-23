@@ -7,6 +7,10 @@ const schema = new Schema({
     required: true,
     trim: true,
   },
+  courier: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
   startDate: {
     type: Date,
     required: true,
