@@ -40,15 +40,39 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
     },
     {
       $lookup: {
+        from: "ads",
+        localField: "ad",
+        foreignField: "_id",
+        as: "ad",
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "user",
+        foreignField: "_id",
+        as: "user",
+      },
+    },
+    {
+      $lookup: {
         from: "messages",
         localField: "_id",
         foreignField: "dialog",
         as: "messages",
       },
     },
+    {
+      $project: {
+        _id: 1,
+        ad: { $first: "$ad" },
+        user: { $first: "$user" },
+        messages: 1,
+      },
+    },
   ]);
 
-  return getResponse(res, { data }, StatusCodes.OK);
+  return getResponse(res, { data: _.first(data) }, StatusCodes.OK);
 });
 
 export const getList = asyncHandler(async (req: Request, res: Response) => {
