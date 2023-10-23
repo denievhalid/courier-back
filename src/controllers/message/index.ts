@@ -120,5 +120,5 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     },
   ]);
 
-  return getResponse(res, { data }, StatusCodes.CREATED);
+  return getResponse(res, { data: _.first(data) }, StatusCodes.CREATED);
 });
