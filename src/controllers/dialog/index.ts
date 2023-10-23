@@ -144,11 +144,27 @@ export const sendMessage = asyncHandler(async (req: Request, res: Response) => {
 
   const messageService = getService("message");
 
-  await messageService.create({
+  const docMessage = await messageService.create({
     dialog: dialogId,
     message,
     user: user._id,
   });
 
-  return getResponse(res, {}, StatusCodes.CREATED);
+  const data = await messageService.aggregate([
+    {
+      $match: {
+        _id: docMessage._id,
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "user",
+        foreignField: "_id",
+        as: "user",
+      },
+    },
+  ]);
+
+  return getResponse(res, { data: _.first(data) }, StatusCodes.CREATED);
 });
