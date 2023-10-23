@@ -6,6 +6,10 @@ export const count = (filter: FilterQuery<DialogType>) => {
   return getModel("dialog").countDocuments(filter);
 };
 
+export const aggregate = (pipeline: PipelineStage[]) => {
+  return getModel("dialog").aggregate(pipeline);
+};
+
 export const create = (payload: DialogType) => {
   return getModel("dialog").create(payload);
 };
