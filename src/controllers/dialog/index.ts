@@ -66,6 +66,7 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
       $project: {
         _id: 1,
         ad: { $first: "$ad" },
+        cover: { $first: "$ad.images" },
         user: { $first: "$user" },
         messages: 1,
       },
