@@ -164,6 +164,15 @@ export const sendMessage = asyncHandler(async (req: Request, res: Response) => {
         as: "user",
       },
     },
+    {
+      $project: {
+        _id: 1,
+        message: 1,
+        status: 1,
+        isSystemMessage: 1,
+        user: { $first: "$user" },
+      },
+    },
   ]);
 
   return getResponse(res, { data: _.first(data) }, StatusCodes.CREATED);
