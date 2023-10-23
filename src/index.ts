@@ -32,7 +32,11 @@ initDatabase()
       serveClient: false,
     });
 
-    io.on("connection", (socket) => {});
+    io.on("connection", (socket) => {
+      setTimeout(() => {
+        io.emit("newDialogs");
+      }, 2000);
+    });
 
     server.listen(getEnv("port"));
   })
