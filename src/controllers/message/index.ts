@@ -11,7 +11,7 @@ import mongoose from "mongoose";
 export const getList = asyncHandler(async (req: Request, res: Response) => {
   const messageService = getService("message");
 
-  const { dialog, message } = getAttributes(req.body, ["dialog"]);
+  const { dialog } = getAttributes(req.params, ["dialog"]);
 
   const data = await messageService.aggregate([
     {
