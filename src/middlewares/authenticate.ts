@@ -32,6 +32,22 @@ export const authenticate = asyncHandler(async (req, res, next) => {
     },
     {
       $lookup: {
+        from: "conversations",
+        localField: "_id",
+        foreignField: "receiver",
+        as: "inboxConversations",
+      },
+    },
+    {
+      $lookup: {
+        from: "conversations",
+        localField: "_id",
+        foreignField: "sender",
+        as: "sentConversations",
+      },
+    },
+    {
+      $lookup: {
         from: "delivery",
         localField: "_id",
         foreignField: "user",
@@ -46,9 +62,13 @@ export const authenticate = asyncHandler(async (req, res, next) => {
         phoneNumber: 1,
         city: 1,
         deliveries: { $size: "$deliveries" },
+        inboxConversations: { $size: "$inboxConversations" },
+        sentConversations: { $size: "$sentConversations" },
       },
     },
   ]);
+
+  console.log(user);
 
   if (_.isEmpty(user)) {
     throw new InvalidCredentialsException();
