@@ -13,7 +13,7 @@ import { errorHandler } from "@/middlewares/errorHandler";
 
 export const createRoutes = (app: Application) => {
   app.use(getEndpoint("ads"), adRoutes);
-  app.use(getEndpoint("conversation"), conversationRoutes);
+  app.use(getEndpoint("conversations"), conversationRoutes);
   app.use(getEndpoint("dialogs"), dialogRoutes);
   app.use(getEndpoint("deliveries"), deliveryRoutes);
   app.use(getEndpoint("favorites"), favoriteRoutes);
