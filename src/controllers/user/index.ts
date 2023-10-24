@@ -33,13 +33,13 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     "phoneNumber",
   ]);
 
-  const useService = getService("user");
+  const userService = getService("user");
 
   const payload = {
     phoneNumber: attributes.phoneNumber,
   };
 
-  const userExists = await useService.exists(payload);
+  const userExists = await userService.exists(payload);
 
   if (userExists) {
     throw new Error("Пользователь уже существует");
@@ -47,7 +47,52 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
   const tokenService = getService("token");
 
-  const user = await useService.create(attributes);
+  await userService.create(attributes);
+
+  const user = await userService.aggregate([
+    {
+      $match: {
+        active: true,
+        phoneNumber: Number(attributes.phoneNumber),
+      },
+    },
+    {
+      $lookup: {
+        from: "conversations",
+        localField: "_id",
+        foreignField: "receiver",
+        as: "inboxConversations",
+      },
+    },
+    {
+      $lookup: {
+        from: "conversations",
+        localField: "_id",
+        foreignField: "sender",
+        as: "sentConversations",
+      },
+    },
+    {
+      $lookup: {
+        from: "delivery",
+        localField: "_id",
+        foreignField: "user",
+        as: "deliveries",
+      },
+    },
+    {
+      $project: {
+        firstname: 1,
+        avatar: 1,
+        gender: 1,
+        phoneNumber: 1,
+        city: 1,
+        deliveries: { $size: "$deliveries" },
+        inboxConversations: { $size: "$inboxConversations" },
+        sentConversations: { $size: "$sentConversations" },
+      },
+    },
+  ]);
 
   const accessToken = tokenService.create(
     { phoneNumber: attributes.phoneNumber },

@@ -68,8 +68,6 @@ export const authenticate = asyncHandler(async (req, res, next) => {
     },
   ]);
 
-  console.log(user);
-
   if (_.isEmpty(user)) {
     throw new InvalidCredentialsException();
   }
