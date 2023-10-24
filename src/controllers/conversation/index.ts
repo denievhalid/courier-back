@@ -29,7 +29,7 @@ export const getConversationsList = asyncHandler(
   async (req: Request, res: Response) => {
     const conversationService = getService("conversation");
 
-    const data = await conversationService.aggregate([{}]);
+    const data = await conversationService.aggregate([]);
 
     return getResponse(res, { data }, StatusCodes.OK);
   }
