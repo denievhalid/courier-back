@@ -1,4 +1,5 @@
 import AdModel from "@/models/ad";
+import ConversationModel from "@/models/conversation";
 import DialogModel from "@/models/dialog";
 import DeliveryModel from "@/models/delivery";
 import FavoriteModel from "@/models/favorite";
@@ -40,6 +41,7 @@ export const createContainer = () => {
   container.services.set("user", UserService);
 
   container.models.set("ad", AdModel);
+  container.models.set("conversation", ConversationModel);
   container.models.set("delivery", DeliveryModel);
   container.models.set("dialog", DialogModel);
   container.models.set("favorite", FavoriteModel);
