@@ -7,6 +7,7 @@ import FileModel from "@/models/file";
 import OtpModel from "@/models/otp";
 import UserModel from "@/models/user";
 import * as AdService from "@/services/ad";
+import * as ConversationService from "@/services/conversation";
 import * as FavoriteService from "@/services/favorite";
 import * as FileService from "@/services/file";
 import * as DialogService from "@/services/dialog";
@@ -28,6 +29,7 @@ export const createContainer = () => {
   };
 
   container.services.set("ad", AdService);
+  container.services.set("conversation", ConversationService);
   container.services.set("dialog", DialogService);
   container.services.set("delivery", DeliveryService);
   container.services.set("favorite", FavoriteService);

@@ -54,7 +54,7 @@ export const authenticate = asyncHandler(async (req, res, next) => {
     throw new InvalidCredentialsException();
   }
 
-  _.set(req, "user", user);
+  _.set(req, "user", _.first(user));
 
   next();
 });
