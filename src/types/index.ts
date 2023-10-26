@@ -24,6 +24,8 @@ export type DialogType = {
   type: "pending" | "sent" | "read";
 };
 
+export type DirectionType = {};
+
 export type MessageType = {
   message: string;
   user: UserType;
