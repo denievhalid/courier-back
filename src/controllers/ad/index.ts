@@ -78,6 +78,8 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
 
   const page = attributes.page || 1;
 
+  console.log(page);
+
   const query: PipelineStage[] = [];
 
   if (_.has(attributes, "match")) {
@@ -88,8 +90,8 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
     query.push(getSortPipeline(attributes.sort));
   }
 
-  query.push(getLimitPipeline(LIMIT));
   query.push(getSkipPipeline((page - 1) * LIMIT));
+  query.push(getLimitPipeline(LIMIT));
   query.push(...getLookupPipeline());
   query.push(getProjectPipeline());
   query.push(getAddFieldsPipeline());
