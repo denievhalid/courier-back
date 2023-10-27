@@ -5,9 +5,11 @@ import type { Request, Response } from "express";
 import { getService } from "@/lib/container";
 import { getParam } from "@/utils/getParam";
 import { PipelineStage } from "mongoose";
+import _ from "lodash";
+import { UserType } from "@/types";
 
 export const getList = asyncHandler(async (req: Request, res: Response) => {
-  const user = getParam(req, "user");
+  const user = _.first(getParam(req, "user")) as UserType;
 
   const favoriteService = getService("favorite");
 
@@ -36,7 +38,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
       },
     },
     {
-      $limit: 20,
+      $limit: 10,
     },
   ];
 
