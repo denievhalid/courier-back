@@ -9,7 +9,7 @@ import _ from "lodash";
 import { UserType } from "@/types";
 
 export const getList = asyncHandler(async (req: Request, res: Response) => {
-  const user = _.first(getParam(req, "user")) as UserType;
+  const user = getParam(req, "user") as UserType;
 
   const favoriteService = getService("favorite");
 
@@ -17,13 +17,13 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
     {
       $match: {
         $expr: {
-          $eq: ["$user", { $toObjectId: user._id }],
+          $eq: ["$user", user._id],
         },
       },
     },
     {
       $lookup: {
-        from: "ad",
+        from: "ads",
         localField: "ad",
         foreignField: "_id",
         as: "ad",
@@ -31,7 +31,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
     },
     {
       $lookup: {
-        from: "user",
+        from: "users",
         localField: "user",
         foreignField: "_id",
         as: "user",
@@ -39,6 +39,12 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
     },
     {
       $limit: 10,
+    },
+    {
+      $project: {
+        _id: 1,
+        ad: { $first: "$ad" },
+      },
     },
   ];
 
