@@ -29,9 +29,15 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
   const ad = getParam(req.body, "ad");
   const user = getParam(req, "user");
 
+  const payload = { ad, user: user._id };
+
   const favoriteService = getService("favorite");
 
-  await favoriteService.remove({ ad, user: user._id });
+  const exists = favoriteService.exists(payload);
+
+  if (exists) {
+    await favoriteService.remove({ ad, user: user._id });
+  }
 
   return getResponse(res, {}, StatusCodes.OK);
 });
