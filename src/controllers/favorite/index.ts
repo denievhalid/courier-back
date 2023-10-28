@@ -8,6 +8,28 @@ import { PipelineStage } from "mongoose";
 import _ from "lodash";
 import { UserType } from "@/types";
 
+export const create = asyncHandler(async (req: Request, res: Response) => {
+  const ad = getParam(req.body, "ad");
+  const user = getParam(req, "user");
+
+  const favoriteService = getService("favorite");
+
+  await favoriteService.create({ ad, user: user._id });
+
+  return getResponse(res, {}, StatusCodes.CREATED);
+});
+
+export const remove = asyncHandler(async (req: Request, res: Response) => {
+  const ad = getParam(req.body, "ad");
+  const user = getParam(req, "user");
+
+  const favoriteService = getService("favorite");
+
+  await favoriteService.remove({ ad, user: user._id });
+
+  return getResponse(res, {}, StatusCodes.OK);
+});
+
 export const getList = asyncHandler(async (req: Request, res: Response) => {
   const user = getParam(req, "user") as UserType;
 

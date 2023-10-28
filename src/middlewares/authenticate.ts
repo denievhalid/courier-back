@@ -65,7 +65,6 @@ export const authenticate = asyncHandler(async (req, res, next) => {
     {
       $project: {
         firstname: 1,
-        favorites: 1,
         avatar: 1,
         gender: 1,
         phoneNumber: 1,
@@ -73,6 +72,7 @@ export const authenticate = asyncHandler(async (req, res, next) => {
         deliveries: { $size: "$deliveries" },
         inboxConversations: { $size: "$inboxConversations" },
         sentConversations: { $size: "$sentConversations" },
+        favorites: 1,
       },
     },
   ]);

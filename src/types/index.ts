@@ -81,6 +81,11 @@ export type DeliveryType = {
   status: string;
 };
 
+export type FavoriteType = {
+  ad: string;
+  user: string;
+};
+
 export type VerifyType = {
   otp: string;
   secret: string;
