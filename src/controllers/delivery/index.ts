@@ -11,7 +11,7 @@ const deliveryService = getService("delivery");
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   const io = getParam(req, "io");
-  const user = _.first(getParam(req, "user")) as UserType;
+  const user = getParam(req, "user") as UserType;
 
   const adService = getService("ad");
 

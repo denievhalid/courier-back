@@ -7,6 +7,7 @@ import { getService } from "@/lib/container";
 import { getParam } from "@/utils/getParam";
 import _ from "lodash";
 import mongoose from "mongoose";
+import { UserType } from "@/types";
 
 export const getList = asyncHandler(async (req: Request, res: Response) => {
   const messageService = getService("message");
@@ -63,7 +64,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
-  const user = _.first(getParam(req, "user"));
+  const user = getParam(req, "user") as UserType;
   const { dialog, message } = getAttributes(req.body, ["dialog", "message"]);
 
   const messageService = getService("message");

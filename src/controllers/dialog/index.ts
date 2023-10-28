@@ -10,7 +10,7 @@ import { me } from "@/controllers/user";
 import mongoose from "mongoose";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
-  const user = _.first(getParam(req.body, "user")) as UserType;
+  const user = getParam(req.body, "user") as UserType;
 
   const userService = getService("user");
 
@@ -85,7 +85,7 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const getList = asyncHandler(async (req: Request, res: Response) => {
-  const user = _.first(getParam(req, "user")) as UserType;
+  const user = getParam(req, "user") as UserType;
   const dialogService = getService("dialog");
 
   const data = await dialogService.getList([
@@ -148,7 +148,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
 export const sendMessage = asyncHandler(async (req: Request, res: Response) => {
   const dialogId = getParam(req.params, "dialogId");
   const message = getParam(req.body, "message");
-  const user = _.first(getParam(req, "user")) as UserType;
+  const user = getParam(req, "user") as UserType;
 
   const messageService = getService("message");
 

@@ -109,7 +109,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 export const updateAvatar = asyncHandler(
   async (req: Request, res: Response) => {
     const avatar = getParam(req, "file");
-    const user = _.first(getParam(req, "user")) as UserType;
+    const user = getParam(req, "user") as UserType;
 
     const userService = getService("user");
 
@@ -130,7 +130,7 @@ export const updateAvatar = asyncHandler(
 
 export const removeAvatar = asyncHandler(
   async (req: Request, res: Response) => {
-    const user = _.first(getParam(req, "user")) as UserType;
+    const user = getParam(req, "user") as UserType;
 
     const userService = getService("user");
 
