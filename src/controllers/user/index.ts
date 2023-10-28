@@ -151,7 +151,7 @@ export const removeAvatar = asyncHandler(
 
 export const update = asyncHandler(async (req: Request, res: Response) => {
   const updatePayload = getParam(req.body, "payload");
-  const user = _.first(getParam(req, "user")) as UserType;
+  const user = getParam(req, "user") as UserType;
 
   const userService = getService("user");
 
