@@ -23,7 +23,7 @@ import { StatusCodes } from "http-status-codes";
 export const create = asyncHandler(async (req: Request, res: Response) => {
   await createAdSchema.validate(req.body, { abortEarly: false });
 
-  const user = _.first(getParam(req, "user")) as UserType;
+  const user = getParam(req, "user") as UserType;
 
   const attributes = _.pick(req.body, [
     "title",
