@@ -55,8 +55,17 @@ export const authenticate = asyncHandler(async (req, res, next) => {
       },
     },
     {
+      $lookup: {
+        from: "favorites",
+        localField: "_id",
+        foreignField: "user",
+        as: "favorites",
+      },
+    },
+    {
       $project: {
         firstname: 1,
+        favorites: 1,
         avatar: 1,
         gender: 1,
         phoneNumber: 1,

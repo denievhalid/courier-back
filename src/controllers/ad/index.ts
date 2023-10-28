@@ -78,8 +78,6 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
 
   const page = attributes.page || 1;
 
-  console.log(page);
-
   const query: PipelineStage[] = [];
 
   if (_.has(attributes, "match")) {
