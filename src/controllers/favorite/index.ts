@@ -12,11 +12,13 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   const ad = getParam(req.body, "ad");
   const user = getParam(req, "user");
 
+  console.log(ad);
+
   const payload = { ad, user: user._id };
 
   const favoriteService = getService("favorite");
 
-  const exists = favoriteService.exists(payload);
+  const exists = await favoriteService.exists(payload);
 
   if (!exists) {
     await favoriteService.create(payload);
@@ -33,7 +35,7 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
 
   const favoriteService = getService("favorite");
 
-  const exists = favoriteService.exists(payload);
+  const exists = await favoriteService.exists(payload);
 
   if (exists) {
     await favoriteService.remove({ ad, user: user._id });
