@@ -16,7 +16,7 @@ export const me = asyncHandler(async (req: Request, res: Response) => {
   return getResponse(
     res,
     {
-      user: _.first(getParam(req, "user")),
+      user: getParam(req, "user"),
     },
     StatusCodes.OK
   );
