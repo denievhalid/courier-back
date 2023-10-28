@@ -38,7 +38,7 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
   const exists = await favoriteService.exists(payload);
 
   if (exists) {
-    await favoriteService.remove({ ad, user: user._id });
+    await favoriteService.remove(payload);
   }
 
   return getResponse(res, {}, StatusCodes.OK);
