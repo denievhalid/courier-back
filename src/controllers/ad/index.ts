@@ -15,7 +15,7 @@ import _ from "lodash";
 import { getService } from "@/lib/container";
 import { getParam } from "@/utils/getParam";
 import { LIMIT } from "@/controllers/ad/const";
-import { PipelineStage } from "mongoose";
+import mongoose, { PipelineStage } from "mongoose";
 import { createAdSchema } from "@/controllers/ad/validation";
 import { UserType } from "@/types";
 import { StatusCodes } from "http-status-codes";
@@ -67,8 +67,34 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
 
 export const getById = asyncHandler(async (req: Request, res: Response) => {
   const id = getParam(req.params, "id");
+  const user = getParam(req, "user");
 
-  const data = await getService("ad").getById(id);
+  const pipeline: PipelineStage[] = [];
+
+  pipeline.push({
+    $match: {
+      _id: new mongoose.Types.ObjectId(id),
+    },
+  });
+
+  if (user) {
+    pipeline.push({
+      $lookup: {
+        from: "favorites",
+        foreignField: "ad",
+        localField: "_id",
+        as: "favorites",
+      },
+    });
+
+    pipeline.push({
+      $addFields: {
+        favorites: { $toBool: { $size: "$favorites" } },
+      },
+    });
+  }
+
+  const data = await getService("ad").aggregate(pipeline);
 
   return getResponse(res, { data });
 });

@@ -3,6 +3,10 @@ import type { FilterQuery, PipelineStage, UpdateQuery } from "mongoose";
 import type { AdType } from "@/types";
 import { DeliveryType } from "@/types";
 
+export const aggregate = (pipeline: PipelineStage[]) => {
+  return getModel("ad").aggregate(pipeline);
+};
+
 export const create = (payload: AdType) => {
   return getModel("ad").create(payload);
 };
