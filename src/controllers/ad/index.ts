@@ -19,6 +19,7 @@ import mongoose, { PipelineStage } from "mongoose";
 import { createAdSchema } from "@/controllers/ad/validation";
 import { UserType } from "@/types";
 import { StatusCodes } from "http-status-codes";
+import dayjs from "dayjs";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   await createAdSchema.validate(req.body, { abortEarly: false });
@@ -36,6 +37,14 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     "weight",
     "comment",
   ]);
+
+  if (attributes.startDate) {
+    attributes.startDate = dayjs(attributes.startDate).toDate();
+  }
+
+  if (attributes.endDate) {
+    attributes.endDate = dayjs(attributes.endDate).toDate();
+  }
 
   const data = await getService("ad").create({
     ...attributes,
