@@ -80,11 +80,26 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
 
   const pipeline: PipelineStage[] = [];
 
-  pipeline.push({
-    $match: {
-      _id: new mongoose.Types.ObjectId(id),
+  pipeline.push(
+    {
+      $match: {
+        _id: new mongoose.Types.ObjectId(id),
+      },
     },
-  });
+    {
+      $lookup: {
+        from: "users",
+        localField: "user",
+        foreignField: "_id",
+        as: "user",
+      },
+    },
+    {
+      $addFields: {
+        user: { $first: "$user" },
+      },
+    }
+  );
 
   if (user) {
     pipeline.push({
