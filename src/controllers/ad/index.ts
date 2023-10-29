@@ -96,7 +96,7 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
 
   const data = await getService("ad").aggregate(pipeline);
 
-  return getResponse(res, { data });
+  return getResponse(res, { data: _.first(data) });
 });
 
 export const getList = asyncHandler(async (req: Request, res: Response) => {
