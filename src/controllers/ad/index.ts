@@ -89,7 +89,7 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
 
     pipeline.push({
       $addFields: {
-        favorites: { $toBool: { $size: "$favorites" } },
+        isFavorite: { $toBool: { $size: "$favorites" } },
       },
     });
   }
