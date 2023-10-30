@@ -28,7 +28,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
 export const getConversationsList = asyncHandler(
   async (req: Request, res: Response) => {
-    const type = getParam(req.body, "type") as "inbox" | "sent";
+    const type = getParam(req.query, "type") as "inbox" | "sent";
     const user = getParam(req, "user") as UserType;
     const conversationService = getService("conversation");
 
