@@ -54,7 +54,8 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   if (!conversation) {
     conversation = await conversationService.create({
       ad: ad._id,
-      user: user._id,
+      receiver: ad.user._id,
+      sender: user._id,
     });
   }
 
