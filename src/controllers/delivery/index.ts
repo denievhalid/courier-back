@@ -1,4 +1,3 @@
-import _, { get } from "lodash";
 import { asyncHandler } from "@/utils/asyncHandler";
 import { getResponse } from "@/utils/getResponse";
 import { getParam } from "@/utils/getParam";

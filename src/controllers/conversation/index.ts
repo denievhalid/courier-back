@@ -50,7 +50,41 @@ export const getConversationsList = asyncHandler(
         },
       },
       {
-        $limit: 20,
+        $lookup: {
+          from: "users",
+          localField: "receiver",
+          foreignField: "_id",
+          as: "receiver",
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "sender",
+          foreignField: "_id",
+          as: "sender",
+        },
+      },
+      {
+        $lookup: {
+          from: "messages",
+          localField: "_id",
+          foreignField: "conversation",
+          as: "messages",
+        },
+      },
+      {
+        $addFields: {
+          lastMessage: { $first: "$messages" },
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          lastMessage: 1,
+          receiver: { $first: "$receiver" },
+          sender: { $first: "$sender" },
+        },
       },
     ]);
 
