@@ -10,21 +10,11 @@ import mongoose, { PipelineStage } from "mongoose";
 import { getAttributes } from "@/utils/getAttributes";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
-  const user = getParam(req.body, "user") as UserType;
-
   const { ad, sender, receiver } = getAttributes(req.body, [
     "ad",
     "sender",
     "receiver",
   ]);
-
-  const userService = getService("user");
-
-  const userExists = await userService.exists({ _id: user._id });
-
-  if (!userExists) {
-    throw new Error("Пользователь не найден");
-  }
 
   const payload = {
     ad,
