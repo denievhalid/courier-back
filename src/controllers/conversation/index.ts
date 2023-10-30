@@ -82,8 +82,7 @@ export const getConversationsList = asyncHandler(
         $project: {
           _id: 1,
           lastMessage: 1,
-          receiver: { $first: "$receiver" },
-          sender: { $first: "$sender" },
+          user: { $first: type === "sent" ? "$receiver" : "sender" },
         },
       },
     ]);
