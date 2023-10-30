@@ -6,7 +6,7 @@ import { UserType } from "@/types";
 import { getService } from "@/lib/container";
 import { getResponse } from "@/utils/getResponse";
 import { StatusCodes } from "http-status-codes";
-import { PipelineStage } from "mongoose";
+import mongoose, { PipelineStage } from "mongoose";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   const user = getParam(req.body, "user") as UserType;
@@ -37,9 +37,9 @@ export const getConversationsList = asyncHandler(
     };
 
     if (type === "inbox") {
-      match.$match["receiver"] = user._id;
+      match.$match["receiver"] = new mongoose.Types.ObjectId(user._id);
     } else if (type === "sent") {
-      match.$match["sender"] = user._id;
+      match.$match["sender"] = new mongoose.Types.ObjectId(user._id);
     }
 
     const data = await conversationService.aggregate([
