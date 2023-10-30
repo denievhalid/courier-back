@@ -47,7 +47,8 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
   let conversation = await conversationService.findOne({
     ad: ad._id,
-    user: user._id,
+    receiver: ad.user._id,
+    sender: user._id,
   });
 
   if (!conversation) {

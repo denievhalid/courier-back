@@ -17,6 +17,7 @@ export type AdType = {
   weight: number;
   route: DaDataRouteType;
   courier?: UserType;
+  user: UserType;
 };
 
 export type ConversationType = {
