@@ -7,9 +7,16 @@ import { getService } from "@/lib/container";
 import { getResponse } from "@/utils/getResponse";
 import { StatusCodes } from "http-status-codes";
 import mongoose, { PipelineStage } from "mongoose";
+import { getAttributes } from "@/utils/getAttributes";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   const user = getParam(req.body, "user") as UserType;
+
+  const { ad, sender, receiver } = getAttributes(req.body, [
+    "ad",
+    "sender",
+    "receiver",
+  ]);
 
   const userService = getService("user");
 
@@ -19,9 +26,19 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     throw new Error("Пользователь не найден");
   }
 
-  const conversation = await getService("conversation").create({
-    users: [user._id],
-  });
+  const payload = {
+    ad,
+    sender,
+    receiver,
+  };
+
+  const conversationService = getService("conversation");
+
+  let conversation = await conversationService.findOne(payload);
+
+  if (!conversation) {
+    conversation = await conversationService.create(payload);
+  }
 
   return getResponse(res, { data: conversation }, StatusCodes.CREATED);
 });
