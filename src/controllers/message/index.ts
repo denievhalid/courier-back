@@ -39,6 +39,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
     {
       $project: {
         ad: { $first: "$conversation.ad" },
+        createdAt: 1,
         message: 1,
         user: { $first: "$user" },
       },
@@ -54,6 +55,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
     {
       $project: {
         ad: { $first: "$ad" },
+        createdAt: "$createdAt",
         user: 1,
         message: 1,
       },
