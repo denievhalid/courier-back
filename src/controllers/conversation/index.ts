@@ -36,10 +36,10 @@ export const getConversationsList = asyncHandler(
       $match: {},
     };
 
-    if (type === "inbox") {
-      match.$match["receiver"] = new mongoose.Types.ObjectId(user._id);
-    } else if (type === "sent") {
+    if (type === "sent") {
       match.$match["sender"] = new mongoose.Types.ObjectId(user._id);
+    } else {
+      match.$match["receiver"] = new mongoose.Types.ObjectId(user._id);
     }
 
     const data = await conversationService.aggregate([
