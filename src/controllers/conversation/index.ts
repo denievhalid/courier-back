@@ -6,6 +6,7 @@ import { UserType } from "@/types";
 import { getService } from "@/lib/container";
 import { getResponse } from "@/utils/getResponse";
 import { StatusCodes } from "http-status-codes";
+import { PipelineStage } from "mongoose";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   const user = getParam(req.body, "user") as UserType;
@@ -27,9 +28,22 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
 export const getConversationsList = asyncHandler(
   async (req: Request, res: Response) => {
+    const type = getParam(req.body, "type") as "inbox" | "sent";
+    const user = getParam(req, "user") as UserType;
     const conversationService = getService("conversation");
 
+    const match: PipelineStage.Match = {
+      $match: {},
+    };
+
+    if (type === "inbox") {
+      match.$match["receiver"] = user._id;
+    } else if (type === "sent") {
+      match.$match["sender"] = user._id;
+    }
+
     const data = await conversationService.aggregate([
+      match,
       {
         $limit: 20,
       },
