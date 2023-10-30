@@ -43,15 +43,15 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     user: user._id,
   });
 
-  const dialogService = getService("dialog");
+  const conversationService = getService("conversation");
 
-  let dialog = await dialogService.findOne({
+  let dialog = await conversationService.findOne({
     ad: ad._id,
     user: user._id,
   });
 
   if (!dialog) {
-    dialog = await dialogService.create({ ad: ad._id, user: user._id });
+    dialog = await conversationService.create({ ad: ad._id, user: user._id });
   }
 
   const messageService = getService("message");
@@ -63,7 +63,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     isSystemMessage: true,
   });
 
-  const dialogDoc = await dialogService.aggregate([
+  const dialogDoc = await conversationService.aggregate([
     {
       $match: {
         _id: dialog._id,
