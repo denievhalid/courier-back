@@ -45,10 +45,15 @@ export const getConversationsList = asyncHandler(
     const data = await conversationService.aggregate([
       match,
       {
+        $sort: {
+          _id: -1,
+        },
+      },
+      {
         $limit: 20,
       },
     ]);
-    console.log(match);
+
     return getResponse(res, { data }, StatusCodes.OK);
   }
 );

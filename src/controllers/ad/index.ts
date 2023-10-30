@@ -56,6 +56,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
 export const update = asyncHandler(async (req: Request, res: Response) => {
   const id = getParam(req.params, "id");
+  const user = getParam(req, "user") as UserType;
 
   const attributes = _.pick(req.body, [
     "title",
@@ -69,14 +70,59 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
     "comment",
   ]);
 
-  const data = await getService("ad").update(id, attributes);
+  await getService("ad").update(id, attributes);
 
-  return getResponse(res, { data });
+  const pipeline: PipelineStage[] = [];
+
+  pipeline.push(
+    {
+      $match: {
+        _id: new mongoose.Types.ObjectId(id),
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "user",
+        foreignField: "_id",
+        as: "user",
+      },
+    },
+    {
+      $addFields: {
+        user: { $first: "$user" },
+      },
+    }
+  );
+
+  if (user) {
+    pipeline.push({
+      $lookup: {
+        from: "favorites",
+        foreignField: "ad",
+        localField: "_id",
+        as: "favorites",
+      },
+    });
+
+    pipeline.push({
+      $addFields: {
+        isFavorite: { $toBool: { $size: "$favorites" } },
+        isOwn: {
+          $cond: [{ $eq: ["$user._id", user._id] }, true, false],
+        },
+      },
+    });
+  }
+
+  const data = await getService("ad").aggregate(pipeline);
+
+  return getResponse(res, { data: _.first(data) });
 });
 
 export const getById = asyncHandler(async (req: Request, res: Response) => {
   const id = getParam(req.params, "id");
-  const user = getParam(req, "user");
+  const user = getParam(req, "user") as UserType;
 
   const pipeline: PipelineStage[] = [];
 
