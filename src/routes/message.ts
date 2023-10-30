@@ -4,7 +4,7 @@ import { create, getList } from "@/controllers/message";
 
 const router = Router();
 
-router.get("/:dialog", authenticate, getList);
+router.get("/:conversation", authenticate, getList);
 router.post("/", authenticate, create);
 
 export default router;

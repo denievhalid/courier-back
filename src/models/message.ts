@@ -3,9 +3,9 @@ import { MessageStatus } from "@/types";
 
 const schema = new Schema(
   {
-    dialog: {
+    conversation: {
       type: Schema.Types.ObjectId,
-      ref: "Dialog",
+      ref: "Conversation",
       required: true,
     },
     message: {

@@ -18,11 +18,11 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     throw new Error("Пользователь не найден");
   }
 
-  const dialog = await getService("dialog").create({
+  const conversation = await getService("conversation").create({
     users: [user._id],
   });
 
-  return getResponse(res, { data: dialog }, StatusCodes.CREATED);
+  return getResponse(res, { data: conversation }, StatusCodes.CREATED);
 });
 
 export const getConversationsList = asyncHandler(

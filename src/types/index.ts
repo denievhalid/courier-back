@@ -19,7 +19,7 @@ export type AdType = {
   courier?: UserType;
 };
 
-export type DialogType = {
+export type ConversationType = {
   users: UserType[];
   type: "pending" | "sent" | "read";
 };

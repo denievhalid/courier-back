@@ -12,20 +12,20 @@ import { UserType } from "@/types";
 export const getList = asyncHandler(async (req: Request, res: Response) => {
   const messageService = getService("message");
 
-  const { dialog } = getAttributes(req.params, ["dialog"]);
+  const { conversation } = getAttributes(req.params, ["conversation"]);
 
   const data = await messageService.aggregate([
     {
       $match: {
-        dialog: new mongoose.Types.ObjectId(dialog),
+        conversation: new mongoose.Types.ObjectId(conversation),
       },
     },
     {
       $lookup: {
-        from: "dialogs",
-        localField: "dialog",
+        from: "conversations",
+        localField: "conversation",
         foreignField: "_id",
-        as: "dialog",
+        as: "conversation",
       },
     },
     {
@@ -38,7 +38,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
     },
     {
       $project: {
-        ad: { $first: "$dialog.ad" },
+        ad: { $first: "$conversation.ad" },
         message: 1,
         user: { $first: "$user" },
       },
@@ -65,12 +65,15 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   const user = getParam(req, "user") as UserType;
-  const { dialog, message } = getAttributes(req.body, ["dialog", "message"]);
+  const { conversation, message } = getAttributes(req.body, [
+    "conversation",
+    "message",
+  ]);
 
   const messageService = getService("message");
 
   const doc = await messageService.create({
-    dialog,
+    conversation,
     message,
     user,
   });
@@ -83,10 +86,10 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     },
     {
       $lookup: {
-        from: "dialogs",
-        localField: "dialog",
+        from: "conversation",
+        localField: "conversation",
         foreignField: "_id",
-        as: "dialog",
+        as: "conversation",
       },
     },
     {
@@ -99,7 +102,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     },
     {
       $project: {
-        ad: { $first: "$dialog.ad" },
+        ad: { $first: "$conversation.ad" },
         message: 1,
         user: { $first: "$user" },
       },
