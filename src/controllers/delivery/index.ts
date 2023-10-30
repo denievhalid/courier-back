@@ -110,16 +110,25 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     {
       $lookup: {
         from: "users",
-        localField: "ad.user",
+        localField: "receiver",
         foreignField: "_id",
-        as: "user",
+        as: "receiver",
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "sender",
+        foreignField: "_id",
+        as: "sender",
       },
     },
     {
       $project: {
         image: { $first: "$ad.images" },
         message: 1,
-        user: { $first: "$user" },
+        receiver: { $first: "$receiver" },
+        sender: { $first: "$sender" },
       },
     },
     {

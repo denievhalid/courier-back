@@ -21,8 +21,9 @@ export type AdType = {
 };
 
 export type ConversationType = {
-  users: UserType[];
-  type: "pending" | "sent" | "read";
+  ad: AdType;
+  receiver: UserType;
+  sender: UserType;
 };
 
 export type DirectionType = {};
