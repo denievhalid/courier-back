@@ -58,6 +58,14 @@ export const getConversationsList = asyncHandler(
       },
       {
         $lookup: {
+          from: "ads",
+          localField: "ad",
+          foreignField: "_id",
+          as: "ad",
+        },
+      },
+      {
+        $lookup: {
           from: "users",
           localField: "receiver",
           foreignField: "_id",
@@ -89,6 +97,7 @@ export const getConversationsList = asyncHandler(
         $project: {
           _id: 1,
           lastMessage: 1,
+          cover: { $first: { $first: "$ad.images" } },
           user: { $first: type === "sent" ? "$receiver" : "sender" },
         },
       },
