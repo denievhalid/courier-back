@@ -8,6 +8,7 @@ import { getParam } from "@/utils/getParam";
 import _ from "lodash";
 import mongoose from "mongoose";
 import { UserType } from "@/types";
+import { SOCKET_EVENTS } from "@/const";
 
 export const getList = asyncHandler(async (req: Request, res: Response) => {
   const messageService = getService("message");
@@ -66,6 +67,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
+  const io = getParam(req, "io");
   const user = getParam(req, "user") as UserType;
   const { conversation, message } = getAttributes(req.body, [
     "conversation",
@@ -74,7 +76,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
   const messageService = getService("message");
 
-  const doc = await messageService.create({
+  const messageDoc = await messageService.create({
     conversation,
     message,
     user,
@@ -83,7 +85,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   const data = await messageService.aggregate([
     {
       $match: {
-        _id: new mongoose.Types.ObjectId(doc._id),
+        _id: new mongoose.Types.ObjectId(messageDoc._id),
       },
     },
     {
@@ -125,6 +127,8 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
       },
     },
   ]);
+
+  io.emit(SOCKET_EVENTS.NEW_MESSAGE, messageDoc);
 
   return getResponse(res, { data: _.first(data) }, StatusCodes.CREATED);
 });

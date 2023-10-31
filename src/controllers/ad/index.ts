@@ -195,6 +195,8 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
 
   const data = await getService("ad").getList(query);
 
+  console.log(query);
+
   return getResponse(res, { data });
 });
 
