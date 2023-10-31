@@ -128,7 +128,9 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     },
   ]);
 
-  io.emit(SOCKET_EVENTS.NEW_MESSAGE, data);
+  const newMessage = _.first(data);
 
-  return getResponse(res, { data: _.first(data) }, StatusCodes.CREATED);
+  io.emit(SOCKET_EVENTS.NEW_MESSAGE, newMessage);
+
+  return getResponse(res, { data: newMessage }, StatusCodes.CREATED);
 });
