@@ -29,7 +29,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
     },
     {
       $sort: {
-        createdAt: -1,
+        createdAt: 1,
       },
     },
     {
