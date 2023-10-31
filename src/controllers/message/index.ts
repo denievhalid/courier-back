@@ -28,11 +28,6 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
       },
     },
     {
-      $sort: {
-        createdAt: 1,
-      },
-    },
-    {
       $project: {
         _id: 1,
         title: 1,
@@ -45,6 +40,11 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
     {
       $match: {
         conversation: new mongoose.Types.ObjectId(conversation),
+      },
+    },
+    {
+      $sort: {
+        createdAt: -1,
       },
     },
     {
