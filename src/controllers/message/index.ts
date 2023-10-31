@@ -21,11 +21,20 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
     _id: new mongoose.Types.ObjectId(conversation),
   });
 
-  const adDoc = await adService.findOne({
-    _id: new mongoose.Types.ObjectId(conversationDoc.ad),
-  });
-
-  console.log(adDoc);
+  const adDoc = await adService.aggregate([
+    {
+      $match: {
+        _id: new mongoose.Types.ObjectId(conversationDoc.ad),
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        title: 1,
+        cover: { $first: "$images" },
+      },
+    },
+  ]);
 
   const messages = await messageService.aggregate([
     {
@@ -75,7 +84,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
   ]);
 
   const data = {
-    ad: adDoc,
+    ad: _.first(adDoc),
     messages,
   };
 
