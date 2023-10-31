@@ -53,7 +53,7 @@ export const getConversationsList = asyncHandler(
       match,
       {
         $sort: {
-          createdAt: -1,
+          updatedAt: -1,
         },
       },
       {
@@ -83,8 +83,26 @@ export const getConversationsList = asyncHandler(
       {
         $lookup: {
           from: "messages",
-          localField: "_id",
-          foreignField: "conversation",
+          let: {
+            conversation: "$_id",
+          },
+          pipeline: [
+            {
+              $sort: {
+                createdAt: -1,
+              },
+            },
+            {
+              $match: {
+                $expr: {
+                  $eq: ["$conversation", "$$conversation"],
+                },
+              },
+            },
+            {
+              $limit: 1,
+            },
+          ],
           as: "messages",
         },
       },
