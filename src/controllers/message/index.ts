@@ -28,6 +28,11 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
       },
     },
     {
+      $sort: {
+        createdAt: -1,
+      },
+    },
+    {
       $project: {
         _id: 1,
         title: 1,
