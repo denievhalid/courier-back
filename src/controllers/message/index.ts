@@ -11,11 +11,23 @@ import { UserType } from "@/types";
 import { SOCKET_EVENTS } from "@/const";
 
 export const getList = asyncHandler(async (req: Request, res: Response) => {
+  const adService = getService("ad");
+  const conversationService = getService("conversation");
   const messageService = getService("message");
 
   const { conversation } = getAttributes(req.params, ["conversation"]);
 
-  const data = await messageService.aggregate([
+  const conversationDoc = await conversationService.findOne({
+    _id: new mongoose.Types.ObjectId(conversation),
+  });
+
+  const adDoc = await adService.findOne({
+    _id: new mongoose.Types.ObjectId(conversationDoc.ad),
+  });
+
+  console.log(adDoc);
+
+  const messages = await messageService.aggregate([
     {
       $match: {
         conversation: new mongoose.Types.ObjectId(conversation),
@@ -39,7 +51,6 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
     },
     {
       $project: {
-        ad: { $first: "$conversation.ad" },
         createdAt: 1,
         message: 1,
         user: { $first: "$user" },
@@ -62,6 +73,11 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
       },
     },
   ]);
+
+  const data = {
+    ad: adDoc,
+    messages,
+  };
 
   return getResponse(res, { data }, StatusCodes.OK);
 });
