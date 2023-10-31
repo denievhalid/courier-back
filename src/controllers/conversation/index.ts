@@ -53,7 +53,7 @@ export const getConversationsList = asyncHandler(
       match,
       {
         $sort: {
-          _id: -1,
+          createdAt: -1,
         },
       },
       {
