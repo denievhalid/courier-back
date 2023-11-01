@@ -126,6 +126,8 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
 
   const pipeline: PipelineStage[] = [];
 
+  let delivery = null;
+
   pipeline.push(
     {
       $match: {
@@ -160,16 +162,25 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
     pipeline.push({
       $addFields: {
         isFavorite: { $toBool: { $size: "$favorites" } },
+        delivery: { $first: "$delivery" },
         isOwn: {
           $cond: [{ $eq: ["$user._id", user._id] }, true, false],
         },
       },
     });
+
+    delivery = (
+      await getService("delivery").findOne({ ad: id, user: user._id })
+    )?.status;
   }
 
-  const data = await getService("ad").aggregate(pipeline);
+  const data = _.first(await getService("ad").aggregate(pipeline));
 
-  return getResponse(res, { data: _.first(data) });
+  if (_.isObject(data)) {
+    _.set(data, "delivery", delivery || null);
+  }
+
+  return getResponse(res, { data });
 });
 
 export const getList = asyncHandler(async (req: Request, res: Response) => {
@@ -194,8 +205,6 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
   query.push(getAddFieldsPipeline());
 
   const data = await getService("ad").getList(query);
-
-  console.log(query);
 
   return getResponse(res, { data });
 });
