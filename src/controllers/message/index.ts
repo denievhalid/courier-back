@@ -6,7 +6,6 @@ import { StatusCodes } from "http-status-codes";
 import { getService } from "@/lib/container";
 import { getParam } from "@/utils/getParam";
 import _ from "lodash";
-import mongoose from "mongoose";
 import { UserType } from "@/types";
 import { SOCKET_EVENTS } from "@/const";
 import { toObjectId } from "@/utils/toObjectId";
@@ -15,12 +14,16 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
   const adService = getService("ad");
   const conversationService = getService("conversation");
   const messageService = getService("message");
+  const user = getParam(req, "user") as UserType;
 
   const { conversation } = getAttributes(req.params, ["conversation"]);
 
-  const conversationDoc = await conversationService.findOne({
-    _id: toObjectId(conversation),
-  });
+  const conversationDoc = await conversationService
+    .findOne({
+      _id: toObjectId(conversation),
+    })
+    .populate("receiver")
+    .populate("sender");
 
   const adDoc = await adService.aggregate([
     {
@@ -89,8 +92,14 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
     },
   ]);
 
+  const companion =
+    conversationDoc.receiver._id === user._id
+      ? conversationDoc.sender
+      : conversationDoc.receiver;
+
   const data = {
     ad: _.first(adDoc),
+    companion,
     messages,
   };
 
