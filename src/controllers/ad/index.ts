@@ -163,7 +163,6 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
     pipeline.push({
       $addFields: {
         isFavorite: { $toBool: { $size: "$favorites" } },
-        delivery: { $first: "$delivery" },
         isOwn: {
           $cond: [{ $eq: ["$user._id", user._id] }, true, false],
         },
