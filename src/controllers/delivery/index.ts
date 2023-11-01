@@ -12,6 +12,7 @@ const deliveryService = getService("delivery");
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   const io = getParam(req, "io");
+  const status = getParam(req.body, "status");
   const user = getParam(req, "user") as UserType;
 
   const adService = getService("ad");
@@ -33,16 +34,25 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
   const payload = { ad: ad._id, user: user._id };
 
-  const deliveryExists = await deliveryService.count(payload);
+  const deliveryDoc = await deliveryService.findOne(payload);
 
-  if (deliveryExists) {
-    throw new Error("Запрос уже отправлен");
+  if (!deliveryDoc) {
+    await deliveryService.create({
+      ad,
+      user: user._id,
+      status,
+    });
+  } else {
+    await deliveryService.update(
+      {
+        ad,
+        user: user._id,
+      },
+      {
+        status,
+      }
+    );
   }
-
-  await deliveryService.create({
-    ad,
-    user: user._id,
-  });
 
   const conversationService = getService("conversation");
 
