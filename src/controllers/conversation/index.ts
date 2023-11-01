@@ -106,7 +106,7 @@ export const getConversationsList = asyncHandler(
       },
       {
         $addFields: {
-          lastMessage: { $first: "$messages" },
+          lastMessage: { $arrayElemAt: ["$messages", 0] },
         },
       },
       {
