@@ -62,7 +62,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
   await messageService.create({
     conversation: conversation._id,
-    message: "Я отвезу",
+    message: "Вы отправили заявку на доставку посылки. Ждем...",
     user: user._id,
     isSystemMessage: true,
   });
