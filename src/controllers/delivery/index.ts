@@ -162,18 +162,15 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
 
   const deliveryService = getService("delivery");
 
-  const payload = {
-    ad: toObjectId(ad),
-    user: toObjectId(user._id),
-  };
-
-  if (_.isNull(status)) {
-    await deliveryService.remove(payload);
-  } else {
-    await deliveryService.update(payload, {
+  await deliveryService.update(
+    {
+      ad: toObjectId(ad),
+      user: toObjectId(user._id),
+    },
+    {
       status,
-    });
-  }
+    }
+  );
 
   return getResponse(res, {});
 });
