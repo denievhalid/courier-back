@@ -11,6 +11,7 @@ import _ from "lodash";
 import { sanitizeUser } from "@/controllers/user/utils";
 import { UserType } from "@/types";
 import { getFilename } from "@/controllers/file/utils";
+import { getUserAggregate } from "@/utils/aggregate";
 
 export const me = asyncHandler(async (req: Request, res: Response) => {
   return getResponse(
@@ -49,50 +50,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
   await userService.create(attributes);
 
-  const user = await userService.aggregate([
-    {
-      $match: {
-        active: true,
-        phoneNumber: Number(attributes.phoneNumber),
-      },
-    },
-    {
-      $lookup: {
-        from: "conversations",
-        localField: "_id",
-        foreignField: "receiver",
-        as: "inboxConversations",
-      },
-    },
-    {
-      $lookup: {
-        from: "conversations",
-        localField: "_id",
-        foreignField: "sender",
-        as: "sentConversations",
-      },
-    },
-    {
-      $lookup: {
-        from: "delivery",
-        localField: "_id",
-        foreignField: "user",
-        as: "deliveries",
-      },
-    },
-    {
-      $project: {
-        firstname: 1,
-        avatar: 1,
-        gender: 1,
-        phoneNumber: 1,
-        city: 1,
-        deliveries: { $size: "$deliveries" },
-        inboxConversations: { $size: "$inboxConversations" },
-        sentConversations: { $size: "$sentConversations" },
-      },
-    },
-  ]);
+  const user = await getUserAggregate(attributes.phoneNumber);
 
   const accessToken = tokenService.create(
     { phoneNumber: attributes.phoneNumber },

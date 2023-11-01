@@ -4,6 +4,7 @@ import { InvalidCredentialsException } from "@/exceptions/forbidden";
 import _ from "lodash";
 import { getService } from "@/lib/container";
 import { getEnv } from "@/utils/env";
+import { getUserAggregate } from "@/utils/aggregate";
 
 export const authenticate = asyncHandler(async (req, res, next) => {
   const token = getParam(req, "token");
@@ -23,50 +24,7 @@ export const authenticate = asyncHandler(async (req, res, next) => {
     throw new InvalidCredentialsException();
   }
 
-  const user = await userService.aggregate([
-    {
-      $match: {
-        active: true,
-        phoneNumber: Number(verified.phoneNumber),
-      },
-    },
-    {
-      $lookup: {
-        from: "conversations",
-        localField: "_id",
-        foreignField: "receiver",
-        as: "inboxConversations",
-      },
-    },
-    {
-      $lookup: {
-        from: "conversations",
-        localField: "_id",
-        foreignField: "sender",
-        as: "sentConversations",
-      },
-    },
-    {
-      $lookup: {
-        from: "delivery",
-        localField: "_id",
-        foreignField: "user",
-        as: "deliveries",
-      },
-    },
-    {
-      $project: {
-        firstname: 1,
-        avatar: 1,
-        gender: 1,
-        phoneNumber: 1,
-        city: 1,
-        deliveries: { $size: "$deliveries" },
-        inboxConversations: { $size: "$inboxConversations" },
-        sentConversations: { $size: "$sentConversations" },
-      },
-    },
-  ]);
+  const user = await getUserAggregate(verified.phoneNumber);
 
   if (_.isEmpty(user)) {
     throw new InvalidCredentialsException();
