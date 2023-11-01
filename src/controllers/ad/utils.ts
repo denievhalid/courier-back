@@ -3,6 +3,7 @@ import { SortType } from "@/controllers/ad/types";
 import type { FilterQuery, PipelineStage } from "mongoose";
 import * as mongoose from "mongoose";
 import { isValidObjectId } from "@/utils/isValidObjectId";
+import { toObjectId } from "@/utils/toObjectId";
 
 const dateSet = new Set(["startDate", "endDate"]);
 
@@ -26,7 +27,7 @@ export const getMatchPipeline = (match: Record<string, any>) => {
     let [param, value] = parseMatchParam(item);
 
     if (isValidObjectId(value)) {
-      value = new mongoose.Types.ObjectId(value);
+      value = toObjectId(value);
     }
 
     if (dateSet.has(param)) {

@@ -9,6 +9,7 @@ import _ from "lodash";
 import mongoose from "mongoose";
 import { UserType } from "@/types";
 import { SOCKET_EVENTS } from "@/const";
+import { toObjectId } from "@/utils/toObjectId";
 
 export const getList = asyncHandler(async (req: Request, res: Response) => {
   const adService = getService("ad");
@@ -18,13 +19,13 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
   const { conversation } = getAttributes(req.params, ["conversation"]);
 
   const conversationDoc = await conversationService.findOne({
-    _id: new mongoose.Types.ObjectId(conversation),
+    _id: toObjectId(conversation),
   });
 
   const adDoc = await adService.aggregate([
     {
       $match: {
-        _id: new mongoose.Types.ObjectId(conversationDoc.ad),
+        _id: toObjectId(conversationDoc.ad),
       },
     },
     {
@@ -39,7 +40,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
   const messages = await messageService.aggregate([
     {
       $match: {
-        conversation: new mongoose.Types.ObjectId(conversation),
+        conversation: toObjectId(conversation),
       },
     },
     {
@@ -115,7 +116,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   const data = await messageService.aggregate([
     {
       $match: {
-        _id: new mongoose.Types.ObjectId(messageDoc._id),
+        _id: toObjectId(messageDoc._id),
       },
     },
     {

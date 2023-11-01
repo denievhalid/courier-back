@@ -1,13 +1,15 @@
 import { asyncHandler } from "@/utils/asyncHandler";
 import { Request, Response } from "express";
-import _ from "lodash";
 import { getParam } from "@/utils/getParam";
-import { UserType } from "@/types";
+import { ConversationType, UserType } from "@/types";
 import { getService } from "@/lib/container";
 import { getResponse } from "@/utils/getResponse";
 import { StatusCodes } from "http-status-codes";
 import mongoose, { PipelineStage } from "mongoose";
 import { getAttributes } from "@/utils/getAttributes";
+import { getUserByConversationType } from "@/controllers/conversation/utils";
+import { Conversation } from "@/controllers/conversation/types";
+import { toObjectId } from "@/utils/toObjectId";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   const { ad, sender, receiver } = getAttributes(req.body, [
@@ -35,7 +37,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
 export const getConversationsList = asyncHandler(
   async (req: Request, res: Response) => {
-    const type = getParam(req.query, "type") as "inbox" | "sent";
+    const type = getParam(req.query, "type") as Conversation;
     const user = getParam(req, "user") as UserType;
     const conversationService = getService("conversation");
 
@@ -43,11 +45,7 @@ export const getConversationsList = asyncHandler(
       $match: {},
     };
 
-    if (type === "sent") {
-      match.$match["sender"] = new mongoose.Types.ObjectId(user._id);
-    } else {
-      match.$match["receiver"] = new mongoose.Types.ObjectId(user._id);
-    }
+    match.$match[getUserByConversationType[type]] = toObjectId(user._id);
 
     const data = await conversationService.aggregate([
       match,

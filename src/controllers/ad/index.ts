@@ -20,6 +20,7 @@ import { createAdSchema } from "@/controllers/ad/validation";
 import { UserType } from "@/types";
 import { StatusCodes } from "http-status-codes";
 import dayjs from "dayjs";
+import { toObjectId } from "@/utils/toObjectId";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   await createAdSchema.validate(req.body, { abortEarly: false });
@@ -77,7 +78,7 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
   pipeline.push(
     {
       $match: {
-        _id: new mongoose.Types.ObjectId(id),
+        _id: toObjectId(id),
       },
     },
     {
@@ -131,7 +132,7 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
   pipeline.push(
     {
       $match: {
-        _id: new mongoose.Types.ObjectId(id),
+        _id: toObjectId(id),
       },
     },
     {
