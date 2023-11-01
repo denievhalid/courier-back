@@ -5,6 +5,8 @@ import { getService } from "@/lib/container";
 import { StatusCodes } from "http-status-codes";
 import type { AdType, UserType } from "@/types";
 import type { Request, Response } from "express";
+import { toObjectId } from "@/utils/toObjectId";
+import { getAttributes } from "@/utils/getAttributes";
 
 const deliveryService = getService("delivery");
 
@@ -144,5 +146,20 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const update = asyncHandler(async (req: Request, res: Response) => {
+  const user = getParam(req, "user") as UserType;
+  const { ad, status } = getAttributes(req.body, ["ad", "status"]);
+
+  const deliveryService = getService("delivery");
+
+  await deliveryService.update(
+    {
+      ad: toObjectId(ad),
+      user: toObjectId(user._id),
+    },
+    {
+      status,
+    }
+  );
+
   return getResponse(res, {});
 });

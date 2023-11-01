@@ -14,6 +14,9 @@ export const findOne = (filter: FilterQuery<DeliveryType>) => {
   return getModel("delivery").findOne(filter);
 };
 
-export const update = (id: string, update: UpdateQuery<DeliveryType>) => {
-  return getModel("delivery").findByIdAndUpdate(id, update);
+export const update = (
+  filter: FilterQuery<DeliveryType>,
+  update: UpdateQuery<DeliveryType>
+) => {
+  return getModel("delivery").findOneAndUpdate(filter, update);
 };
