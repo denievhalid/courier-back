@@ -35,6 +35,22 @@ export const getUserAggregate = (phoneNumber: number | string) => {
       },
     },
     {
+      $lookup: {
+        from: "favorites",
+        localField: "_id",
+        foreignField: "user",
+        as: "favorites",
+      },
+    },
+    {
+      $lookup: {
+        from: "directions",
+        localField: "_id",
+        foreignField: "user",
+        as: "directions",
+      },
+    },
+    {
       $project: {
         firstname: 1,
         avatar: 1,
@@ -43,6 +59,8 @@ export const getUserAggregate = (phoneNumber: number | string) => {
         city: 1,
         deliveries: { $size: "$deliveries" },
         counters: {
+          favoriteAds: { $size: "$favorites" },
+          favoriteDirections: { $size: "$directions" },
           inboxConversations: { $size: "$inboxConversations" },
           sentConversations: { $size: "$sentConversations" },
         },
