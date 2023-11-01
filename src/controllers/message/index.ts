@@ -97,8 +97,16 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
       ? conversationDoc.sender
       : conversationDoc.receiver;
 
+  const delivery = (
+    await getService("delivery").findOne({
+      ad: toObjectId(conversationDoc.ad),
+      user: toObjectId(user._id),
+    })
+  )?.status;
+
   const data = {
     ad: _.first(adDoc),
+    delivery,
     companion,
     messages,
   };

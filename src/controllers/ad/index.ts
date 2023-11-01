@@ -170,7 +170,10 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
     });
 
     delivery = (
-      await getService("delivery").findOne({ ad: id, user: user._id })
+      await getService("delivery").findOne({
+        ad: toObjectId(id),
+        user: toObjectId(user._id),
+      })
     )?.status;
   }
 
