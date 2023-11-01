@@ -70,6 +70,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
     {
       $project: {
         createdAt: 1,
+        isSystemMessage: 1,
         message: 1,
         user: { $first: "$user" },
       },
@@ -88,6 +89,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
         createdAt: "$createdAt",
         user: 1,
         message: 1,
+        isSystemMessage: 1,
       },
     },
   ]);
