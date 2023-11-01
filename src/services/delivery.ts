@@ -20,3 +20,7 @@ export const update = (
 ) => {
   return getModel("delivery").findOneAndUpdate(filter, update);
 };
+
+export const remove = (filter: FilterQuery<DeliveryType>) => {
+  return getModel("delivery").findOneAndRemove(filter);
+};
