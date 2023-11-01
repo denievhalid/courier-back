@@ -42,8 +42,10 @@ export const getUserAggregate = (phoneNumber: number | string) => {
         phoneNumber: 1,
         city: 1,
         deliveries: { $size: "$deliveries" },
-        inboxConversations: { $size: "$inboxConversations" },
-        sentConversations: { $size: "$sentConversations" },
+        counters: {
+          inboxConversations: { $size: "$inboxConversations" },
+          sentConversations: { $size: "$sentConversations" },
+        },
       },
     },
   ]);
