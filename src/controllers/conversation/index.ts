@@ -106,15 +106,17 @@ export const getConversationsList = asyncHandler(
       },
       {
         $addFields: {
-          lastMessage: { $arrayElemAt: ["$messages", 0] },
+          lastMessage: { $first: "$messages" },
         },
       },
       {
         $project: {
           _id: 1,
           lastMessage: 1,
-          //cover: { $arrayElemAt: [{ $arrayElemAt: ["$ad.images", 0] }, 0] },
-          user: { $first: type === "sent" ? "$receiver" : "sender" },
+          cover: { $first: { $first: "$ad.images" } },
+          user: {
+            $first: type === "sent" ? "$receiver" : "$sender",
+          },
         },
       },
     ]);
