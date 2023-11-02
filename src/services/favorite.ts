@@ -14,6 +14,10 @@ export const getList = (pipeline: PipelineStage[]) => {
   return getModel("favorite").aggregate(pipeline);
 };
 
+export const count = (filter: FilterQuery<FavoriteType>) => {
+  return getModel("favorite").countDocuments(filter);
+};
+
 export const exists = (filter: FilterQuery<FavoriteType>) => {
   return getModel("favorite").countDocuments(filter);
 };
