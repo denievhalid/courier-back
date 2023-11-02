@@ -43,7 +43,7 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
 
   const count = await favoriteService.count(payload);
 
-  return getResponse(res, { count }, StatusCodes.OK);
+  return getResponse(res, { data: count }, StatusCodes.OK);
 });
 
 export const getList = asyncHandler(async (req: Request, res: Response) => {
