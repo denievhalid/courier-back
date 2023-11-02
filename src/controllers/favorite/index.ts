@@ -30,7 +30,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 export const remove = asyncHandler(async (req: Request, res: Response) => {
   const ad = getParam(req.body, "ad");
   const user = getParam(req, "user");
-  console.log(ad);
+
   const payload = { ad, user: user._id };
 
   const favoriteService = getService("favorite");
@@ -41,7 +41,9 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
     await favoriteService.remove(payload);
   }
 
-  return getResponse(res, {}, StatusCodes.OK);
+  const count = await favoriteService.count(payload);
+
+  return getResponse(res, { count }, StatusCodes.OK);
 });
 
 export const getList = asyncHandler(async (req: Request, res: Response) => {
