@@ -7,12 +7,14 @@ import { getParam } from "@/utils/getParam";
 import { PipelineStage } from "mongoose";
 import _ from "lodash";
 import { UserType } from "@/types";
+import { count } from "@/services/favorite";
+import { toObjectId } from "@/utils/toObjectId";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   const ad = getParam(req.body, "ad");
   const user = getParam(req, "user");
 
-  const payload = { ad, user: user._id };
+  const payload = { ad: toObjectId(ad), user: toObjectId(user._id) };
 
   const favoriteService = getService("favorite");
 
@@ -22,7 +24,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     await favoriteService.create(payload);
   }
 
-  const count = await favoriteService.count(payload);
+  const count = await favoriteService.count({ user: toObjectId(user._id) });
 
   return getResponse(res, { data: count }, StatusCodes.CREATED);
 });
@@ -31,7 +33,7 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
   const ad = getParam(req.body, "ad");
   const user = getParam(req, "user");
 
-  const payload = { ad, user: user._id };
+  const payload = { ad: toObjectId(ad), user: toObjectId(user._id) };
 
   const favoriteService = getService("favorite");
 
@@ -41,7 +43,7 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
     await favoriteService.remove(payload);
   }
 
-  const count = await favoriteService.count(payload);
+  const count = await favoriteService.count({ user: toObjectId(user._id) });
 
   return getResponse(res, { data: count }, StatusCodes.OK);
 });
