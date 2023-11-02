@@ -140,6 +140,16 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
         from: "users",
         localField: "user",
         foreignField: "_id",
+        pipeline: [
+          {
+            $lookup: {
+              from: "deliveries",
+              localField: "user",
+              foreignField: "user",
+              as: "deliveries",
+            },
+          },
+        ],
         as: "user",
       },
     },

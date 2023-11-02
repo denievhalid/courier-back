@@ -82,6 +82,11 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
         ad: { $first: "$ad" },
       },
     },
+    {
+      $addFields: {
+        "ad.cover": { $first: "$ad.images" },
+      },
+    },
   ];
 
   const data = await favoriteService.getList(query);
