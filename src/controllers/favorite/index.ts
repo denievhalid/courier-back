@@ -12,8 +12,6 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   const ad = getParam(req.body, "ad");
   const user = getParam(req, "user");
 
-  console.log(ad);
-
   const payload = { ad, user: user._id };
 
   const favoriteService = getService("favorite");
@@ -24,7 +22,9 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     await favoriteService.create(payload);
   }
 
-  return getResponse(res, {}, StatusCodes.CREATED);
+  const count = await favoriteService.count(payload);
+
+  return getResponse(res, { data: count }, StatusCodes.CREATED);
 });
 
 export const remove = asyncHandler(async (req: Request, res: Response) => {
