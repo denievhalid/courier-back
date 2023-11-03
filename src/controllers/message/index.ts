@@ -119,15 +119,15 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
 export const create = asyncHandler(async (req: Request, res: Response) => {
   const io = getParam(req, "io");
   const user = getParam(req, "user") as UserType;
-  const { conversation, message, type } = getAttributes(req.body, [
-    "conversation",
-    "message",
-    "type",
-  ]);
+  const { conversation, message, type, isSystemMessage } = getAttributes(
+    req.body,
+    ["conversation", "message", "type", "isSystemMessage"]
+  );
 
   const messageService = getService("message");
 
   const messageDoc = await messageService.create({
+    isSystemMessage,
     conversation,
     message,
     user,
