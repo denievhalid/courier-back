@@ -28,6 +28,10 @@ const schema = new Schema(
       required: true,
       default: MessageStatus.SEND,
     },
+    type: {
+      type: Number,
+      enum: [0, 1, 2, 4],
+    },
   },
   {
     timestamps: true,
