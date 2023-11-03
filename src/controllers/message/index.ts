@@ -6,7 +6,7 @@ import { StatusCodes } from "http-status-codes";
 import { getService } from "@/lib/container";
 import { getParam } from "@/utils/getParam";
 import _ from "lodash";
-import { UserType } from "@/types";
+import { AdType, UserType } from "@/types";
 import { SOCKET_EVENTS } from "@/const";
 import { toObjectId } from "@/utils/toObjectId";
 
@@ -25,7 +25,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
     .populate("receiver")
     .populate("sender");
 
-  const adDoc = await adService.aggregate([
+  let adDoc = await adService.aggregate([
     {
       $match: {
         _id: toObjectId(conversationDoc.ad),
@@ -108,10 +108,17 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
     })
   )?.status;
 
+  adDoc = _.first(adDoc) as AdType;
+
   const data = {
-    ad: _.first(adDoc),
+    ad: adDoc,
     delivery,
-    companion,
+    companion: {
+      _id: companion._id,
+      avatar: companion.avatar,
+      firstname: companion.firstname,
+      courier: adDoc?.courier?._id === companion._id,
+    },
     messages,
   };
 
