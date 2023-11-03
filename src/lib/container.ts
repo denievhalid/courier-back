@@ -1,4 +1,5 @@
 import AdModel from "@/models/ad";
+import BlockModel from "@/models/block";
 import ConversationModel from "@/models/conversation";
 import DeliveryModel from "@/models/delivery";
 import DirectionModel from "@/models/direction";
@@ -8,6 +9,7 @@ import FileModel from "@/models/file";
 import OtpModel from "@/models/otp";
 import UserModel from "@/models/user";
 import * as AdService from "@/services/ad";
+import * as BlockService from "@/services/block";
 import * as ConversationService from "@/services/conversation";
 import * as FavoriteService from "@/services/favorite";
 import * as FileService from "@/services/file";
@@ -28,6 +30,7 @@ let container: Container | null = null;
 
 function registerServices(container: Container) {
   container.services.set("ad", AdService);
+  container.services.set("block", BlockService);
   container.services.set("conversation", ConversationService);
   container.services.set("delivery", DeliveryService);
   container.services.set("direction", DirectionService);
@@ -42,6 +45,7 @@ function registerServices(container: Container) {
 
 function registerModels(container: Container) {
   container.models.set("ad", AdModel);
+  container.models.set("block", BlockModel);
   container.models.set("conversation", ConversationModel);
   container.models.set("delivery", DeliveryModel);
   container.models.set("direction", DirectionModel);

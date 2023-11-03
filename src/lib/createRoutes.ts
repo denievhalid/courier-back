@@ -1,4 +1,5 @@
 import adRoutes from "@/routes/ad";
+import blockRoutes from "@/routes/block";
 import authRoutes from "@/routes/auth";
 import conversationRoutes from "@/routes/conversation";
 import deliveryRoutes from "@/routes/delivery";
@@ -13,6 +14,7 @@ import type { Application } from "express";
 
 export const createRoutes = (app: Application) => {
   app.use(getEndpoint("ads"), adRoutes);
+  app.use(getEndpoint("blocks"), blockRoutes);
   app.use(getEndpoint("conversations"), conversationRoutes);
   app.use(getEndpoint("deliveries"), deliveryRoutes);
   app.use(getEndpoint("directions"), directionRoutes);

@@ -20,6 +20,11 @@ export type AdType = {
   user: UserType;
 };
 
+export type BlockType = {
+  user: UserType;
+  blockedUser: UserType;
+};
+
 export type ConversationType = {
   ad: AdType;
   receiver: UserType;
