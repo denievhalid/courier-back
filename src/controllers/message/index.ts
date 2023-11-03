@@ -90,6 +90,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
         user: 1,
         message: 1,
         isSystemMessage: 1,
+        type: 1,
       },
     },
   ]);
