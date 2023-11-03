@@ -71,15 +71,6 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     });
   }
 
-  const messageService = getService("message");
-
-  await messageService.create({
-    conversation: conversation._id,
-    message: "Вы отправили заявку на доставку посылки. Ждем...",
-    user: user._id,
-    isSystemMessage: true,
-  });
-
   const conversationDoc = await conversationService.aggregate([
     {
       $match: {
