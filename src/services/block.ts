@@ -6,6 +6,10 @@ export const create = (payload: BlockType) => {
   return getModel("block").create(payload);
 };
 
+export const exists = (payload: BlockType) => {
+  return getModel("block").countDocuments(payload);
+};
+
 export const findOne = (filter: FilterQuery<BlockType>) => {
   return getModel("block").findOne(filter);
 };

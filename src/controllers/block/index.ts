@@ -11,10 +11,21 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   const user = getParam(req, "user") as UserType;
   const blockedUser = getParam(req.body, "user");
 
-  await getService("block").create({
+  const blockedService = getService("block");
+
+  const payload = {
     blockedUser: toObjectId(blockedUser._id),
     user: toObjectId(user._id),
-  });
+  };
+
+  const exists = await blockedService.exists(payload);
+
+  if (!exists) {
+    await blockedService.create({
+      blockedUser: toObjectId(blockedUser._id),
+      user: toObjectId(user._id),
+    });
+  }
 
   return getResponse(
     res,
