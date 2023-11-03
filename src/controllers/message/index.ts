@@ -72,6 +72,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
         createdAt: 1,
         isSystemMessage: 1,
         message: 1,
+        type: 1,
         user: { $first: "$user" },
       },
     },
