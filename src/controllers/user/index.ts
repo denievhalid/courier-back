@@ -12,6 +12,7 @@ import { sanitizeUser } from "@/controllers/user/utils";
 import { UserType } from "@/types";
 import { getFilename } from "@/controllers/file/utils";
 import { getUserAggregate } from "@/utils/aggregate";
+import { toObjectId } from "@/utils/toObjectId";
 
 export const me = asyncHandler(async (req: Request, res: Response) => {
   return getResponse(
@@ -62,6 +63,22 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     { accessToken, user: _.assign(sanitizeUser(user), { deliveries: 0 }) },
     StatusCodes.CREATED
   );
+});
+
+export const getById = asyncHandler(async (req: Request, res: Response) => {
+  const id = getParam(req.params, "id");
+
+  const userService = getService("user");
+
+  const data = await userService.aggregate([
+    {
+      $match: {
+        _id: toObjectId(id),
+      },
+    },
+  ]);
+
+  return getResponse(res, { data: _.first(data) }, StatusCodes.OK);
 });
 
 export const updateAvatar = asyncHandler(
