@@ -10,6 +10,7 @@ import { initDatabase } from "@/lib/database";
 import { closeApp } from "@/utils/closeApp";
 import { extractToken } from "@/middlewares/extractToken";
 import _ from "lodash";
+import { SOCKET_EVENTS } from "@/const";
 
 const app = express();
 
@@ -39,8 +40,8 @@ initDatabase()
     createRoutes(app);
 
     io.on("connection", (socket) => {
-      socket.on("typing", (room: string) => {
-        socket.emit("typing");
+      socket.on(SOCKET_EVENTS.TYPING, ({ room, value }) => {
+        socket.emit(SOCKET_EVENTS.TYPING, value);
       });
     });
 

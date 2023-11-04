@@ -6,4 +6,5 @@ export const DataType = {
 export const SOCKET_EVENTS = {
   NEW_CONVERSATION: "newConversation",
   NEW_MESSAGE: "newMessage",
+  TYPING: "typing",
 };
