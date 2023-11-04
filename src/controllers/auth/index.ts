@@ -6,6 +6,7 @@ import { getResponse } from "@/utils/getResponse";
 import { StatusCodes } from "http-status-codes";
 import { getAttributes } from "@/utils/getAttributes";
 import { getEnv } from "@/utils/env";
+import _ from "lodash";
 
 export const verifyOtp = asyncHandler(async (req: Request, res: Response) => {
   await verifyOtpSchema.validate(req.body);
@@ -42,16 +43,17 @@ export const verifyOtp = asyncHandler(async (req: Request, res: Response) => {
     ...credentials,
   });
 
-  const userExists = await userService.exists(credentials);
+  const user = await userService.findOne(credentials);
 
-  let payload: { accessToken?: string; userExists: boolean } = {
-    userExists,
+  let payload = {
+    user,
   };
 
-  if (userExists) {
-    payload.accessToken = tokenService.create(
-      credentials,
-      getEnv("JWT_SECRET")
+  if (user) {
+    _.set(
+      payload,
+      "accessToken",
+      tokenService.create(credentials, getEnv("JWT_SECRET"))
     );
   }
 
