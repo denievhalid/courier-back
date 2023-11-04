@@ -38,7 +38,11 @@ initDatabase()
 
     createRoutes(app);
 
-    //io.on("connection", (socket) => {});
+    io.on("connection", (socket) => {
+      io.on("typing", (room: string) => {
+        io.to(room).emit("typing");
+      });
+    });
 
     server.listen(getEnv("port"));
   })
