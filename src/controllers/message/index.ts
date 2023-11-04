@@ -105,7 +105,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
   const isBlocked = Boolean(
     await blockService.count({
       user: toObjectId(user._id),
-      blockedUser: conversationDoc.sender._id,
+      blockedUser: companion._id,
     })
   );
 
