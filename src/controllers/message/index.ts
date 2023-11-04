@@ -109,7 +109,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
     })
   );
 
-  const canWrite = Boolean(
+  const canWrite = !Boolean(
     await blockService.count({
       blockedUser: toObjectId(user._id),
       user: companion._id,
