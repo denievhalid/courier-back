@@ -12,6 +12,7 @@ import { toObjectId } from "@/utils/toObjectId";
 
 export const getList = asyncHandler(async (req: Request, res: Response) => {
   const adService = getService("ad");
+  const blockService = getService("block");
   const conversationService = getService("conversation");
   const messageService = getService("message");
   const user = getParam(req, "user") as UserType;
@@ -101,6 +102,13 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
       ? conversationDoc.sender
       : conversationDoc.receiver;
 
+  const isBlocked = Boolean(
+    await blockService.count({
+      user: toObjectId(user._id),
+      blockedUser: conversationDoc.sender._id,
+    })
+  );
+
   const delivery = (
     await getService("delivery").findOne({
       ad: toObjectId(conversationDoc.ad),
@@ -113,6 +121,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
   const data = {
     ad: adDoc,
     delivery,
+    isBlocked,
     companion: {
       _id: companion._id,
       avatar: companion.avatar,
