@@ -39,8 +39,8 @@ initDatabase()
     createRoutes(app);
 
     io.on("connection", (socket) => {
-      io.on("typing", (room: string) => {
-        io.to(room).emit("typing");
+      socket.on("typing", (room: string) => {
+        socket.to(room).emit("typing");
       });
     });
 
