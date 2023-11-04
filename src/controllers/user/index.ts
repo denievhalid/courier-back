@@ -76,6 +76,19 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
         _id: toObjectId(id),
       },
     },
+    {
+      $lookup: {
+        from: "blocks",
+        localField: "_id",
+        foreignField: "user",
+        as: "blocked",
+      },
+    },
+    {
+      $addFields: {
+        isBlocked: { $toBool: { $size: "$blocked" } },
+      },
+    },
   ]);
 
   return getResponse(res, { data: _.first(data) }, StatusCodes.OK);
