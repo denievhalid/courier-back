@@ -109,6 +109,13 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
     })
   );
 
+  const canWrite = Boolean(
+    await blockService.count({
+      blockedUser: toObjectId(user._id),
+      user: companion._id,
+    })
+  );
+
   const delivery = (
     await getService("delivery").findOne({
       ad: toObjectId(conversationDoc.ad),
@@ -122,6 +129,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
     ad: adDoc,
     delivery,
     isBlocked,
+    canWrite,
     companion: {
       _id: companion._id,
       avatar: companion.avatar,
