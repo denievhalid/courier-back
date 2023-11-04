@@ -49,9 +49,9 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
     user: toObjectId(user._id),
   };
 
-  const exists = await blockedService.exists(payload);
+  const count = await blockedService.count(payload);
 
-  if (exists) {
+  if (count) {
     await blockedService.remove({
       blockedUser: toObjectId(blockedUser._id),
       user: toObjectId(user._id),
