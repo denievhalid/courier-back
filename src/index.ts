@@ -40,7 +40,7 @@ initDatabase()
 
     io.on("connection", (socket) => {
       socket.on("typing", (room: string) => {
-        socket.to(room).emit("typing");
+        socket.emit("typing");
       });
     });
 
