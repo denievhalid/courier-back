@@ -67,8 +67,17 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
 export const getById = asyncHandler(async (req: Request, res: Response) => {
   const id = getParam(req.params, "id");
+  const user = getParam(req, "user") as UserType;
 
+  const blockService = getService("block");
   const userService = getService("user");
+
+  const isBlocked = Boolean(
+    await blockService.count({
+      user: toObjectId(user._id),
+      blockedUser: toObjectId(id),
+    })
+  );
 
   const data = await userService.aggregate([
     {
@@ -77,16 +86,8 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
       },
     },
     {
-      $lookup: {
-        from: "blocks",
-        localField: "_id",
-        foreignField: "user",
-        as: "blocked",
-      },
-    },
-    {
       $addFields: {
-        isBlocked: { $toBool: { $size: "$blocked" } },
+        isBlocked,
       },
     },
   ]);

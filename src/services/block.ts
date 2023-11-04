@@ -6,7 +6,7 @@ export const create = (payload: BlockType) => {
   return getModel("block").create(payload);
 };
 
-export const exists = (payload: BlockType) => {
+export const count = (payload: BlockType) => {
   return getModel("block").countDocuments(payload);
 };
 
