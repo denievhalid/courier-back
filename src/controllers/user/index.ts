@@ -86,8 +86,17 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
       },
     },
     {
+      $lookup: {
+        from: "delivery",
+        localField: "_id",
+        foreignField: "user",
+        as: "deliveries",
+      },
+    },
+    {
       $addFields: {
         isBlocked,
+        deliveries: { $size: "$deliveries" },
       },
     },
   ]);
