@@ -41,7 +41,7 @@ initDatabase()
 
     io.on("connection", (socket) => {
       socket.on(SOCKET_EVENTS.TYPING, ({ room, value }) => {
-        socket.emit(SOCKET_EVENTS.TYPING, value);
+        io.emit(SOCKET_EVENTS.TYPING, value);
       });
     });
 
