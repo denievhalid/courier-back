@@ -98,7 +98,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
   ]);
 
   const companion =
-    conversationDoc.receiver._id === user._id
+    conversationDoc.receiver._id.toString() === user._id.toString()
       ? conversationDoc.sender
       : conversationDoc.receiver;
 
