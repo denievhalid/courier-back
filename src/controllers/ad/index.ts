@@ -222,19 +222,23 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
   query.push(getProjectPipeline());
   query.push(getAddFieldsPipeline());
 
-  const data = await getService("ad").getList(query);
-
-  let isFavoriteDirection = false;
-
   if (user) {
-    isFavoriteDirection = await directionService.count({
+    let directionDoc = await directionService.findOne({
       hash: attributes.filterHash,
     });
+
+    if (directionDoc) {
+      query.push({
+        $addFields: {
+          isFavorite: { $toBool: directionDoc },
+        },
+      });
+    }
   }
 
-  const payload = _.assign(data, { isFavoriteDirection });
+  const data = await getService("ad").getList(query);
 
-  return getResponse(res, { data: payload }, StatusCodes.OK);
+  return getResponse(res, { data }, StatusCodes.OK);
 });
 
 export const remove = asyncHandler(async (req: Request, res: Response) => {

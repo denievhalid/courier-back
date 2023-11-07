@@ -10,6 +10,10 @@ export const count = (payload: DirectionType) => {
   return getModel("direction").countDocuments(payload);
 };
 
+export const findOne = (filter: FilterQuery<DirectionType>) => {
+  return getModel("direction").findOne(filter);
+};
+
 export const getList = (filter: FilterQuery<DirectionType>) => {
   return getModel("direction").find(filter);
 };
