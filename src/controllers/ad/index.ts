@@ -230,7 +230,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
 
     query.push({
       $addFields: {
-        isFavorite: { $toBool: directionDoc },
+        isFavoriteDirection: { $toBool: directionDoc },
       },
     });
   }
