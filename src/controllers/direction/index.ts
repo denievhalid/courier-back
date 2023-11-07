@@ -14,7 +14,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
   const directionService = getService("direction");
 
-  const exists = await directionService.exists(payload);
+  const exists = await directionService.count(payload);
 
   if (!exists) {
     await directionService.create(payload);
