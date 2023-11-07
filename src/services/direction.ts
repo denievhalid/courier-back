@@ -6,6 +6,10 @@ export const create = (payload: DirectionType) => {
   return getModel("direction").create(payload);
 };
 
+export const count = (payload: DirectionType) => {
+  return getModel("direction").countDocuments(payload);
+};
+
 export const getList = (filter: FilterQuery<DirectionType>) => {
   return getModel("direction").find(filter);
 };

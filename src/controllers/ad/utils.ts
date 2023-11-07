@@ -10,7 +10,7 @@ const dateSet = new Set(["startDate", "endDate"]);
 const MATCH_PARAM_SEPARATOR = ":";
 
 export const getAttributes = (data: Record<string, any>) =>
-  _.pick(data, ["match", "sort", "page"]);
+  _.pick(data, ["match", "sort", "page", "filterHash"]);
 
 export const getMatchPipeline = (match: Record<string, any>) => {
   const stage: PipelineStage.Match = {

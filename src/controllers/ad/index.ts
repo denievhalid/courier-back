@@ -200,6 +200,10 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
 export const getList = asyncHandler(async (req: Request, res: Response) => {
   const attributes = getAttributes(req.query);
 
+  const user = getParam(req, "user") as UserType;
+
+  const directionService = getService("direction");
+
   const page = attributes.page || 1;
 
   const query: PipelineStage[] = [];
@@ -220,7 +224,17 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
 
   const data = await getService("ad").getList(query);
 
-  return getResponse(res, { data });
+  let isFavoriteDirection = false;
+
+  if (user) {
+    isFavoriteDirection = await directionService.count({
+      hash: attributes.filterHash,
+    });
+  }
+
+  const payload = _.assign({}, data, isFavoriteDirection);
+
+  return getResponse(res, { data: payload }, StatusCodes.OK);
 });
 
 export const remove = asyncHandler(async (req: Request, res: Response) => {
