@@ -232,7 +232,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
     });
   }
 
-  const payload = _.assign({}, data, isFavoriteDirection);
+  const payload = _.assign(data, { isFavoriteDirection });
 
   return getResponse(res, { data: payload }, StatusCodes.OK);
 });
