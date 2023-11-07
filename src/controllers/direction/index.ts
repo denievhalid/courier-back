@@ -20,7 +20,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     await directionService.create(payload);
   }
 
-  const count = await directionService.count({ user: toObjectId(user._id) });
+  const count = await directionService.count(payload);
 
   return getResponse(res, { data: count }, StatusCodes.CREATED);
 });
@@ -43,7 +43,7 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
     await directionService.remove(payload);
   }
 
-  const count = await directionService.count({ user: toObjectId(user._id) });
+  const count = await directionService.count(payload);
 
   return getResponse(res, { data: count }, StatusCodes.CREATED);
 });
