@@ -227,13 +227,11 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
       hash: attributes.filterHash,
     });
 
-    if (directionDoc) {
-      query.push({
-        $addFields: {
-          isFavorite: { $toBool: directionDoc },
-        },
-      });
-    }
+    query.push({
+      $addFields: {
+        isFavorite: { $toBool: directionDoc },
+      },
+    });
   }
 
   const data = await getService("ad").getList(query);
