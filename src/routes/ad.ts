@@ -5,7 +5,7 @@ import { getUser } from "@/middlewares/getUser";
 
 const router = Router();
 
-router.get("/", getList);
+router.get("/", getUser, getList);
 router.get("/:id", getUser, getById);
 router.post("/", authenticate, create);
 router.patch("/:id", authenticate, update);
