@@ -30,5 +30,20 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const remove = asyncHandler(async (req: Request, res: Response) => {
-  return getResponse(res, {}, StatusCodes.OK);
+  const hash = getParam(req.body, "hash");
+  const user = getParam(req, "user");
+
+  const payload = { hash, user: toObjectId(user._id) };
+
+  const directionService = getService("direction");
+
+  const exists = await directionService.count(payload);
+
+  if (exists) {
+    await directionService.remove(payload);
+  }
+
+  const count = await directionService.count({ user: toObjectId(user._id) });
+
+  return getResponse(res, { data: count }, StatusCodes.CREATED);
 });
