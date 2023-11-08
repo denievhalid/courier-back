@@ -101,6 +101,7 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
     res,
     {
       data: {
+        hash: direction.hash,
         filter: direction.filter,
         ads: data,
       },
