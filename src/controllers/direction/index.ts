@@ -6,6 +6,7 @@ import { getParam } from "@/utils/getParam";
 import { toObjectId } from "@/utils/toObjectId";
 import { getService } from "@/lib/container";
 import { DirectionType, UserType } from "@/types";
+import _ from "lodash";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   const hash = getParam(req.body, "hash");
@@ -42,10 +43,12 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
     },
   ])) as DirectionType[];
 
+  let adIds = _.first(directions.map((direction) => direction.ads));
+
   const data = await adService.aggregate([
     {
       $match: {
-        _id: { $in: directions.map((direction) => direction.ads) },
+        _id: { $in: adIds?.map((id) => toObjectId(id)) },
       },
     },
   ]);
