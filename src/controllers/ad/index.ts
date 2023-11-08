@@ -162,18 +162,14 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
   );
 
   if (user) {
-    pipeline.push({
-      $lookup: {
-        from: "favorites",
-        foreignField: "ad",
-        localField: "_id",
-        as: "favorites",
-      },
+    const isFavorite = await getService("favorite").count({
+      ad: toObjectId(id),
+      user: toObjectId(user._id),
     });
 
     pipeline.push({
       $addFields: {
-        isFavorite: { $toBool: { $size: "$favorites" } },
+        isFavorite: Boolean(isFavorite),
         isOwn: {
           $cond: [{ $eq: ["$user._id", user._id] }, true, false],
         },
