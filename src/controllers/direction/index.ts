@@ -21,9 +21,9 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     await directionService.create(payload);
   }
 
-  const count = await directionService.count(payload);
+  const data = await directionService.findOne(payload);
 
-  return getResponse(res, { data: count }, StatusCodes.CREATED);
+  return getResponse(res, { data }, StatusCodes.CREATED);
 });
 
 export const getList = asyncHandler(async (req: Request, res: Response) => {
@@ -56,7 +56,7 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
     await directionService.remove(payload);
   }
 
-  const count = await directionService.count(payload);
+  const data = await directionService.findOne(payload);
 
-  return getResponse(res, { data: count }, StatusCodes.CREATED);
+  return getResponse(res, { data }, StatusCodes.CREATED);
 });
