@@ -147,6 +147,22 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   return getResponse(res, {}, StatusCodes.CREATED);
 });
 
+export const getList = asyncHandler(async (req: Request, res: Response) => {
+  const user = getParam(req, "user") as UserType;
+
+  const directionService = getService("direction");
+
+  const data = await directionService.aggregate([
+    {
+      $match: {
+        user: toObjectId(user._id),
+      },
+    },
+  ]);
+
+  return getResponse(res, { data }, StatusCodes.OK);
+});
+
 export const update = asyncHandler(async (req: Request, res: Response) => {
   const user = getParam(req, "user") as UserType;
   const { ad, status } = getAttributes(req.body, ["ad", "status"]);
