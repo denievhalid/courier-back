@@ -56,7 +56,5 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
     await directionService.remove(payload);
   }
 
-  const data = await directionService.findOne(payload);
-
-  return getResponse(res, { data }, StatusCodes.CREATED);
+  return getResponse(res, {}, StatusCodes.OK);
 });
