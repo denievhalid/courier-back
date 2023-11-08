@@ -10,6 +10,10 @@ const schema = new Schema({
     ref: "User",
     required: true,
   },
+  ads: {
+    type: Array<string>,
+    required: true,
+  },
 });
 
 export default model("Direction", schema);
