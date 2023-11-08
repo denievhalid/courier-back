@@ -33,6 +33,7 @@ export type ConversationType = {
 
 export type DirectionType = {
   ads: string[];
+  filter: string;
 };
 
 export type MessageType = {

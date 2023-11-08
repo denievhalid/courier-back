@@ -53,21 +53,17 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
   const adService = getService("ad");
   const directionService = getService("direction");
 
-  const directions = (await directionService.aggregate([
-    {
-      $match: {
-        _id: toObjectId(directionId),
-        user: toObjectId(user._id),
-      },
-    },
-  ])) as DirectionType[];
+  const direction = (await directionService.findOne({
+    _id: toObjectId(directionId),
+    user: toObjectId(user._id),
+  })) as DirectionType;
 
-  let adIds = _.first(directions.map((direction) => direction.ads));
+  let adIds = direction.ads.map((_id) => toObjectId(_id));
 
   const data = await adService.aggregate([
     {
       $match: {
-        _id: { $in: adIds?.map((id) => toObjectId(id)) },
+        _id: { $in: adIds },
       },
     },
     {
@@ -101,7 +97,16 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
     },
   ]);
 
-  return getResponse(res, { data }, StatusCodes.OK);
+  return getResponse(
+    res,
+    {
+      data: {
+        filter: direction.filter,
+        ads: data,
+      },
+    },
+    StatusCodes.OK
+  );
 });
 
 export const remove = asyncHandler(async (req: Request, res: Response) => {
