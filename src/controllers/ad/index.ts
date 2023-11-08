@@ -225,7 +225,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
   if (user) {
     let directionDoc = await directionService.findOne({
       hash: attributes.filterHash,
-      user: toObjectId(user._id),
+      user: toObjectId(user._id?.toString()),
     });
 
     isFavoriteDirection = Boolean(directionDoc);
