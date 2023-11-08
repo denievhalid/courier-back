@@ -70,6 +70,35 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
         _id: { $in: adIds?.map((id) => toObjectId(id)) },
       },
     },
+    {
+      $lookup: {
+        from: "users",
+        localField: "user",
+        foreignField: "_id",
+        pipeline: [
+          {
+            $lookup: {
+              from: "deliveries",
+              localField: "user",
+              foreignField: "user",
+              as: "deliveries",
+            },
+          },
+          {
+            $addFields: {
+              deliveries: { $size: "$deliveries" },
+            },
+          },
+        ],
+        as: "user",
+      },
+    },
+    {
+      $addFields: {
+        user: { $first: "$user" },
+        cover: { $first: "$images" },
+      },
+    },
   ]);
 
   return getResponse(res, { data }, StatusCodes.OK);
