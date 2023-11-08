@@ -149,6 +149,11 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
               as: "deliveries",
             },
           },
+          {
+            $addFields: {
+              deliveries: { $size: "$deliveries" },
+            },
+          },
         ],
         as: "user",
       },
