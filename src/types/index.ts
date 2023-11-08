@@ -31,7 +31,9 @@ export type ConversationType = {
   sender: UserType;
 };
 
-export type DirectionType = {};
+export type DirectionType = {
+  ads: string[];
+};
 
 export type MessageType = {
   message: string;

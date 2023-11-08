@@ -5,7 +5,7 @@ import { StatusCodes } from "http-status-codes";
 import { getParam } from "@/utils/getParam";
 import { toObjectId } from "@/utils/toObjectId";
 import { getService } from "@/lib/container";
-import { UserType } from "@/types";
+import { DirectionType, UserType } from "@/types";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   const hash = getParam(req.body, "hash");
@@ -31,12 +31,21 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 export const getList = asyncHandler(async (req: Request, res: Response) => {
   const user = getParam(req, "user") as UserType;
 
+  const adService = getService("ad");
   const directionService = getService("direction");
 
-  const data = await directionService.aggregate([
+  const directions = (await directionService.aggregate([
     {
       $match: {
         user: toObjectId(user._id),
+      },
+    },
+  ])) as DirectionType[];
+
+  const data = await adService.aggregate([
+    {
+      $match: {
+        _id: { $in: directions.map((direction) => direction.ads) },
       },
     },
   ]);
