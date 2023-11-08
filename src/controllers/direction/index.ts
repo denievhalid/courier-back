@@ -11,8 +11,9 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   const hash = getParam(req.body, "hash");
   const user = getParam(req, "user");
   const ads = getParam(req.body, "ads");
+  const filter = getParam(req.body, "filter");
 
-  const payload = { ads, hash, user: toObjectId(user._id) };
+  const payload = { ads, hash, filter, user: toObjectId(user._id) };
 
   const directionService = getService("direction");
 

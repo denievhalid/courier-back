@@ -14,6 +14,10 @@ const schema = new Schema({
     type: Array<string>,
     required: true,
   },
+  filter: {
+    type: String,
+    required: true,
+  },
 });
 
 export default model("Direction", schema);
