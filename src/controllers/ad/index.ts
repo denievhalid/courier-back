@@ -11,7 +11,7 @@ import {
   getSkipPipeline,
   getSortPipeline,
 } from "@/controllers/ad/utils";
-import _ from "lodash";
+import _, { at } from "lodash";
 import { getService } from "@/lib/container";
 import { getParam } from "@/utils/getParam";
 import { LIMIT } from "@/controllers/ad/const";
@@ -21,6 +21,7 @@ import { UserType } from "@/types";
 import { StatusCodes } from "http-status-codes";
 import dayjs from "dayjs";
 import { toObjectId } from "@/utils/toObjectId";
+import { string } from "yup";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   await createAdSchema.validate(req.body, { abortEarly: false });
@@ -209,12 +210,32 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
 
   const query: PipelineStage[] = [];
 
-  if (_.has(attributes, "match")) {
-    query.push(getMatchPipeline(attributes.match));
+  let date: { $gte?: Date; $lte?: Date } = {};
+
+  let status = attributes.status;
+
+  if (!_.isArray(status)) {
+    status = [status];
   }
 
-  if (_.has(attributes, "sort")) {
-    query.push(getSortPipeline(attributes.sort));
+  query.push({
+    $match: {
+      status: { $in: status },
+    },
+  });
+
+  if (attributes.startDate) {
+    date["$gte"] = new Date(attributes.startDate);
+  }
+
+  if (attributes.endDate) {
+    date["$lte"] = new Date(attributes.endDate);
+  }
+
+  if (attributes.sort) {
+    query.push({
+      $sort: { [attributes.sort]: -1 },
+    });
   }
 
   query.push(getSkipPipeline((page - 1) * LIMIT));
@@ -223,7 +244,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
   query.push(getProjectPipeline());
   query.push(getAddFieldsPipeline());
 
-  const data = await getService("ad").getList(query);
+  const data = await getService("ad").aggregate(query);
 
   let isFavoriteDirection = false;
 
