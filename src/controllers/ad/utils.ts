@@ -13,6 +13,8 @@ export const getAttributes = (data: Record<string, any>) =>
   _.pick(data, [
     "startDate",
     "endDate",
+    "from",
+    "to",
     "sort",
     "page",
     "filterHash",

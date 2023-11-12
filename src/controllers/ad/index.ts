@@ -232,6 +232,22 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
     });
   }
 
+  if (attributes.from) {
+    query.push({
+      $match: {
+        from: toObjectId(attributes.from),
+      },
+    });
+  }
+
+  if (attributes.to) {
+    query.push({
+      $match: {
+        to: toObjectId(attributes.to),
+      },
+    });
+  }
+
   if (attributes.startDate) {
     date["$gte"] = new Date(attributes.startDate);
   }
