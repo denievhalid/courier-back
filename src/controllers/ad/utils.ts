@@ -17,6 +17,7 @@ export const getAttributes = (data: Record<string, any>) =>
     "page",
     "filterHash",
     "status",
+    "user",
   ]);
 
 export const getMatchPipeline = (match: Record<string, any>) => {
