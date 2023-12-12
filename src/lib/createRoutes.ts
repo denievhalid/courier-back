@@ -23,5 +23,5 @@ export const createRoutes = (app: Application) => {
   app.use(getEndpoint("messages"), messageRoutes);
   app.use(getEndpoint("auth"), authRoutes);
   app.use(getEndpoint("users"), userRoutes);
-  app.use(errorHandler);
+  //app.use(errorHandler);
 };
