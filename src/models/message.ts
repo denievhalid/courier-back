@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import { MessageStatus } from "@/types";
+import { MessageStatus, SystemActionCodes } from "@/types";
 
 const schema = new Schema(
   {
@@ -10,7 +10,6 @@ const schema = new Schema(
     },
     message: {
       type: String,
-      required: true,
       trim: true,
     },
     user: {
@@ -27,6 +26,10 @@ const schema = new Schema(
       enum: [MessageStatus.PENDING, MessageStatus.READ, MessageStatus.SEND],
       required: true,
       default: MessageStatus.SEND,
+    },
+    systemAction: {
+      type: String,
+      enum: [SystemActionCodes.DELIVERY_REQUESTED, SystemActionCodes.DELIVERY_CANCELED, SystemActionCodes.DELIVERY_CONFIRMED],
     },
     type: {
       type: Number,
