@@ -7,4 +7,5 @@ export const SOCKET_EVENTS = {
   NEW_CONVERSATION: "newConversation",
   NEW_MESSAGE: "newMessage",
   TYPING: "typing",
+  SYSTEM_ACTION: "systemAction"
 };

@@ -145,9 +145,9 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
 export const create = asyncHandler(async (req: Request, res: Response) => {
   const io = getParam(req, "io");
   const user = getParam(req, "user") as UserType;
-  const { conversation, message, type, isSystemMessage } = getAttributes(
+  const { conversation, message, type, isSystemMessage, systemAction } = getAttributes(
     req.body,
-    ["conversation", "message", "type", "isSystemMessage"]
+    ["conversation", "message", "type", "isSystemMessage", "systemAction"]
   );
 
   const messageService = getService("message");
@@ -158,6 +158,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     message,
     user,
     type,
+    systemAction
   });
 
   const data = await messageService.aggregate([
@@ -186,6 +187,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
       $project: {
         ad: { $first: "$conversation.ad" },
         message: 1,
+        systemAction: 1,
         user: { $first: "$user" },
       },
     },
@@ -202,13 +204,14 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
         ad: { $first: "$ad" },
         user: 1,
         message: 1,
+        systemAction: 1,
       },
     },
   ]);
 
   const newMessage = _.first(data);
 
-  io.emit(SOCKET_EVENTS.NEW_MESSAGE, newMessage);
+  isSystemMessage ? io.emit(SOCKET_EVENTS.SYSTEM_ACTION, newMessage) : io.emit(SOCKET_EVENTS.NEW_MESSAGE, newMessage)
 
   return getResponse(res, { data: newMessage }, StatusCodes.CREATED);
 });

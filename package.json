@@ -6,7 +6,9 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --module 'CommonJS' && TS_NODE_BASEURL=./dist nodemon -r tsconfig-paths/register dist/index.js",
-    "serve": "nodemon"
+    "serve": "nodemon",
+    "devWindows": "concurrently \"npx tsc --watch\" \"nodemon -q ./dist/index.js\""
+
   },
   "keywords": [],
   "author": "",
