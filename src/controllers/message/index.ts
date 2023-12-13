@@ -74,6 +74,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
         isSystemMessage: 1,
         message: 1,
         type: 1,
+        systemAction:1,
         user: { $first: "$user" },
       },
     },
@@ -93,6 +94,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
         message: 1,
         isSystemMessage: 1,
         type: 1,
+        systemAction:1,
       },
     },
   ]);
@@ -188,6 +190,8 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
         ad: { $first: "$conversation.ad" },
         message: 1,
         systemAction: 1,
+        isSystemMessage: 1,
+        type: 1,
         user: { $first: "$user" },
       },
     },
@@ -205,10 +209,12 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
         user: 1,
         message: 1,
         systemAction: 1,
+        isSystemMessage: 1,
+        type: 1,
       },
     },
   ]);
-
+  
   const newMessage = _.first(data);
 
   isSystemMessage ? io.emit(SOCKET_EVENTS.SYSTEM_ACTION, newMessage) : io.emit(SOCKET_EVENTS.NEW_MESSAGE, newMessage)
