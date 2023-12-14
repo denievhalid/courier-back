@@ -6,7 +6,7 @@ import { StatusCodes } from "http-status-codes";
 import { getService } from "@/lib/container";
 import { getParam } from "@/utils/getParam";
 import _ from "lodash";
-import { AdType, UserType } from "@/types";
+import { AdType, MessageType, TCreateMessage, UserType } from "@/types";
 import { SOCKET_EVENTS } from "@/const";
 import { toObjectId } from "@/utils/toObjectId";
 
@@ -171,7 +171,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     },
     {
       $lookup: {
-        from: "conversation",
+        from: "conversations",
         localField: "conversation",
         foreignField: "_id",
         as: "conversation",
@@ -215,7 +215,19 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     },
   ]);
   
-  const newMessage = _.first(data);
+ 
+  const newMessage: TCreateMessage | undefined = _.first(data);
+  const conversationId = _.get(newMessage, 'ad._id', null)
+  
+  if(conversationId && newMessage) {
+    const delivery = (
+      await getService("delivery").findOne({
+        ad: toObjectId(conversationId),
+        user: toObjectId(user._id),
+      })
+    )?.status;
+    newMessage.delivery = delivery
+  }
 
   isSystemMessage ? io.emit(SOCKET_EVENTS.SYSTEM_ACTION, newMessage) : io.emit(SOCKET_EVENTS.NEW_MESSAGE, newMessage)
 
