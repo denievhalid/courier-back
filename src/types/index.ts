@@ -43,6 +43,13 @@ export type MessageType = {
   status: string;
 };
 
+export type TCreateMessage = {
+  message: string;
+  user: UserType;
+  isSystemMessage?: boolean;
+  systemAction?: SystemActionCodes;
+  delivery: DeliveryStatus
+}
 export type OtpType = {
   _id: string;
   deadline: Date;
