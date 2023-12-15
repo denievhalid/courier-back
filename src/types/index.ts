@@ -48,8 +48,8 @@ export type TCreateMessage = {
   user: UserType;
   isSystemMessage?: boolean;
   systemAction?: SystemActionCodes;
-  delivery: DeliveryStatus
-}
+  delivery: DeliveryStatus;
+};
 export type OtpType = {
   _id: string;
   deadline: Date;
@@ -110,7 +110,11 @@ export type VerifyType = {
 };
 
 export enum SystemActionCodes {
-  DELIVERY_REQUESTED = 'DELIVERY_REQUESTED',
-  DELIVERY_CONFIRMED = 'DELIVERY_CONFIRMED',
-  DELIVERY_CANCELED = 'DELIVERY_CANCELED'
+  DELIVERY_REQUESTED = "DELIVERY_REQUESTED",
+  DELIVERY_CONFIRMED = "DELIVERY_CONFIRMED",
+  DELIVERY_CANCELED = "DELIVERY_CANCELED",
+}
+
+export enum Services {
+  MESSAGE = "message",
 }
