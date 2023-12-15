@@ -40,8 +40,8 @@ initDatabase()
     createRoutes(app);
 
     io.on("connection", (socket) => {
-      socket.on(SOCKET_EVENTS.TYPING, ({ room, value }) => {
-        socket.emit(SOCKET_EVENTS.TYPING, value);
+      io.on(SOCKET_EVENTS.JOIN_ROOM, (room: string) => {
+        socket.join(room);
       });
     });
 
