@@ -147,14 +147,23 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
 export const create = asyncHandler(async (req: Request, res: Response) => {
   const io = getParam(req, "io");
   const user = getParam(req, "user") as UserType;
-  const { conversation, message, type, isSystemMessage, systemAction } =
-    getAttributes(req.body, [
-      "conversation",
-      "message",
-      "type",
-      "isSystemMessage",
-      "systemAction",
-    ]);
+  const {
+    conversation: conversationId,
+    message,
+    type,
+    isSystemMessage,
+    systemAction,
+  } = getAttributes(req.body, [
+    "conversation",
+    "message",
+    "type",
+    "isSystemMessage",
+    "systemAction",
+  ]);
+
+  const conversation = await getService(Services.CONVERSATION).findOne({
+    _id: conversationId,
+  });
 
   const messageService = getService(Services.MESSAGE);
 
@@ -220,12 +229,12 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   ]);
 
   const newMessage: TCreateMessage | undefined = _.first(data);
-  const conversationId = _.get(newMessage, "ad._id", null);
+  const adId = _.get(newMessage, "ad._id", null);
 
-  if (conversationId && newMessage) {
+  if (adId && newMessage) {
     const delivery = (
       await getService("delivery").findOne({
-        ad: toObjectId(conversationId),
+        ad: toObjectId(adId),
         user: toObjectId(user._id),
       })
     )?.status;
@@ -233,8 +242,10 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   }
 
   isSystemMessage
-    ? io.emit(SOCKET_EVENTS.SYSTEM_ACTION, newMessage)
-    : io.emit(SOCKET_EVENTS.NEW_MESSAGE, newMessage);
+    ? io
+        .to(conversation?.receiver)
+        .emit(SOCKET_EVENTS.SYSTEM_ACTION, newMessage)
+    : io.to(conversation?.receiver).emit(SOCKET_EVENTS.NEW_MESSAGE, newMessage);
 
   return getResponse(res, { data: newMessage }, StatusCodes.CREATED);
 });

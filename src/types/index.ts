@@ -116,6 +116,7 @@ export enum SystemActionCodes {
 }
 
 export enum Services {
+  CONVERSATION = "conversation",
   MESSAGE = "message",
 }
 
