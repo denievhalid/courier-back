@@ -1,7 +1,7 @@
 import { asyncHandler } from "@/utils/asyncHandler";
 import { Request, Response } from "express";
 import { getParam } from "@/utils/getParam";
-import { ConversationType, UserType } from "@/types";
+import { ConversationType, MessageType, UserType } from "@/types";
 import { getService } from "@/lib/container";
 import { getResponse } from "@/utils/getResponse";
 import { StatusCodes } from "http-status-codes";
@@ -10,8 +10,10 @@ import { getAttributes } from "@/utils/getAttributes";
 import { getUserByConversationType } from "@/controllers/conversation/utils";
 import { Conversation } from "@/controllers/conversation/types";
 import { toObjectId } from "@/utils/toObjectId";
+import { SOCKET_EVENTS } from "@/const";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
+  const io = getParam(req, "io");
   const { ad, sender, receiver } = getAttributes(req.body, [
     "ad",
     "sender",
@@ -31,6 +33,8 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   if (!conversation) {
     conversation = await conversationService.create(payload);
   }
+
+  io.to(receiver._id).emit(SOCKET_EVENTS.NEW_CONVERSATION);
 
   return getResponse(res, { data: conversation }, StatusCodes.CREATED);
 });
@@ -96,7 +100,7 @@ export const getConversationsList = asyncHandler(
                   $eq: ["$conversation", "$$conversation"],
                 },
               },
-            }
+            },
           ],
           as: "messages",
         },
@@ -111,21 +115,25 @@ export const getConversationsList = asyncHandler(
           unreadMessagesCount: {
             $function: {
               // @ts-ignore
-              body: function(messages) {
+              body: function (messages) {
                 // @ts-ignore
-                const lastReadIndex = messages.slice().findIndex(message => message.status === 'read');
-                const unreadCount = lastReadIndex !== -1 ? lastReadIndex : messages.length;
-                return unreadCount
+                const lastReadIndex = messages
+                  .slice()
+                  .findIndex(
+                    (message: MessageType) => message.status === "read"
+                  );
+                const unreadCount =
+                  lastReadIndex !== -1 ? lastReadIndex : messages.length;
+                return unreadCount;
               },
-              args: ['$messages'],
-              lang: 'js',
+              args: ["$messages"],
+              lang: "js",
             },
           },
-          lastMessage: { $arrayElemAt: ['$messages', 0] }
+          lastMessage: { $arrayElemAt: ["$messages", 0] },
         },
       },
     ]);
-
 
     return getResponse(res, { data }, StatusCodes.OK);
   }
