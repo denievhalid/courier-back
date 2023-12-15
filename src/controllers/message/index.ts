@@ -165,6 +165,8 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     _id: conversationId,
   });
 
+  console.log(conversation, "conversation");
+
   const messageService = getService(Services.MESSAGE);
 
   const messageDoc = await messageService.create({
