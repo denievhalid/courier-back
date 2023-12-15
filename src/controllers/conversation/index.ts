@@ -115,18 +115,21 @@ export const getConversationsList = asyncHandler(
           unreadMessagesCount: {
             $function: {
               // @ts-ignore
-              body: function (messages) {
+              body: function (messages, user) {
                 // @ts-ignore
                 const lastReadIndex = messages
                   .slice()
-                  .findIndex(
-                    (message: MessageType) => message.status === "read"
-                  );
+                  .filter(
+                    (messageObject) =>
+                      JSON.stringify(messageObject.user) !==
+                      JSON.stringify(user._id)
+                  )
+                  .findIndex((message) => message.status === "read");
                 const unreadCount =
                   lastReadIndex !== -1 ? lastReadIndex : messages.length;
                 return unreadCount;
               },
-              args: ["$messages"],
+              args: ["$messages", user],
               lang: "js",
             },
           },
