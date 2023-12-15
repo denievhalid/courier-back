@@ -242,14 +242,13 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     )?.status;
     newMessage.delivery = delivery;
   }
+
+  const receiver = conversation?.receiver?._id?.toString();
+
   console.log(conversation?.receiver?._id, "conversation?.receiver?._id");
   isSystemMessage
-    ? io
-        .to(conversation?.receiver?._id)
-        .emit(SOCKET_EVENTS.SYSTEM_ACTION, newMessage)
-    : io
-        .to(conversation?.receiver?._id)
-        .emit(SOCKET_EVENTS.NEW_MESSAGE, newMessage);
+    ? io.to(receiver).emit(SOCKET_EVENTS.SYSTEM_ACTION, newMessage)
+    : io.to(receiver).emit(SOCKET_EVENTS.NEW_MESSAGE, newMessage);
 
   return getResponse(res, { data: newMessage }, StatusCodes.CREATED);
 });
