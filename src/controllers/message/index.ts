@@ -248,7 +248,6 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
   await messageService.update(
     {
       _id: toObjectId(id),
-      user: toObjectId(user._id),
     },
     {
       ...req.body,
