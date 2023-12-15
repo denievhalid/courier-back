@@ -42,7 +42,6 @@ initDatabase()
     io.on("connection", (socket) => {
       socket.on(SOCKET_EVENTS.JOIN_ROOM, ({ room }: { room: string }) => {
         socket.join(room);
-        io.to(room).emit(SOCKET_EVENTS.NEW_CONVERSATION);
       });
     });
 

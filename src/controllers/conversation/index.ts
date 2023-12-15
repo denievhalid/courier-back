@@ -34,7 +34,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     conversation = await conversationService.create(payload);
   }
 
-  io.to(receiver._id).emit(SOCKET_EVENTS.NEW_CONVERSATION);
+  io.to(receiver._id).emit(SOCKET_EVENTS.NEW_CONVERSATION, conversation);
 
   return getResponse(res, { data: conversation }, StatusCodes.CREATED);
 });
