@@ -245,7 +245,8 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
   const receiver = conversation?.receiver?._id?.toString();
 
-  console.log(conversation?.receiver?._id, "conversation?.receiver?._id");
+  console.log(receiver);
+
   isSystemMessage
     ? io.to(receiver).emit(SOCKET_EVENTS.SYSTEM_ACTION, newMessage)
     : io.to(receiver).emit(SOCKET_EVENTS.NEW_MESSAGE, newMessage);
