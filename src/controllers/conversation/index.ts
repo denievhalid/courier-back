@@ -59,6 +59,9 @@ export const getConversationsList = asyncHandler(
         },
       },
       {
+        $limit: 100,
+      },
+      {
         $lookup: {
           from: "ads",
           localField: "ad",
@@ -120,11 +123,13 @@ export const getConversationsList = asyncHandler(
                 const lastReadIndex = messages
                   .slice()
                   .filter(
-                    (messageObject) =>
+                    (messageObject: MessageType) =>
                       JSON.stringify(messageObject.user) !==
                       JSON.stringify(user._id)
                   )
-                  .findIndex((message) => message.status === "read");
+                  .findIndex(
+                    (message: MessageType) => message.status === "read"
+                  );
                 const unreadCount =
                   lastReadIndex !== -1 ? lastReadIndex : messages.length;
                 return unreadCount;
