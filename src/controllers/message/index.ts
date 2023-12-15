@@ -245,9 +245,11 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
   isSystemMessage
     ? io
-        .to(conversation?.receiver)
+        .to(conversation?.receiver?._id)
         .emit(SOCKET_EVENTS.SYSTEM_ACTION, newMessage)
-    : io.to(conversation?.receiver).emit(SOCKET_EVENTS.NEW_MESSAGE, newMessage);
+    : io
+        .to(conversation?.receiver?._id)
+        .emit(SOCKET_EVENTS.NEW_MESSAGE, newMessage);
 
   return getResponse(res, { data: newMessage }, StatusCodes.CREATED);
 });
