@@ -112,7 +112,7 @@ export const getConversationsList = asyncHandler(
         $project: {
           _id: 1,
           cover: { $first: { $first: "$ad.images" } },
-          user: {
+          courier: {
             $first: type === "sent" ? "$receiver" : "$sender",
           },
           unreadMessagesCount: {
