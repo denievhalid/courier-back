@@ -118,3 +118,16 @@ export enum SystemActionCodes {
 export enum Services {
   MESSAGE = "message",
 }
+
+export enum Routes {
+  ADS = "ads",
+  AUTH = "auth",
+  BLOCKS = "blocks",
+  CONVERSATIONS = "conversations",
+  DELIVERIES = "deliveries",
+  DIRECTIONS = "directions",
+  FAVORITES = "favorites",
+  FILES = "files",
+  MESSAGES = "messages",
+  USERS = "users",
+}
