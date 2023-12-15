@@ -55,6 +55,15 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     );
   }
 
+  await adService.update(
+    {
+      _id: ad._id,
+    },
+    {
+      courier: user._id,
+    }
+  );
+
   const conversationService = getService("conversation");
 
   let conversation = await conversationService.findOne({
