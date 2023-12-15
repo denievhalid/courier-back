@@ -1,3 +1,4 @@
+import _ from "lodash";
 import { asyncHandler } from "@/utils/asyncHandler";
 import { Request, Response } from "express";
 import { getAttributes } from "@/utils/getAttributes";
@@ -5,8 +6,7 @@ import { getResponse } from "@/utils/getResponse";
 import { StatusCodes } from "http-status-codes";
 import { getService } from "@/lib/container";
 import { getParam } from "@/utils/getParam";
-import _ from "lodash";
-import { AdType, MessageType, TCreateMessage, UserType } from "@/types";
+import { AdType, Services, TCreateMessage, UserType } from "@/types";
 import { SOCKET_EVENTS } from "@/const";
 import { toObjectId } from "@/utils/toObjectId";
 
@@ -14,7 +14,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
   const adService = getService("ad");
   const blockService = getService("block");
   const conversationService = getService("conversation");
-  const messageService = getService("message");
+  const messageService = getService(Services.MESSAGE);
   const user = getParam(req, "user") as UserType;
 
   const { conversation } = getAttributes(req.params, ["conversation"]);
@@ -74,7 +74,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
         isSystemMessage: 1,
         message: 1,
         type: 1,
-        systemAction:1,
+        systemAction: 1,
         user: { $first: "$user" },
       },
     },
@@ -94,7 +94,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
         message: 1,
         isSystemMessage: 1,
         type: 1,
-        systemAction:1,
+        systemAction: 1,
       },
     },
   ]);
@@ -147,12 +147,16 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
 export const create = asyncHandler(async (req: Request, res: Response) => {
   const io = getParam(req, "io");
   const user = getParam(req, "user") as UserType;
-  const { conversation, message, type, isSystemMessage, systemAction } = getAttributes(
-    req.body,
-    ["conversation", "message", "type", "isSystemMessage", "systemAction"]
-  );
+  const { conversation, message, type, isSystemMessage, systemAction } =
+    getAttributes(req.body, [
+      "conversation",
+      "message",
+      "type",
+      "isSystemMessage",
+      "systemAction",
+    ]);
 
-  const messageService = getService("message");
+  const messageService = getService(Services.MESSAGE);
 
   const messageDoc = await messageService.create({
     isSystemMessage,
@@ -160,7 +164,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     message,
     user,
     type,
-    systemAction
+    systemAction,
   });
 
   const data = await messageService.aggregate([
@@ -214,22 +218,42 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
       },
     },
   ]);
-  
- 
+
   const newMessage: TCreateMessage | undefined = _.first(data);
-  const conversationId = _.get(newMessage, 'ad._id', null)
-  
-  if(conversationId && newMessage) {
+  const conversationId = _.get(newMessage, "ad._id", null);
+
+  if (conversationId && newMessage) {
     const delivery = (
       await getService("delivery").findOne({
         ad: toObjectId(conversationId),
         user: toObjectId(user._id),
       })
     )?.status;
-    newMessage.delivery = delivery
+    newMessage.delivery = delivery;
   }
 
-  isSystemMessage ? io.emit(SOCKET_EVENTS.SYSTEM_ACTION, newMessage) : io.emit(SOCKET_EVENTS.NEW_MESSAGE, newMessage)
+  isSystemMessage
+    ? io.emit(SOCKET_EVENTS.SYSTEM_ACTION, newMessage)
+    : io.emit(SOCKET_EVENTS.NEW_MESSAGE, newMessage);
 
   return getResponse(res, { data: newMessage }, StatusCodes.CREATED);
+});
+
+export const update = asyncHandler(async (req: Request, res: Response) => {
+  const id = getParam(req.params, "id");
+  const user = getParam(req, "user") as UserType;
+
+  const messageService = getService(Services.MESSAGE);
+
+  await messageService.update(
+    {
+      _id: toObjectId(id),
+      user: toObjectId(user._id),
+    },
+    {
+      ...req.body,
+    }
+  );
+
+  return getResponse(res, {}, StatusCodes.OK);
 });
