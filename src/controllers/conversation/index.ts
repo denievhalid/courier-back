@@ -96,30 +96,36 @@ export const getConversationsList = asyncHandler(
                   $eq: ["$conversation", "$$conversation"],
                 },
               },
-            },
-            {
-              $limit: 1,
-            },
+            }
           ],
           as: "messages",
         },
       },
       {
-        $addFields: {
-          lastMessage: { $first: "$messages" },
-        },
-      },
-      {
         $project: {
           _id: 1,
-          lastMessage: 1,
           cover: { $first: { $first: "$ad.images" } },
           user: {
             $first: type === "sent" ? "$receiver" : "$sender",
           },
+          unreadMessagesCount: {
+            $function: {
+              // @ts-ignore
+              body: function(messages) {
+                // @ts-ignore
+                const lastReadIndex = messages.slice().reverse().findIndex(message => message.status === 'read');
+                const unreadCount = lastReadIndex !== -1 ? messages.length - 1 - lastReadIndex : messages.length;
+                return unreadCount
+              },
+              args: ['$messages'],
+              lang: 'js',
+            },
+          },
+          lastMessage: { $arrayElemAt: ['$messages', 0] }
         },
       },
     ]);
+
 
     return getResponse(res, { data }, StatusCodes.OK);
   }
