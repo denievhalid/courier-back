@@ -242,7 +242,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     )?.status;
     newMessage.delivery = delivery;
   }
-
+  console.log(conversation?.receiver?._id, "conversation?.receiver?._id");
   isSystemMessage
     ? io
         .to(conversation?.receiver?._id)
