@@ -14,7 +14,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   const io = getParam(req, "io");
   const { ad, status } = getAttributes(req.body, ["ad", "status"]);
   const user = getParam(req, "user") as UserType;
-
+  console.log(user, "user");
   const adService = getService(Services.AD);
   const deliveryService = getService(Services.DELIVERY);
 
