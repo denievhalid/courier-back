@@ -43,7 +43,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
   await deliveryService.create({
     ad: toObjectId(ad),
-    user: user._id,
+    user: toObjectId(user._id),
     status,
   });
 
@@ -51,8 +51,8 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
   const conversationPayload = {
     ad: toObjectId(ad),
-    receiver: ad.user._id,
-    sender: user._id,
+    receiver: toObjectId(ad.user._id),
+    sender: toObjectId(user._id),
   };
 
   let conversation = await conversationService.findOne(conversationPayload);
