@@ -104,3 +104,17 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
 
   return getResponse(res, {});
 });
+
+export const remove = asyncHandler(async (req: Request, res: Response) => {
+  const user = getParam(req, "user") as UserType;
+  const _id = getParam(req.params, "id");
+
+  const deliveryService = getService(Services.DELIVERY);
+
+  await deliveryService.remove({
+    _id,
+    user: toObjectId(user._id),
+  });
+
+  return getResponse(res, {}, StatusCodes.OK);
+});
