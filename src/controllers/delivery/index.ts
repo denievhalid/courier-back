@@ -26,10 +26,12 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   })) as AdType;
 
   if (!ad) {
+    console.log("ad error");
     throw new Error("Объявление не найдено");
   }
 
   if (ad.courier) {
+    console.log("ad.courier error");
     throw new Error("Извините, курьер уже найден");
   }
 
