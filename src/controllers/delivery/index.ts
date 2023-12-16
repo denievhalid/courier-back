@@ -19,19 +19,17 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   const deliveryService = getService(Services.DELIVERY);
 
   const ad = (await adService.findOne({
-    _id: getParam(req.body, "ad"),
+    _id: toObjectId(getParam(req.body, "ad")),
     user: {
-      $ne: user._id,
+      $ne: toObjectId(user._id),
     },
   })) as AdType;
 
   if (!ad) {
-    console.log("ad error");
     throw new Error("Объявление не найдено");
   }
 
   if (ad.courier) {
-    console.log("ad.courier error");
     throw new Error("Извините, курьер уже найден");
   }
 
