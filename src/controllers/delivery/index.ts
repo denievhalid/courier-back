@@ -12,30 +12,28 @@ import { getConversationAggregate } from "@/controllers/delivery/aggregate";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   const io = getParam(req, "io");
-  const status = getParam(req.body, "status");
+  const { ad, status } = getAttributes(req.body, ["ad", "status"]);
   const user = getParam(req, "user") as UserType;
 
   const adService = getService(Services.AD);
   const deliveryService = getService(Services.DELIVERY);
 
-  const ad = (await adService.findOne({
-    _id: toObjectId(getParam(req.body, "ad")),
+  const adDoc = (await adService.findOne({
+    _id: toObjectId(ad),
     user: {
       $ne: toObjectId(user._id),
     },
   })) as AdType;
 
-  if (!ad) {
-    console.log("ad");
+  if (!adDoc) {
     throw new Error("Объявление не найдено");
   }
 
-  if (ad.courier) {
-    console.log("ad courier");
+  if (adDoc.courier) {
     throw new Error("Извините, курьер уже найден");
   }
 
-  const payload = { ad: ad._id, user: user._id };
+  const payload = { ad, user: user._id };
 
   const deliveryDoc = await deliveryService.findOne(payload);
 
@@ -44,7 +42,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   }
 
   await deliveryService.create({
-    ad,
+    ad: toObjectId(ad),
     user: user._id,
     status,
   });
@@ -52,7 +50,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   const conversationService = getService(Services.CONVERSATION);
 
   const conversationPayload = {
-    ad: ad._id,
+    ad: toObjectId(ad),
     receiver: ad.user._id,
     sender: user._id,
   };
