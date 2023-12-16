@@ -107,12 +107,12 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
 
 export const remove = asyncHandler(async (req: Request, res: Response) => {
   const user = getParam(req, "user") as UserType;
-  const _id = getParam(req.params, "id");
-
+  const id = getParam(req.params, "id");
+  console.log(id);
   const deliveryService = getService(Services.DELIVERY);
 
   await deliveryService.remove({
-    _id,
+    _id: toObjectId(id),
     user: toObjectId(user._id),
   });
 
