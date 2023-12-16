@@ -6,6 +6,6 @@ const router = Router();
 
 router.post("/", authenticate, create);
 router.patch("/", authenticate, update);
-router.delete("/:id", authenticate, remove);
+router.delete("/:ad", authenticate, remove);
 
 export default router;
