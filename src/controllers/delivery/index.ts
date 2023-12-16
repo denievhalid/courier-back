@@ -14,7 +14,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   const io = getParam(req, "io");
   const { ad, status } = getAttributes(req.body, ["ad", "status"]);
   const user = getParam(req, "user") as UserType;
-  console.log({ ad, status });
+
   const adService = getService(Services.AD);
   const deliveryService = getService(Services.DELIVERY);
 
@@ -51,7 +51,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
   const conversationPayload = {
     ad: toObjectId(ad),
-    receiver: toObjectId(ad.user._id),
+    receiver: toObjectId(adDoc.user._id),
     sender: toObjectId(user._id),
   };
 
