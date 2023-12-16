@@ -7,16 +7,16 @@ import type { AdType, UserType } from "@/types";
 import type { Request, Response } from "express";
 import { toObjectId } from "@/utils/toObjectId";
 import { getAttributes } from "@/utils/getAttributes";
-import _ from "lodash";
-
-const deliveryService = getService("delivery");
+import { Services } from "@/types";
+import { getConversationAggregate } from "@/controllers/delivery/aggregate";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   const io = getParam(req, "io");
   const status = getParam(req.body, "status");
   const user = getParam(req, "user") as UserType;
 
-  const adService = getService("ad");
+  const adService = getService(Services.AD);
+  const deliveryService = getService(Services.DELIVERY);
 
   const ad = (await adService.findOne({
     _id: getParam(req.body, "ad"),
@@ -38,118 +38,32 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   const deliveryDoc = await deliveryService.findOne(payload);
 
   if (!deliveryDoc) {
-    await deliveryService.create({
-      ad,
-      user: user._id,
-      status,
-    });
-  } else {
-    await deliveryService.update(
-      {
-        ad,
-        user: user._id,
-      },
-      {
-        status,
-      }
-    );
+    throw new Error("Запрос уже отправлен");
   }
 
-  await adService.update(
-    {
-      _id: ad._id,
-    },
-    {
-      courier: user._id,
-    }
-  );
+  await deliveryService.create({
+    ad,
+    user: user._id,
+    status,
+  });
 
-  const conversationService = getService("conversation");
+  const conversationService = getService(Services.CONVERSATION);
 
-  let conversation = await conversationService.findOne({
+  const conversationPayload = {
     ad: ad._id,
     receiver: ad.user._id,
     sender: user._id,
-  });
+  };
+
+  let conversation = await conversationService.findOne(conversationPayload);
 
   if (!conversation) {
-    conversation = await conversationService.create({
-      ad: ad._id,
-      receiver: ad.user._id,
-      sender: user._id,
-    });
+    conversation = await conversationService.create(conversationPayload);
   }
 
-  const conversationDoc = await conversationService.aggregate([
-    {
-      $match: {
-        _id: conversation._id,
-      },
-    },
-    {
-      $limit: 1,
-    },
-    {
-      $lookup: {
-        from: "ads",
-        localField: "ad",
-        foreignField: "_id",
-        as: "ad",
-      },
-    },
-    {
-      $lookup: {
-        from: "messages",
-        let: { id: "$_id" },
-        pipeline: [
-          {
-            $match: {
-              $expr: {
-                $and: [{ $eq: ["$$id", "$conversation"] }],
-              },
-            },
-          },
-          { $limit: 1 },
-        ],
-        as: "messages",
-      },
-    },
-    {
-      $project: {
-        ad: { $first: "$ad" },
-        message: { $first: "$messages" },
-      },
-    },
-    {
-      $lookup: {
-        from: "users",
-        localField: "receiver",
-        foreignField: "_id",
-        as: "receiver",
-      },
-    },
-    {
-      $lookup: {
-        from: "users",
-        localField: "sender",
-        foreignField: "_id",
-        as: "sender",
-      },
-    },
-    {
-      $project: {
-        image: { $first: "$ad.images" },
-        message: 1,
-        receiver: { $first: "$receiver" },
-        sender: { $first: "$sender" },
-      },
-    },
-    {
-      $addFields: {
-        isNew: true,
-      },
-    },
-  ]);
+  const conversationDoc = await conversationService.aggregate(
+    getConversationAggregate(conversation._id)
+  );
 
   io.emit("newConversation", conversationDoc);
 
@@ -159,7 +73,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 export const getList = asyncHandler(async (req: Request, res: Response) => {
   const user = getParam(req, "user") as UserType;
 
-  const directionService = getService("direction");
+  const directionService = getService(Services.DIRECTION);
 
   const data = await directionService.aggregate([
     {
@@ -176,7 +90,7 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
   const user = getParam(req, "user") as UserType;
   const { ad, status } = getAttributes(req.body, ["ad", "status"]);
 
-  const deliveryService = getService("delivery");
+  const deliveryService = getService(Services.DELIVERY);
 
   await deliveryService.update(
     {
