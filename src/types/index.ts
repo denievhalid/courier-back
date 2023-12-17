@@ -135,3 +135,9 @@ export enum Routes {
   MESSAGES = "messages",
   USERS = "users",
 }
+
+export type IOType = {
+  to: (room: string) => {
+    emit: (event: string, data: any) => void;
+  };
+};

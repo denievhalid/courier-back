@@ -9,6 +9,7 @@ import { getParam } from "@/utils/getParam";
 import { AdType, Services, TCreateMessage, UserType } from "@/types";
 import { SOCKET_EVENTS } from "@/const";
 import { toObjectId } from "@/utils/toObjectId";
+import { createMessageHelper } from "./helpers/createMessage";
 
 export const getList = asyncHandler(async (req: Request, res: Response) => {
   const adService = getService("ad");
@@ -162,115 +163,15 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     "systemAction",
   ]);
 
-  const conversationService = getService(Services.CONVERSATION);
-
-  const conversation = await conversationService.findOne({
-    _id: toObjectId(conversationId),
-  });
-
-  const messageService = getService(Services.MESSAGE);
-
-  const messageDoc = await messageService.create({
-    isSystemMessage,
-    conversation,
-    message,
+  const newMessage = await createMessageHelper({
+    io,
     user,
+    conversationId,
+    message,
     type,
+    isSystemMessage,
     systemAction,
   });
-
-  const updatedConversation = await conversationService.update(
-    { _id: toObjectId(conversationId) },
-    { lastMessage: messageDoc },
-    { new: true }
-  );
-
-  const data = await messageService.aggregate([
-    {
-      $match: {
-        _id: toObjectId(messageDoc._id),
-      },
-    },
-    {
-      $lookup: {
-        from: "conversations",
-        localField: "conversation",
-        foreignField: "_id",
-        as: "conversation",
-      },
-    },
-    {
-      $lookup: {
-        from: "users",
-        localField: "user",
-        foreignField: "_id",
-        as: "user",
-      },
-    },
-    {
-      $project: {
-        ad: { $first: "$conversation.ad" },
-        message: 1,
-        systemAction: 1,
-        isSystemMessage: 1,
-        type: 1,
-        user: { $first: "$user" },
-      },
-    },
-    {
-      $lookup: {
-        from: "ads",
-        localField: "ad",
-        foreignField: "_id",
-        as: "ad",
-      },
-    },
-    {
-      $project: {
-        ad: { $first: "$ad" },
-        user: 1,
-        message: 1,
-        systemAction: 1,
-        isSystemMessage: 1,
-        type: 1,
-      },
-    },
-  ]);
-
-  const newMessage: TCreateMessage | undefined = _.first(data);
-  const adId = _.get(newMessage, "ad._id", null);
-
-  if (adId && newMessage) {
-    const delivery = (
-      await getService("delivery").findOne({
-        ad: toObjectId(adId),
-        user: toObjectId(user._id),
-      })
-    )?.status;
-    newMessage.delivery = delivery;
-  }
-
-  // для диалога
-  io.to(conversation?._id?.toString()).emit(
-    SOCKET_EVENTS[isSystemMessage ? "SYSTEM_ACTION" : "NEW_MESSAGE"],
-    newMessage
-  );
-
-  const allConversations = await conversationService.find({
-    _id: toObjectId(conversationId),
-  });
-
-  // Для страницы ConversationScreen
-  io.to(conversation?.receiver?._id?.toString()).emit(
-    SOCKET_EVENTS.UPDATE_CONVERSATION,
-    allConversations
-  );
-  io.to(conversation?.sender?._id?.toString()).emit(
-    SOCKET_EVENTS.UPDATE_CONVERSATION,
-    allConversations
-  );
-
-  console.log(allConversations, "updatedConversation");
 
   return getResponse(res, { data: newMessage }, StatusCodes.CREATED);
 });

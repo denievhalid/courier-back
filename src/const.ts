@@ -10,4 +10,5 @@ export const SOCKET_EVENTS = {
   JOIN_ROOM: "joinRoom",
   TYPING: "typing",
   SYSTEM_ACTION: "systemAction",
+  UPDATE_DELIVERY_STATUS: "updateDeliveryStatus",
 };
