@@ -162,8 +162,10 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     "systemAction",
   ]);
 
-  const conversation = await getService(Services.CONVERSATION).findOne({
-    _id: conversationId,
+  const conversationService = getService(Services.CONVERSATION);
+
+  const conversation = await conversationService.findOne({
+    _id: toObjectId(conversationId),
   });
 
   const messageService = getService(Services.MESSAGE);
@@ -176,6 +178,12 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     type,
     systemAction,
   });
+
+  const updatedConversation = await conversationService.update(
+    { _id: toObjectId(conversationId) },
+    { lastMessage: messageDoc },
+    { new: true }
+  );
 
   const data = await messageService.aggregate([
     {
@@ -242,18 +250,23 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     newMessage.delivery = delivery;
   }
 
+  // для диалога
   io.to(conversation?._id?.toString()).emit(
     SOCKET_EVENTS[isSystemMessage ? "SYSTEM_ACTION" : "NEW_MESSAGE"],
     newMessage
   );
+
+  // Для страницы ConversationScreen
   io.to(conversation?.receiver?._id?.toString()).emit(
-    SOCKET_EVENTS.NEW_MESSAGE,
-    newMessage
+    SOCKET_EVENTS.UPDATE_CONVERSATION,
+    updatedConversation
   );
   io.to(conversation?.sender?._id?.toString()).emit(
-    SOCKET_EVENTS.NEW_MESSAGE,
-    newMessage
+    SOCKET_EVENTS.UPDATE_CONVERSATION,
+    updatedConversation
   );
+
+  console.log(updatedConversation, "updatedConversation");
 
   return getResponse(res, { data: newMessage }, StatusCodes.CREATED);
 });
