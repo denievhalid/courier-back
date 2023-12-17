@@ -112,6 +112,9 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
     },
     {
       status,
+    },
+    {
+      new: true,
     }
   );
   const conversation = await conversationService.findOne({
