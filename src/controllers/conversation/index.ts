@@ -1,11 +1,11 @@
 import { asyncHandler } from "@/utils/asyncHandler";
 import { Request, Response } from "express";
 import { getParam } from "@/utils/getParam";
-import { ConversationType, MessageType, UserType } from "@/types";
+import { MessageType, UserType } from "@/types";
 import { getService } from "@/lib/container";
 import { getResponse } from "@/utils/getResponse";
 import { StatusCodes } from "http-status-codes";
-import mongoose, { PipelineStage } from "mongoose";
+import { PipelineStage } from "mongoose";
 import { getAttributes } from "@/utils/getAttributes";
 import { getUserByConversationType } from "@/controllers/conversation/utils";
 import { Conversation } from "@/controllers/conversation/types";

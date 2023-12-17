@@ -166,8 +166,6 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     _id: conversationId,
   });
 
-  console.log(conversation, "conversation");
-
   const messageService = getService(Services.MESSAGE);
 
   const messageDoc = await messageService.create({
@@ -244,13 +242,18 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     newMessage.delivery = delivery;
   }
 
-  isSystemMessage
-    ? io
-        .to(conversation?._id?.toString())
-        .emit(SOCKET_EVENTS.SYSTEM_ACTION, newMessage)
-    : io
-        .to(conversation?._id?.toString())
-        .emit(SOCKET_EVENTS.NEW_MESSAGE, newMessage);
+  io.to(conversation?._id?.toString()).emit(
+    SOCKET_EVENTS[isSystemMessage ? "SYSTEM_ACTION" : "NEW_MESSAGE"],
+    newMessage
+  );
+  io.to(conversation?.receiver?._id?.toString()).emit(
+    SOCKET_EVENTS.NEW_MESSAGE,
+    newMessage
+  );
+  io.to(conversation?.sender?._id?.toString()).emit(
+    SOCKET_EVENTS.NEW_MESSAGE,
+    newMessage
+  );
 
   return getResponse(res, { data: newMessage }, StatusCodes.CREATED);
 });
