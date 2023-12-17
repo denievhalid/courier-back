@@ -37,7 +37,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
         _id: 1,
         title: 1,
         cover: { $first: "$images" },
-        user: 1,
+        AdOwner: "$user",
       },
     },
   ]);
