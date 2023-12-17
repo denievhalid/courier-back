@@ -20,7 +20,6 @@ const schema = new Schema(
     lastMessage: {
       type: Schema.Types.ObjectId,
       ref: "Message",
-      required: true,
     },
   },
   {
