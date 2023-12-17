@@ -66,7 +66,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   const conversationDoc = await conversationService.aggregate(
     getConversationAggregate(conversation._id)
   );
-  createMessageHelper({
+  await createMessageHelper({
     io,
     user,
     conversationId: conversation._id,
@@ -117,6 +117,7 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
       new: true,
     }
   );
+  console.log(delivery, "delivery");
   const conversation = await conversationService.findOne({
     ad: toObjectId(ad),
   });
