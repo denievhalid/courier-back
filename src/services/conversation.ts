@@ -1,9 +1,20 @@
 import { getModel } from "@/lib/container";
-import { FilterQuery, PipelineStage } from "mongoose";
-import { ConversationType } from "@/types";
+import { FilterQuery, PipelineStage, UpdateQuery } from "mongoose";
+import { AdType, ConversationType, Services } from "@/types";
 
 export const create = (payload: ConversationType) => {
   return getModel("conversation").create(payload);
+};
+
+export const update = (
+  { _id }: FilterQuery<AdType>,
+  update: UpdateQuery<AdType>
+) => {
+  return getModel(Services.CONVERSATION).findOneAndUpdate(
+    { _id },
+    { ...update },
+    { new: true }
+  );
 };
 
 export const findOne = (filter: FilterQuery<ConversationType>) => {
