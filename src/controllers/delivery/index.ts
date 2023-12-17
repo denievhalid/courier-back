@@ -7,8 +7,10 @@ import type { AdType, UserType } from "@/types";
 import type { Request, Response } from "express";
 import { toObjectId } from "@/utils/toObjectId";
 import { getAttributes } from "@/utils/getAttributes";
-import { Services } from "@/types";
+import { Services, SystemActionCodes } from "@/types";
 import { getConversationAggregate } from "@/controllers/delivery/aggregate";
+import { SOCKET_EVENTS } from "@/const";
+import { createMessageHelper } from "../message/helpers/createMessage";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   const io = getParam(req, "io");
@@ -64,6 +66,15 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   const conversationDoc = await conversationService.aggregate(
     getConversationAggregate(conversation._id)
   );
+  createMessageHelper({
+    io,
+    user,
+    conversationId: conversation._id,
+    message: "заявка отправлена",
+    type: 1,
+    isSystemMessage: true,
+    systemAction: SystemActionCodes.DELIVERY_REQUESTED,
+  });
 
   io.emit("newConversation", conversationDoc);
 
@@ -87,12 +98,14 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const update = asyncHandler(async (req: Request, res: Response) => {
+  const io = getParam(req, "io");
   const user = getParam(req, "user") as UserType;
   const { ad, status } = getAttributes(req.body, ["ad", "status"]);
+  const conversationService = getService("conversation");
 
   const deliveryService = getService(Services.DELIVERY);
 
-  await deliveryService.update(
+  const delivery = await deliveryService.update(
     {
       ad: toObjectId(ad),
       user: toObjectId(user._id),
@@ -101,7 +114,13 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
       status,
     }
   );
-
+  const conversation = await conversationService.findOne({
+    ad: toObjectId(ad),
+  });
+  io.to(conversation?._id?.toString()).emit(
+    SOCKET_EVENTS.UPDATE_DELIVERY_STATUS,
+    delivery
+  );
   return getResponse(res, {});
 });
 
@@ -117,4 +136,18 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
   });
 
   return getResponse(res, {}, StatusCodes.OK);
+});
+
+export const getByAdId = asyncHandler(async (req: Request, res: Response) => {
+  const user = getParam(req, "user") as UserType;
+  const { ad } = getAttributes(req.body, ["ad"]);
+
+  const deliveryService = getService(Services.DELIVERY);
+
+  const delivery = await deliveryService.findOne({
+    ad: toObjectId(ad),
+    user: toObjectId(user._id),
+  });
+
+  return getResponse(res, { data: delivery.toObject() });
 });
