@@ -17,6 +17,10 @@ export const update = (
   );
 };
 
+export const find = (filter: FilterQuery<ConversationType>) => {
+  return getModel("conversation").find(filter);
+};
+
 export const findOne = (filter: FilterQuery<ConversationType>) => {
   return getModel("conversation").findOne(filter);
 };

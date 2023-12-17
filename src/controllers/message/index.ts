@@ -256,17 +256,21 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     newMessage
   );
 
+  const allConversations = await conversationService.find({
+    _id: toObjectId(conversationId),
+  });
+
   // Для страницы ConversationScreen
   io.to(conversation?.receiver?._id?.toString()).emit(
     SOCKET_EVENTS.UPDATE_CONVERSATION,
-    updatedConversation
+    allConversations
   );
   io.to(conversation?.sender?._id?.toString()).emit(
     SOCKET_EVENTS.UPDATE_CONVERSATION,
-    updatedConversation
+    allConversations
   );
 
-  console.log(updatedConversation, "updatedConversation");
+  console.log(allConversations, "updatedConversation");
 
   return getResponse(res, { data: newMessage }, StatusCodes.CREATED);
 });
