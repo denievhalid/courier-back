@@ -44,12 +44,6 @@ export const createMessageHelper = async ({
     systemAction,
   });
 
-  const updatedConversation = await conversationService.update(
-    { _id: toObjectId(conversationId) },
-    { lastMessage: messageDoc },
-    { new: true }
-  );
-
   const data = await messageService.aggregate([
     {
       $match: {
@@ -106,13 +100,12 @@ export const createMessageHelper = async ({
   const adId = _.get(newMessage, "ad._id", null);
 
   if (adId && newMessage) {
-    const delivery = (
+    const delivery = (newMessage.delivery = (
       await getService("delivery").findOne({
         ad: toObjectId(adId),
         user: toObjectId(user._id),
       })
-    )?.status;
-    newMessage.delivery = delivery;
+    )?.status);
   }
 
   // для диалога

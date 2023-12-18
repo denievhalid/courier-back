@@ -7,11 +7,6 @@ export const getMessagesListAggregate = (conversationId: string) => [
     },
   },
   {
-    $sort: {
-      createdAt: -1,
-    },
-  },
-  {
     $lookup: {
       from: "conversations",
       localField: "conversation",
@@ -22,9 +17,19 @@ export const getMessagesListAggregate = (conversationId: string) => [
   {
     $lookup: {
       from: "users",
-      localField: "sender",
+      localField: "user",
       foreignField: "_id",
-      as: "sender",
+      as: "user",
+    },
+  },
+  {
+    $project: {
+      ad: { $first: "$conversation.ad" },
+      message: 1,
+      systemAction: 1,
+      isSystemMessage: 1,
+      type: 1,
+      user: { $first: "$user" },
     },
   },
   {
@@ -38,12 +43,11 @@ export const getMessagesListAggregate = (conversationId: string) => [
   {
     $project: {
       ad: { $first: "$ad" },
-      createdAt: 1,
-      isSystemMessage: 1,
+      user: 1,
       message: 1,
-      type: 1,
       systemAction: 1,
-      sender: { $first: "$sender" },
+      isSystemMessage: 1,
+      type: 1,
     },
   },
 ];
