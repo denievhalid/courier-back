@@ -78,17 +78,17 @@ export const getConversationsList = asyncHandler(
       {
         $lookup: {
           from: "users",
-          localField: "receiver",
-          foreignField: "_id",
-          as: "receiver",
+          localField: "courier",
+          courier: "_id",
+          as: "courier",
         },
       },
       {
         $lookup: {
           from: "users",
-          localField: "sender",
+          localField: "adAuthor",
           foreignField: "_id",
-          as: "sender",
+          as: "adAuthor",
         },
       },
       {
