@@ -36,7 +36,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   const payload = { ad: toObjectId(ad), user: toObjectId(user._id) };
 
   const deliveryDoc = await deliveryService.findOne(payload);
-
+  console.log(11);
   if (deliveryDoc) {
     throw new Error("Запрос уже отправлен");
   }
