@@ -69,6 +69,7 @@ export type UserType = {
   _id: string;
   firstname: string;
   phoneNumber: number;
+  courier?: boolean | undefined;
 };
 
 export interface IService {

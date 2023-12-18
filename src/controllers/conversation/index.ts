@@ -17,6 +17,7 @@ import { toObjectId } from "@/utils/toObjectId";
 import { getUserByConversationType } from "./utils";
 import { getMessagesListAggregate } from "./aggregate";
 import { Conversation } from "./types";
+import { isEqual } from "lodash";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   //const io = getParam(req, "io");
@@ -166,6 +167,12 @@ export const getMessagesList = asyncHandler(
       conversation.courier?._id.toString() === user._id.toString()
         ? conversation?.adAuthor
         : conversation?.courier;
+
+    // @ts-ignore
+    companion?.courier = isEqual(
+      conversation.ad.courier?._id.toString(),
+      companion?._id.toString()
+    );
 
     const data = {
       ad: conversation.ad,
