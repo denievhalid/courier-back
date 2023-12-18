@@ -22,9 +22,9 @@ export const getMessagesListAggregate = (conversationId: string) => [
   {
     $lookup: {
       from: "users",
-      localField: "user",
+      localField: "sender",
       foreignField: "_id",
-      as: "user",
+      as: "sender",
     },
   },
   {
@@ -34,15 +34,7 @@ export const getMessagesListAggregate = (conversationId: string) => [
       message: 1,
       type: 1,
       systemAction: 1,
-      user: { $first: "$user" },
-    },
-  },
-  {
-    $lookup: {
-      from: "ads",
-      localField: "ad",
-      foreignField: "_id",
-      as: "ad",
+      user: { $first: "$sender" },
     },
   },
   {
