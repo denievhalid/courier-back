@@ -43,6 +43,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     status,
   });
 
+  console.log(1);
   const conversationService = getService(Services.CONVERSATION);
 
   const conversationPayload = {
@@ -50,13 +51,14 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     adAuthor: toObjectId(ad.user._id),
     courier: toObjectId(user._id),
   };
+  console.log(2);
 
   let conversation = await conversationService.findOne(conversationPayload);
 
   if (!conversation) {
     conversation = await conversationService.create(conversationPayload);
   }
-
+  console.log(2);
   const conversationDoc = await conversationService.aggregate(
     getConversationAggregate(conversation._id)
   );
@@ -70,6 +72,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     isSystemMessage: true,
     systemAction: SystemActionCodes.DELIVERY_REQUESTED,
   });
+  console.log(4);
 
   io.emit("newConversation", conversationDoc);
 
