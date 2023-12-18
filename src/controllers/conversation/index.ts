@@ -104,6 +104,9 @@ export const getConversationsList = asyncHandler(
               },
             },
             {
+              $limit: 1,
+            },
+            {
               $match: {
                 $expr: {
                   $eq: ["$conversation", "$$conversation"],
@@ -111,7 +114,7 @@ export const getConversationsList = asyncHandler(
               },
             },
           ],
-          as: "messages",
+          as: "lastMessage",
         },
       },
       {
@@ -121,28 +124,7 @@ export const getConversationsList = asyncHandler(
           user: {
             $first: type === "sent" ? "$receiver" : "$sender",
           },
-          unreadMessagesCount: {
-            $function: {
-              body: function (messages: MessageType[], user: UserType) {
-                const partnerMessages = messages
-                  .slice()
-                  .filter(
-                    (messageObject: MessageType) =>
-                      JSON.stringify(messageObject.user) !==
-                      JSON.stringify(user._id)
-                  );
-                const lastReadIndex = partnerMessages.findIndex(
-                  (message: MessageType) => message.status === "read"
-                );
-                const unreadCount =
-                  lastReadIndex !== -1 ? lastReadIndex : partnerMessages.length;
-                return unreadCount;
-              },
-              args: ["$messages", user],
-              lang: "js",
-            },
-          },
-          lastMessage: { $arrayElemAt: ["$messages", 0] },
+          lastMessage: { $first: "$lastMessage" },
         },
       },
     ]);
