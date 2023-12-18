@@ -14,8 +14,8 @@ import { SOCKET_EVENTS } from "@/const";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   //const io = getParam(req, "io");
-  const attributes = getAttributes(req.body, ["ad", "sender", "receiver"]);
-
+  const attributes = getAttributes(req.body, ["ad", "courier"]);
+  console.log(attributes, "attributes");
   const service = getService(Services.CONVERSATION);
 
   let conversation = await service.findOne(attributes);
