@@ -166,16 +166,10 @@ export const getMessagesList = asyncHandler(
       })
     );
 
-    const delivery = await getService("delivery").findOne({
-      ad: toObjectId(conversation.ad._id),
-      user: toObjectId(user._id),
-    })?.status;
-
     const data = {
       ad: conversation.ad,
       adAuthor: conversation.adAuthor,
       isBlocked,
-      delivery,
       canWrite,
       companion,
       messages,
