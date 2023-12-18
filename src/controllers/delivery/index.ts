@@ -65,7 +65,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   const conversationDoc = await conversationService.aggregate(
     getConversationAggregate(conversation._id)
   );
-
+  console.log(5);
   await createMessageHelper({
     io,
     user,
