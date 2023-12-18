@@ -45,21 +45,21 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
   const conversationService = getService(Services.CONVERSATION);
 
-  const conversationPayload = {
-    ad: toObjectId(ad),
-    receiver: toObjectId(adDoc.user._id),
-    sender: toObjectId(user._id),
-  };
-
-  let conversation = await conversationService.findOne(conversationPayload);
-
-  if (!conversation) {
-    conversation = await conversationService.create(conversationPayload);
-  }
-
-  const conversationDoc = await conversationService.aggregate(
-    getConversationAggregate(conversation._id)
-  );
+  // const conversationPayload = {
+  //   ad: toObjectId(ad),
+  //   receiver: toObjectId(adDoc.user._id),
+  //   sender: toObjectId(user._id),
+  // };
+  //
+  // let conversation = await conversationService.findOne(conversationPayload);
+  //
+  // if (!conversation) {
+  //   conversation = await conversationService.create(conversationPayload);
+  // }
+  //
+  // const conversationDoc = await conversationService.aggregate(
+  //   getConversationAggregate(conversation._id)
+  // );
 
   // await createMessageHelper({
   //   io,
