@@ -12,7 +12,7 @@ const schema = new Schema(
       type: String,
       trim: true,
     },
-    user: {
+    sender: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
@@ -29,7 +29,11 @@ const schema = new Schema(
     },
     systemAction: {
       type: String,
-      enum: [SystemActionCodes.DELIVERY_REQUESTED, SystemActionCodes.DELIVERY_CANCELED, SystemActionCodes.DELIVERY_CONFIRMED],
+      enum: [
+        SystemActionCodes.DELIVERY_REQUESTED,
+        SystemActionCodes.DELIVERY_CANCELED,
+        SystemActionCodes.DELIVERY_CONFIRMED,
+      ],
     },
     type: {
       type: Number,

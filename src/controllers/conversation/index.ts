@@ -1,7 +1,7 @@
 import { asyncHandler } from "@/utils/asyncHandler";
 import { Request, Response } from "express";
 import { getParam } from "@/utils/getParam";
-import { MessageType, UserType } from "@/types";
+import { MessageType, Services, UserType } from "@/types";
 import { getService } from "@/lib/container";
 import { getResponse } from "@/utils/getResponse";
 import { StatusCodes } from "http-status-codes";
@@ -13,28 +13,21 @@ import { toObjectId } from "@/utils/toObjectId";
 import { SOCKET_EVENTS } from "@/const";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
-  const io = getParam(req, "io");
-  const { ad, sender, receiver } = getAttributes(req.body, [
-    "ad",
-    "sender",
-    "receiver",
-  ]);
+  //const io = getParam(req, "io");
+  const attributes = getAttributes(req.body, ["ad", "sender", "receiver"]);
 
-  const payload = {
-    ad,
-    sender,
-    receiver,
-  };
+  const service = getService(Services.CONVERSATION);
 
-  const conversationService = getService("conversation");
-
-  let conversation = await conversationService.findOne(payload);
+  let conversation = await service.findOne(attributes);
 
   if (!conversation) {
-    conversation = await conversationService.create(payload);
+    conversation = await service.create(attributes);
   }
 
-  io.to(receiver._id).emit(SOCKET_EVENTS.NEW_CONVERSATION, conversation);
+  // io.to(attributes?.receiver?._id).emit(
+  //   SOCKET_EVENTS.NEW_CONVERSATION,
+  //   conversation
+  // );
 
   return getResponse(res, { data: conversation }, StatusCodes.CREATED);
 });
