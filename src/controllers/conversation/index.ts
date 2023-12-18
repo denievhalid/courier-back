@@ -170,6 +170,7 @@ export const getMessagesList = asyncHandler(
 
     const data = {
       ad: conversation.ad,
+      adAuthor: conversation.adAuthor,
       isBlocked,
       canWrite,
       companion,
