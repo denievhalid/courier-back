@@ -175,15 +175,23 @@ export const getMessagesList = asyncHandler(
       companion?._id.toString()
     );
 
+    const isBlocked = Boolean(
+      await blockService.count({
+        user: toObjectId(user._id),
+        blockedUser: toObjectId(companion?._id),
+      })
+    );
+
     const canWrite = !Boolean(
       await blockService.count({
         blockedUser: toObjectId(user._id),
-        user: companion._id,
+        user: toObjectId(companion?._id),
       })
     );
 
     const data = {
       ad: conversation.ad,
+      isBlocked,
       canWrite,
       companion,
       messages,
