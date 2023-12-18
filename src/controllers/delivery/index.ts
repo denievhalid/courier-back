@@ -11,6 +11,7 @@ import { Services, SystemActionCodes } from "@/types";
 import { getConversationAggregate } from "@/controllers/delivery/aggregate";
 import { SOCKET_EVENTS } from "@/const";
 import { createMessageHelper } from "@/controllers/message/helpers/createMessage";
+import _ from "lodash";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   const io = getParam(req, "io");
@@ -72,7 +73,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     sender: toObjectId(user._id),
   });
 
-  const data = await messageService.aggregate([
+  const message = await messageService.aggregate([
     {
       $match: {
         _id: toObjectId(messageDoc._id),
@@ -114,9 +115,12 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     },
   ]);
 
-  io.emit("newConversation", conversationDoc);
+  io.to(conversation?._id?.toString()).emit(
+    SOCKET_EVENTS.SYSTEM_ACTION,
+    _.first(message)
+  );
 
-  return getResponse(res, { data }, StatusCodes.CREATED);
+  return getResponse(res, {}, StatusCodes.CREATED);
 });
 
 export const getList = asyncHandler(async (req: Request, res: Response) => {
