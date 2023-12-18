@@ -41,7 +41,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   console.log("00");
 
   await deliveryService.create({
-    ad: toObjectId(ad),
+    ad: toObjectId(ad._id),
     user: toObjectId(user._id),
     status,
   });
