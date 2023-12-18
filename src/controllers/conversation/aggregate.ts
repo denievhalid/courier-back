@@ -28,24 +28,22 @@ export const getMessagesListAggregate = (conversationId: string) => [
     },
   },
   {
-    $project: {
-      createdAt: 1,
-      isSystemMessage: 1,
-      message: 1,
-      type: 1,
-      systemAction: 1,
-      user: { $first: "$sender" },
+    $lookup: {
+      from: "ads",
+      localField: "ad",
+      foreignField: "_id",
+      as: "ad",
     },
   },
   {
     $project: {
       ad: { $first: "$ad" },
-      createdAt: "$createdAt",
-      sender: 1,
-      message: 1,
+      createdAt: 1,
       isSystemMessage: 1,
+      message: 1,
       type: 1,
       systemAction: 1,
+      sender: { $first: "$sender" },
     },
   },
 ];
