@@ -29,8 +29,6 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     throw new Error("Объявление не найдено");
   }
 
-  console.log(0);
-
   const payload = { ad: toObjectId(ad._id), user: toObjectId(user._id) };
 
   const deliveryDoc = await deliveryService.findOne(payload);
@@ -38,7 +36,6 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   if (deliveryDoc) {
     throw new Error("Запрос уже отправлен");
   }
-  console.log("00");
 
   await deliveryService.create({
     ad: toObjectId(ad._id),
@@ -46,7 +43,6 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     status,
   });
 
-  console.log(1);
   const conversationService = getService(Services.CONVERSATION);
 
   const conversationPayload = {
@@ -54,28 +50,26 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     adAuthor: toObjectId(ad.user._id),
     courier: toObjectId(user._id),
   };
-  console.log(2);
 
   let conversation = await conversationService.findOne(conversationPayload);
 
   if (!conversation) {
     conversation = await conversationService.create(conversationPayload);
   }
-  console.log(2);
+
   const conversationDoc = await conversationService.aggregate(
     getConversationAggregate(conversation._id)
   );
-  console.log(5);
-  await createMessageHelper({
-    io,
-    user,
-    conversationId: conversation._id,
-    message: "заявка отправлена",
-    type: 1,
-    isSystemMessage: true,
-    systemAction: SystemActionCodes.DELIVERY_REQUESTED,
-  });
-  console.log(4);
+
+  // await createMessageHelper({
+  //   io,
+  //   user,
+  //   conversationId: conversation._id,
+  //   message: "заявка отправлена",
+  //   type: 1,
+  //   isSystemMessage: true,
+  //   systemAction: SystemActionCodes.DELIVERY_REQUESTED,
+  // });
 
   io.emit("newConversation", conversationDoc);
 
