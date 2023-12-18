@@ -1,27 +1,28 @@
 import { asyncHandler } from "@/utils/asyncHandler";
 import { Request, Response } from "express";
 import { getParam } from "@/utils/getParam";
-import { MessageType, Services, UserType } from "@/types";
+import { AdType, MessageType, Services, UserType } from "@/types";
 import { getService } from "@/lib/container";
 import { getResponse } from "@/utils/getResponse";
 import { StatusCodes } from "http-status-codes";
 import { PipelineStage } from "mongoose";
 import { getAttributes } from "@/utils/getAttributes";
-import { getUserByConversationType } from "@/controllers/conversation/utils";
-import { Conversation } from "@/controllers/conversation/types";
 import { toObjectId } from "@/utils/toObjectId";
-import { SOCKET_EVENTS } from "@/const";
-import { getMessagesListAggregate } from "@/controllers/conversation/aggregate";
+import { getUserByConversationType } from "./utils";
+import { getMessagesListAggregate } from "./aggregate";
+import { Conversation } from "./types";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   //const io = getParam(req, "io");
-  const { ad, courier } = getAttributes(req.body, ["ad", "courier"]);
+  const ad = getParam(req.body, "ad") as AdType;
+  const user = getParam(req, "user") as UserType;
 
   const service = getService(Services.CONVERSATION);
-  const participantService = getService(Services.PARTICIPANT);
 
   const payload = {
     ad: ad?._id,
+    adAuthor: toObjectId(ad?.user?._id),
+    courier: toObjectId(user._id),
   };
 
   let conversation = await service.findOne(payload);
@@ -29,12 +30,6 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   if (!conversation) {
     conversation = await service.create(payload);
   }
-
-  await participantService.create({
-    conversation: toObjectId(conversation._id),
-    courier: toObjectId(courier),
-    adAuthor: toObjectId(ad?.user?._id),
-  });
 
   // io.to(attributes?.receiver?._id).emit(
   //   SOCKET_EVENTS.NEW_CONVERSATION,
