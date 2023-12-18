@@ -49,7 +49,7 @@ export const getConversationsList = asyncHandler(
   async (req: Request, res: Response) => {
     const type = getParam(req.query, "type") as ConversationTypes;
     const user = getParam(req, "user") as UserType;
-    const conversationService = getService(Services.CONVERSATION);
+    const service = getService(Services.CONVERSATION);
 
     const match: PipelineStage.Match = {
       $match: {},
@@ -59,7 +59,7 @@ export const getConversationsList = asyncHandler(
 
     console.log(match);
 
-    const data = await conversationService.aggregate([
+    const data = await service.aggregate([
       match,
       {
         $sort: {
@@ -77,14 +77,14 @@ export const getConversationsList = asyncHandler(
           as: "ad",
         },
       },
-      {
-        $lookup: {
-          from: "users",
-          localField: "courier",
-          courier: "_id",
-          as: "courier",
-        },
-      },
+      // {
+      //   $lookup: {
+      //     from: "users",
+      //     localField: "courier",
+      //     courier: "_id",
+      //     as: "courier",
+      //   },
+      // },
       {
         $lookup: {
           from: "users",
