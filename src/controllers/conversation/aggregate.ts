@@ -36,8 +36,17 @@ export const getMessagesListAggregate = (conversationId: string) => [
     },
   },
   {
+    $lookup: {
+      from: "users",
+      localField: "adAuthor",
+      foreignField: "_id",
+      as: "adAuthor",
+    },
+  },
+  {
     $project: {
       ad: { $first: "$ad" },
+      adAuthor: 1,
       createdAt: 1,
       isSystemMessage: 1,
       message: 1,
