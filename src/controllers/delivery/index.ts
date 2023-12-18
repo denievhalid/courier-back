@@ -10,7 +10,7 @@ import { getAttributes } from "@/utils/getAttributes";
 import { Services, SystemActionCodes } from "@/types";
 import { getConversationAggregate } from "@/controllers/delivery/aggregate";
 import { SOCKET_EVENTS } from "@/const";
-import { createMessageHelper } from "../message/helpers/createMessage";
+import { createMessageHelper } from "@/controllers/message/helpers/createMessage";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   const io = getParam(req, "io");
@@ -21,27 +21,21 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   const deliveryService = getService(Services.DELIVERY);
 
   const adDoc = (await adService.findOne({
-    _id: toObjectId(ad),
+    _id: toObjectId(ad._id),
     courier: { $exists: false },
   })) as AdType;
-
-  console.log(0);
 
   if (!adDoc) {
     throw new Error("Объявление не найдено");
   }
 
-  console.log(1);
-
-  const payload = { ad: toObjectId(ad), user: toObjectId(user._id) };
+  const payload = { ad: toObjectId(ad._id), user: toObjectId(user._id) };
 
   const deliveryDoc = await deliveryService.findOne(payload);
-  console.log(deliveryDoc);
+
   if (deliveryDoc) {
     throw new Error("Запрос уже отправлен");
   }
-
-  console.log(2);
 
   await deliveryService.create({
     ad: toObjectId(ad),
@@ -49,37 +43,35 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     status,
   });
 
-  console.log(3);
-
   const conversationService = getService(Services.CONVERSATION);
 
-  // const conversationPayload = {
-  //   ad: toObjectId(ad),
-  //   receiver: toObjectId(adDoc.user._id),
-  //   sender: toObjectId(user._id),
-  // };
-  //
-  // let conversation = await conversationService.findOne(conversationPayload);
-  //
-  // if (!conversation) {
-  //   conversation = await conversationService.create(conversationPayload);
-  // }
-  //
-  // const conversationDoc = await conversationService.aggregate(
-  //   getConversationAggregate(conversation._id)
-  // );
+  const conversationPayload = {
+    ad: toObjectId(ad),
+    adAuthor: toObjectId(ad.user._id),
+    courier: toObjectId(user._id),
+  };
 
-  // await createMessageHelper({
-  //   io,
-  //   user,
-  //   conversationId: conversation._id,
-  //   message: "заявка отправлена",
-  //   type: 1,
-  //   isSystemMessage: true,
-  //   systemAction: SystemActionCodes.DELIVERY_REQUESTED,
-  // });
-  //
-  // io.emit("newConversation", conversationDoc);
+  let conversation = await conversationService.findOne(conversationPayload);
+
+  if (!conversation) {
+    conversation = await conversationService.create(conversationPayload);
+  }
+
+  const conversationDoc = await conversationService.aggregate(
+    getConversationAggregate(conversation._id)
+  );
+
+  await createMessageHelper({
+    io,
+    user,
+    conversationId: conversation._id,
+    message: "заявка отправлена",
+    type: 1,
+    isSystemMessage: true,
+    systemAction: SystemActionCodes.DELIVERY_REQUESTED,
+  });
+
+  io.emit("newConversation", conversationDoc);
 
   return getResponse(res, {}, StatusCodes.CREATED);
 });
