@@ -25,6 +25,8 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     courier: { $exists: false },
   })) as AdType;
 
+  console.log(0);
+
   if (!adDoc) {
     throw new Error("Объявление не найдено");
   }
