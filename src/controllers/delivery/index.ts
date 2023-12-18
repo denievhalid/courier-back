@@ -29,6 +29,8 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     throw new Error("Объявление не найдено");
   }
 
+  console.log(1);
+
   const payload = { ad: toObjectId(ad), user: toObjectId(user._id) };
 
   const deliveryDoc = await deliveryService.findOne(payload);
@@ -37,11 +39,15 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     throw new Error("Запрос уже отправлен");
   }
 
+  console.log(2);
+
   await deliveryService.create({
     ad: toObjectId(ad),
     user: toObjectId(user._id),
     status,
   });
+
+  console.log(3);
 
   const conversationService = getService(Services.CONVERSATION);
 
