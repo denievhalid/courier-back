@@ -45,9 +45,9 @@ export const getConversationById = asyncHandler(
       {
         $project: {
           _id: 1,
-          ad: "$ad",
-          adAuthor: "$adAuthor",
-          courier: "$courier",
+          ad: { $first: "$ad" },
+          adAuthor: { $first: "$adAuthor" },
+          courier: { $first: "$courier" },
         },
       },
     ]);
@@ -56,7 +56,7 @@ export const getConversationById = asyncHandler(
       throw new Error("Разговор не найден");
     }
 
-    _.set(req, "conversation", conversation);
+    _.set(req, "conversation", _.first(conversation));
 
     return next();
   }
