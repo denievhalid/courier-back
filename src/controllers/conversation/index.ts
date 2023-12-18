@@ -1,7 +1,13 @@
 import { asyncHandler } from "@/utils/asyncHandler";
 import { Request, Response } from "express";
 import { getParam } from "@/utils/getParam";
-import { AdType, MessageType, Services, UserType } from "@/types";
+import {
+  AdType,
+  ConversationType,
+  MessageType,
+  Services,
+  UserType,
+} from "@/types";
 import { getService } from "@/lib/container";
 import { getResponse } from "@/utils/getResponse";
 import { StatusCodes } from "http-status-codes";
@@ -147,14 +153,24 @@ export const getConversationsList = asyncHandler(
 
 export const getMessagesList = asyncHandler(
   async (req: Request, res: Response) => {
-    const conversation = getParam(req, "conversation");
-
+    const conversation = getParam(req, "conversation") as ConversationType;
+    const user = getParam(req, "user") as UserType;
+    console.log(conversation, "conversation");
     const messageService = getService(Services.MESSAGE);
 
     const messages = await messageService.aggregate(
-      getMessagesListAggregate(conversation)
+      getMessagesListAggregate(conversation._id)
     );
 
-    return getResponse(res, { data: messages }, StatusCodes.OK);
+    const companion =
+      conversation.courier?._id.toString() === user._id.toString()
+        ? conversation?.adAuthor
+        : conversation?.courier;
+
+    const data = {
+      companion,
+    };
+
+    return getResponse(res, { data }, StatusCodes.OK);
   }
 );

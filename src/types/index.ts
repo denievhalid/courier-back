@@ -33,9 +33,10 @@ export type BlockType = {
 };
 
 export type ConversationType = {
+  _id: string;
   ad: AdType;
-  receiver: UserType;
-  sender: UserType;
+  adAuthor: UserType;
+  courier: UserType;
 };
 
 export type DirectionType = {
