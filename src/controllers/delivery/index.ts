@@ -22,20 +22,14 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
   const adDoc = (await adService.findOne({
     _id: toObjectId(ad),
-    courier: {
-      $ne: toObjectId(user._id),
-    },
+    courier: { $exists: false },
   })) as AdType;
 
   if (!adDoc) {
     throw new Error("Объявление не найдено");
   }
 
-  if (adDoc.courier) {
-    throw new Error("Извините, курьер уже найден");
-  }
-
-  const payload = { ad, user: user._id };
+  const payload = { ad: toObjectId(ad), user: toObjectId(user._id) };
 
   const deliveryDoc = await deliveryService.findOne(payload);
 
@@ -66,17 +60,18 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   const conversationDoc = await conversationService.aggregate(
     getConversationAggregate(conversation._id)
   );
-  await createMessageHelper({
-    io,
-    user,
-    conversationId: conversation._id,
-    message: "заявка отправлена",
-    type: 1,
-    isSystemMessage: true,
-    systemAction: SystemActionCodes.DELIVERY_REQUESTED,
-  });
 
-  io.emit("newConversation", conversationDoc);
+  // await createMessageHelper({
+  //   io,
+  //   user,
+  //   conversationId: conversation._id,
+  //   message: "заявка отправлена",
+  //   type: 1,
+  //   isSystemMessage: true,
+  //   systemAction: SystemActionCodes.DELIVERY_REQUESTED,
+  // });
+  //
+  // io.emit("newConversation", conversationDoc);
 
   return getResponse(res, {}, StatusCodes.CREATED);
 });
