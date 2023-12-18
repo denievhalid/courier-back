@@ -1,13 +1,7 @@
 import { asyncHandler } from "@/utils/asyncHandler";
 import { Request, Response } from "express";
 import { getParam } from "@/utils/getParam";
-import {
-  AdType,
-  ConversationType,
-  MessageType,
-  Services,
-  UserType,
-} from "@/types";
+import { AdType, ConversationType, Services, UserType } from "@/types";
 import { getService } from "@/lib/container";
 import { getResponse } from "@/utils/getResponse";
 import { StatusCodes } from "http-status-codes";
@@ -124,7 +118,7 @@ export const getConversationsList = asyncHandler(
           _id: 1,
           cover: { $first: { $first: "$ad.images" } },
           companion: {
-            $first: `$${getUserByConversationType[type]}`,
+            $first: type === ConversationTypes.INBOX ? "$courier" : "$adAuthor",
           },
           lastMessage: { $first: "$lastMessage" },
         },
