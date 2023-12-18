@@ -41,7 +41,7 @@ export const getMessagesListAggregate = (conversationId: string) => [
     $project: {
       ad: { $first: "$ad" },
       createdAt: "$createdAt",
-      user: 1,
+      sender: 1,
       message: 1,
       isSystemMessage: 1,
       type: 1,
