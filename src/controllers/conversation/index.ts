@@ -57,6 +57,8 @@ export const getConversationsList = asyncHandler(
 
     match.$match[getUserByConversationType[type]] = toObjectId(user._id);
 
+    console.log(match);
+
     const data = await conversationService.aggregate([
       match,
       {
