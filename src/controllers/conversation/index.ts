@@ -129,6 +129,8 @@ export const getConversationsList = asyncHandler(
       },
     ]);
 
+    console.log(data, "data");
+
     return getResponse(res, { data }, StatusCodes.OK);
   }
 );
