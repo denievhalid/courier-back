@@ -121,9 +121,9 @@ export const getConversationsList = asyncHandler(
         $project: {
           _id: 1,
           cover: { $first: { $first: "$ad.images" } },
-          companion: {
-            $first: `$${getUserByConversationType[type]}`,
-          },
+          // companion: {
+          //   $first: `$${getUserByConversationType[type]}`,
+          // },
           lastMessage: { $first: "$lastMessage" },
         },
       },
