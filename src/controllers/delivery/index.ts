@@ -38,6 +38,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   if (deliveryDoc) {
     throw new Error("Запрос уже отправлен");
   }
+  console.log(00);
 
   await deliveryService.create({
     ad: toObjectId(ad),
