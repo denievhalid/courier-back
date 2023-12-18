@@ -95,16 +95,6 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
       },
     },
     {
-      $project: {
-        ad: { $first: "$conversation.ad" },
-        message: 1,
-        systemAction: 1,
-        isSystemMessage: 1,
-        type: 1,
-        user: { $first: "$user" },
-      },
-    },
-    {
       $lookup: {
         from: "ads",
         localField: "ad",
