@@ -10,7 +10,7 @@ import { getConversationById } from "@/controllers/conversation/middlewares";
 const router = Router();
 
 router.get("/", authenticate, getConversationsList);
-router.get("/:id", authenticate, getConversationById, getMessagesList);
+router.get("/:id/messages", authenticate, getConversationById, getMessagesList);
 router.post("/", authenticate, create);
 
 export default router;
