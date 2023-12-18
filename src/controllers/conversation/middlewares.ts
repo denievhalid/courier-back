@@ -12,7 +12,45 @@ export const getConversationById = asyncHandler(
 
     const service = getService(Services.CONVERSATION);
 
-    const conversation = await service.findOne({ _id: toObjectId(id) });
+    const conversation = await service.aggregate([
+      {
+        $match: {
+          _id: toObjectId(id),
+        },
+      },
+      {
+        $lookup: {
+          from: "ads",
+          localField: "ad",
+          foreignField: "_id",
+          as: "ad",
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "courier",
+          foreignField: "_id",
+          as: "courier",
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "adAuthor",
+          foreignField: "_id",
+          as: "adAuthor",
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          ad: "$ad",
+          adAuthor: "$adAuthor",
+          courier: "$courier",
+        },
+      },
+    ]);
 
     if (!conversation) {
       throw new Error("Разговор не найден");

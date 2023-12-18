@@ -157,7 +157,7 @@ export const getMessagesList = asyncHandler(
     const user = getParam(req, "user") as UserType;
 
     const messageService = getService(Services.MESSAGE);
-
+    console.log(conversation);
     const messages = await messageService.aggregate(
       getMessagesListAggregate(conversation._id)
     );
@@ -170,8 +170,6 @@ export const getMessagesList = asyncHandler(
     const data = {
       companion,
     };
-
-    console.log(data);
 
     return getResponse(res, { data }, StatusCodes.OK);
   }
