@@ -131,7 +131,6 @@ export enum Services {
   DELIVERY = "delivery",
   DIRECTION = "direction",
   MESSAGE = "message",
-  PARTICIPANT = "participant",
 }
 
 export enum Routes {
