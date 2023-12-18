@@ -29,6 +29,8 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     throw new Error("Объявление не найдено");
   }
 
+  console.log(0);
+
   const payload = { ad: toObjectId(ad._id), user: toObjectId(user._id) };
 
   const deliveryDoc = await deliveryService.findOne(payload);
