@@ -32,23 +32,12 @@ export const getMessagesListAggregate = (conversationId: string) => [
       from: "ads",
       localField: "ad",
       foreignField: "_id",
-      pipeline: [
-        {
-          $lookup: {
-            from: "users",
-            localField: "$ad.adAuthor",
-            foreignField: "_id",
-            as: "adAuthor",
-          },
-        },
-      ],
       as: "ad",
     },
   },
   {
     $project: {
       ad: { $first: "$ad" },
-      adAuthor: 1,
       createdAt: 1,
       isSystemMessage: 1,
       message: 1,
