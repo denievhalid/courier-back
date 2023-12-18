@@ -157,6 +157,7 @@ export const getMessagesList = asyncHandler(
     const conversation = getParam(req, "conversation") as ConversationType;
     const user = getParam(req, "user") as UserType;
 
+    const blockService = getService(Services.BLOCK);
     const messageService = getService(Services.MESSAGE);
 
     const messages = await messageService.aggregate(
@@ -174,8 +175,16 @@ export const getMessagesList = asyncHandler(
       companion?._id.toString()
     );
 
+    const canWrite = !Boolean(
+      await blockService.count({
+        blockedUser: toObjectId(user._id),
+        user: companion._id,
+      })
+    );
+
     const data = {
       ad: conversation.ad,
+      canWrite,
       companion,
       messages,
     };

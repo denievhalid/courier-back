@@ -126,6 +126,7 @@ export enum SystemActionCodes {
 
 export enum Services {
   AD = "ad",
+  BLOCK = "block",
   CONVERSATION = "conversation",
   DELIVERY = "delivery",
   DIRECTION = "direction",
