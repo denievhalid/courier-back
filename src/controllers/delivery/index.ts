@@ -22,7 +22,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
   const adDoc = (await adService.findOne({
     _id: toObjectId(ad),
-    user: {
+    courier: {
       $ne: toObjectId(user._id),
     },
   })) as AdType;
