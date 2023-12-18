@@ -61,6 +61,17 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     getConversationAggregate(conversation._id)
   );
 
+  const messageService = getService(Services.MESSAGE);
+
+  const messageDoc = await messageService.create({
+    isSystemMessage: true,
+    conversation,
+    message: "Заявка на доставку",
+    systemAction: SystemActionCodes.DELIVERY_REQUESTED,
+    type: 1,
+    sender: toObjectId(user._id),
+  });
+
   // await createMessageHelper({
   //   io,
   //   user,
