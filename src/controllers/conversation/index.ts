@@ -15,7 +15,7 @@ import { SOCKET_EVENTS } from "@/const";
 export const create = asyncHandler(async (req: Request, res: Response) => {
   //const io = getParam(req, "io");
   const attributes = getAttributes(req.body, ["ad", "courier"]);
-  console.log(attributes, "attributes");
+
   const service = getService(Services.CONVERSATION);
 
   let conversation = await service.findOne(attributes);
@@ -36,7 +36,7 @@ export const getConversationsList = asyncHandler(
   async (req: Request, res: Response) => {
     const type = getParam(req.query, "type") as Conversation;
     const user = getParam(req, "user") as UserType;
-    const conversationService = getService("conversation");
+    const conversationService = getService(Services.CONVERSATION);
 
     const match: PipelineStage.Match = {
       $match: {},
@@ -135,5 +135,13 @@ export const getConversationsList = asyncHandler(
     ]);
 
     return getResponse(res, { data }, StatusCodes.OK);
+  }
+);
+
+export const getMessagesList = asyncHandler(
+  async (req: Request, res: Response) => {
+    const conversation = getParam(req, "conversation");
+
+    return getResponse(res, {}, StatusCodes.OK);
   }
 );
