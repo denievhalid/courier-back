@@ -157,7 +157,7 @@ export const getMessagesList = asyncHandler(
     const user = getParam(req, "user") as UserType;
 
     const messageService = getService(Services.MESSAGE);
-    console.log(conversation);
+
     const messages = await messageService.aggregate(
       getMessagesListAggregate(conversation._id)
     );
@@ -168,6 +168,7 @@ export const getMessagesList = asyncHandler(
         : conversation?.courier;
 
     const data = {
+      ad: conversation.ad,
       companion,
     };
 
