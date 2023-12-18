@@ -170,6 +170,7 @@ export const getMessagesList = asyncHandler(
     const data = {
       ad: conversation.ad,
       companion,
+      messages,
     };
 
     return getResponse(res, { data }, StatusCodes.OK);
