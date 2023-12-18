@@ -12,11 +12,10 @@ import { getService } from "@/lib/container";
 import { getResponse } from "@/utils/getResponse";
 import { StatusCodes } from "http-status-codes";
 import { PipelineStage } from "mongoose";
-import { getAttributes } from "@/utils/getAttributes";
 import { toObjectId } from "@/utils/toObjectId";
 import { getUserByConversationType } from "./utils";
 import { getMessagesListAggregate } from "./aggregate";
-import { Conversation } from "./types";
+import { ConversationTypes } from "./types";
 import { isEqual } from "lodash";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
@@ -48,7 +47,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
 export const getConversationsList = asyncHandler(
   async (req: Request, res: Response) => {
-    const type = getParam(req.query, "type") as Conversation;
+    const type = getParam(req.query, "type") as ConversationTypes;
     const user = getParam(req, "user") as UserType;
     const conversationService = getService(Services.CONVERSATION);
 
