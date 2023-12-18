@@ -11,18 +11,30 @@ import { getUserByConversationType } from "@/controllers/conversation/utils";
 import { Conversation } from "@/controllers/conversation/types";
 import { toObjectId } from "@/utils/toObjectId";
 import { SOCKET_EVENTS } from "@/const";
+import { getMessagesListAggregate } from "@/controllers/conversation/aggregate";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   //const io = getParam(req, "io");
-  const attributes = getAttributes(req.body, ["ad", "courier"]);
+  const { ad, courier } = getAttributes(req.body, ["ad", "courier"]);
 
   const service = getService(Services.CONVERSATION);
+  const participantService = getService(Services.PARTICIPANT);
 
-  let conversation = await service.findOne(attributes);
+  const payload = {
+    ad: ad?._id,
+  };
+
+  let conversation = await service.findOne(payload);
 
   if (!conversation) {
-    conversation = await service.create(attributes);
+    conversation = await service.create(payload);
   }
+
+  await participantService.create({
+    conversation: toObjectId(conversation._id),
+    courier: toObjectId(courier),
+    adAuthor: toObjectId(ad?.user?._id),
+  });
 
   // io.to(attributes?.receiver?._id).emit(
   //   SOCKET_EVENTS.NEW_CONVERSATION,
@@ -142,6 +154,12 @@ export const getMessagesList = asyncHandler(
   async (req: Request, res: Response) => {
     const conversation = getParam(req, "conversation");
 
-    return getResponse(res, {}, StatusCodes.OK);
+    const messageService = getService(Services.MESSAGE);
+
+    const messages = await messageService.aggregate(
+      getMessagesListAggregate(conversation)
+    );
+
+    return getResponse(res, { data: messages }, StatusCodes.OK);
   }
 );

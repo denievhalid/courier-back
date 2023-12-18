@@ -7,11 +7,6 @@ const schema = new Schema(
       ref: "Ad",
       required: true,
     },
-    courier: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
     lastMessage: {
       type: Schema.Types.ObjectId,
       ref: "Message",

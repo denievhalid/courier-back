@@ -20,6 +20,13 @@ export type AdType = {
   user: UserType;
 };
 
+export type ParticipantType = {
+  _id: string;
+  conversation: ConversationType;
+  courier: UserType;
+  adAuthor: UserType;
+};
+
 export type BlockType = {
   user: UserType;
   blockedUser: UserType;
@@ -121,6 +128,7 @@ export enum Services {
   DELIVERY = "delivery",
   DIRECTION = "direction",
   MESSAGE = "message",
+  PARTICIPANT = "participant",
 }
 
 export enum Routes {

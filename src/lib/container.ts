@@ -6,6 +6,7 @@ import DirectionModel from "@/models/direction";
 import FavoriteModel from "@/models/favorite";
 import MessageModel from "@/models/message";
 import FileModel from "@/models/file";
+import ParticipantModel from "@/models/participant";
 import OtpModel from "@/models/otp";
 import UserModel from "@/models/user";
 import * as AdService from "@/services/ad";
@@ -16,6 +17,7 @@ import * as FileService from "@/services/file";
 import * as DeliveryService from "@/services/delivery";
 import * as DirectionService from "@/services/direction";
 import * as MessageService from "@/services/message";
+import * as ParticipantService from "@/services/participant";
 import * as OtpService from "@/services/otp";
 import * as TokenService from "@/services/token";
 import * as UserService from "@/services/user";
@@ -38,6 +40,7 @@ function registerServices(container: Container) {
   container.services.set("favorite", FavoriteService);
   container.services.set("file", FileService);
   container.services.set("message", MessageService);
+  container.services.set("participant", ParticipantService);
   container.services.set("otp", OtpService);
   container.services.set("token", TokenService);
   container.services.set("user", UserService);
@@ -52,6 +55,7 @@ function registerModels(container: Container) {
   container.models.set("favorite", FavoriteModel);
   container.models.set("message", MessageModel);
   container.models.set("file", FileModel);
+  container.models.set("participant", ParticipantModel);
   container.models.set("otp", OtpModel);
   container.models.set("user", UserModel);
 }
