@@ -72,19 +72,61 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     sender: toObjectId(user._id),
   });
 
-  // await createMessageHelper({
-  //   io,
-  //   user,
-  //   conversationId: conversation._id,
-  //   message: "заявка отправлена",
-  //   type: 1,
-  //   isSystemMessage: true,
-  //   systemAction: SystemActionCodes.DELIVERY_REQUESTED,
-  // });
+  const data = await messageService.aggregate([
+    {
+      $match: {
+        _id: toObjectId(messageDoc._id),
+      },
+    },
+    {
+      $lookup: {
+        from: "conversations",
+        localField: "conversation",
+        foreignField: "_id",
+        as: "conversation",
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "user",
+        foreignField: "_id",
+        as: "user",
+      },
+    },
+    {
+      $project: {
+        ad: { $first: "$conversation.ad" },
+        message: 1,
+        systemAction: 1,
+        isSystemMessage: 1,
+        type: 1,
+        user: { $first: "$user" },
+      },
+    },
+    {
+      $lookup: {
+        from: "ads",
+        localField: "ad",
+        foreignField: "_id",
+        as: "ad",
+      },
+    },
+    {
+      $project: {
+        ad: { $first: "$ad" },
+        user: 1,
+        message: 1,
+        systemAction: 1,
+        isSystemMessage: 1,
+        type: 1,
+      },
+    },
+  ]);
 
   io.emit("newConversation", conversationDoc);
 
-  return getResponse(res, {}, StatusCodes.CREATED);
+  return getResponse(res, { data }, StatusCodes.CREATED);
 });
 
 export const getList = asyncHandler(async (req: Request, res: Response) => {
