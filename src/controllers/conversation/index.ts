@@ -10,7 +10,7 @@ import { toObjectId } from "@/utils/toObjectId";
 import { getUserByConversationType } from "./utils";
 import { getMessagesListAggregate } from "./aggregate";
 import { ConversationTypes } from "./types";
-import { isEqual } from "lodash";
+import _, { isEqual } from "lodash";
 import { getAttributes } from "@/utils/getAttributes";
 import { createMessageHelper } from "@/controllers/message/helpers/createMessage";
 import { SOCKET_EVENTS } from "@/const";
