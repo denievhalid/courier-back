@@ -48,6 +48,7 @@ export const getConversationById = asyncHandler(
           ad: { $first: "$ad" },
           adAuthor: { $first: "$adAuthor" },
           courier: { $first: "$courier" },
+          cover: { $first: "$images" },
         },
       },
     ]);
