@@ -21,8 +21,6 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   ]);
   const user = getParam(req, "user") as UserType;
 
-  console.log(conversation, "conversation");
-
   const adService = getService(Services.AD);
   const deliveryService = getService(Services.DELIVERY);
 
@@ -107,8 +105,10 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const remove = asyncHandler(async (req: Request, res: Response) => {
+  const io = getParam(req, "io");
   const user = getParam(req, "user") as UserType;
   const ad = getParam(req.params, "ad");
+  const conversation = getParam(req.body, "conversation");
 
   const deliveryService = getService(Services.DELIVERY);
 
@@ -116,6 +116,11 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
     ad: toObjectId(ad),
     user: toObjectId(user._id),
   });
+
+  io.to(conversation.toString()).emit(
+    SOCKET_EVENTS.UPDATE_DELIVERY_STATUS,
+    null
+  );
 
   return getResponse(res, {}, StatusCodes.OK);
 });
@@ -130,6 +135,11 @@ export const getByAdId = asyncHandler(async (req: Request, res: Response) => {
     ad: toObjectId(ad),
     user: toObjectId(user._id),
   });
+
+  io.to(conversation.toString()).emit(
+    SOCKET_EVENTS.UPDATE_DELIVERY_STATUS,
+    status
+  );
 
   return getResponse(res, { data: delivery.toObject() });
 });
