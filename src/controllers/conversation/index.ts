@@ -12,7 +12,6 @@ import { getMessagesListAggregate } from "./aggregate";
 import { ConversationTypes } from "./types";
 import _, { isEqual } from "lodash";
 import { getAttributes } from "@/utils/getAttributes";
-import { createMessageHelper } from "@/controllers/message/helpers/createMessage";
 import { SOCKET_EVENTS } from "@/const";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
@@ -67,7 +66,10 @@ export const createMessage = asyncHandler(
 
     const data = { message, type, isSystemMessage, systemAction, isOwn: true };
 
-    io.to(conversation?._id?.toString()).emit(SOCKET_EVENTS.NEW_MESSAGE, data);
+    io.to(conversation?._id?.toString()).emit(
+      SOCKET_EVENTS.NEW_MESSAGE,
+      newMessage
+    );
 
     return getResponse(res, { data }, StatusCodes.CREATED);
   }
@@ -84,8 +86,6 @@ export const getConversationsList = asyncHandler(
     };
 
     match.$match[getUserByConversationType[type]] = toObjectId(user._id);
-
-    console.log(match);
 
     const data = await service.aggregate([
       match,

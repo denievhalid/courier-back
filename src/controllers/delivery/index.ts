@@ -51,10 +51,8 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     courier: toObjectId(user._id),
   };
 
-  console.log(conversationPayload, "conversationPayload");
-
   let conversation = await conversationService.findOne(conversationPayload);
-  console.log(conversation, "conversation");
+
   if (!conversation) {
     conversation = await conversationService.create(conversationPayload);
   }
@@ -160,7 +158,7 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
       new: true,
     }
   );
-  console.log(delivery, "delivery");
+
   const conversation = await conversationService.findOne({
     ad: toObjectId(ad),
   });
