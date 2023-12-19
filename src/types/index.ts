@@ -46,9 +46,13 @@ export type DirectionType = {
 };
 
 export type MessageType = {
+  _id: string;
   message: string;
-  user: UserType;
+  sender: UserType;
   status: string;
+  isSystemMessage?: boolean;
+  systemAction?: string;
+  type?: number;
 };
 
 export type TCreateMessage = {

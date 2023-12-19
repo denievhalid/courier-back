@@ -13,6 +13,7 @@ import { ConversationTypes } from "./types";
 import _, { isEqual } from "lodash";
 import { getAttributes } from "@/utils/getAttributes";
 import { SOCKET_EVENTS } from "@/const";
+import { serializeMessage } from "@/controllers/conversation/serialize";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   //const io = getParam(req, "io");
@@ -64,16 +65,10 @@ export const createMessage = asyncHandler(
       systemAction,
     });
 
-    newMessage.isOwn = newMessage.sender._id === user._id;
-
-    console.log(newMessage);
-
-    _.set(newMessage, "test", 1);
-
-    console.log(newMessage);
-
     const data = {
-      message,
+      message: serializeMessage(newMessage, {
+        isOwn: newMessage.sender._id === user._id,
+      }),
       type,
       isSystemMessage,
       systemAction,
