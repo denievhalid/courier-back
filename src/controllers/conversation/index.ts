@@ -173,7 +173,7 @@ export const getMessagesList = asyncHandler(
     const messageService = getService(Services.MESSAGE);
 
     const messages = await messageService.aggregate(
-      getMessagesListAggregate(conversation._id)
+      getMessagesListAggregate(conversation, user)
     );
 
     const companion =

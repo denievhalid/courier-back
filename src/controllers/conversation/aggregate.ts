@@ -1,9 +1,13 @@
 import { toObjectId } from "@/utils/toObjectId";
+import { ConversationType, UserType } from "@/types";
 
-export const getMessagesListAggregate = (conversationId: string) => [
+export const getMessagesListAggregate = (
+  conversation: ConversationType,
+  user: UserType
+) => [
   {
     $match: {
-      conversation: toObjectId(conversationId),
+      conversation: toObjectId(conversation._id),
     },
   },
   {
@@ -44,6 +48,13 @@ export const getMessagesListAggregate = (conversationId: string) => [
       type: 1,
       systemAction: 1,
       sender: { $first: "$sender" },
+    },
+  },
+  {
+    $addFields: {
+      isOwn: {
+        $cond: [{ $eq: ["$sender_id", user._id] }, true, false],
+      },
     },
   },
 ];
