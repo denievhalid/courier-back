@@ -56,7 +56,7 @@ export const createMessage = asyncHandler(
 
     const messageService = getService(Services.MESSAGE);
 
-    const newMessage = await messageService.create({
+    const messageDoc = await messageService.create({
       isSystemMessage,
       conversation,
       message,
@@ -65,8 +65,33 @@ export const createMessage = asyncHandler(
       systemAction,
     });
 
+    const newMessage = await messageService.aggregate([
+      {
+        $match: {
+          _id: toObjectId(messageDoc._id),
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "sender",
+          foreignField: "_id",
+          as: "sender",
+        },
+      },
+      {
+        $project: {
+          sender: 1,
+          message: 1,
+          systemAction: 1,
+          isSystemMessage: 1,
+          type: 1,
+        },
+      },
+    ]);
+
     const data = {
-      message: newMessage,
+      message: _.first(newMessage),
       isSystemMessage,
       systemAction,
       type,
