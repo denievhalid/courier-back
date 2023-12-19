@@ -97,7 +97,7 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
 
   io.to(conversation?._id?.toString()).emit(
     SOCKET_EVENTS.UPDATE_DELIVERY_STATUS,
-    delivery
+    delivery.status
   );
 
   return getResponse(res, {});
