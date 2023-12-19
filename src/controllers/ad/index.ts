@@ -63,6 +63,7 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
   const attributes = _.pick(req.body, [
     "title",
     "date",
+    "courier",
     "to",
     "price",
     "status",
