@@ -14,7 +14,11 @@ import _ from "lodash";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   const io = getParam(req, "io");
-  const { ad, status } = getAttributes(req.body, ["ad", "status"]);
+  const { ad, conversation, status } = getAttributes(req.body, [
+    "ad",
+    "conversation",
+    "status",
+  ]);
   const user = getParam(req, "user") as UserType;
 
   const adService = getService(Services.AD);
@@ -42,6 +46,11 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     user: toObjectId(user._id),
     status,
   });
+
+  io.to(conversation.toString()).emit(
+    SOCKET_EVENTS.UPDATE_DELIVERY_STATUS,
+    status
+  );
 
   return getResponse(res, {}, StatusCodes.CREATED);
 });
@@ -86,10 +95,12 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
   const conversation = await conversationService.findOne({
     ad: toObjectId(ad),
   });
+
   io.to(conversation?._id?.toString()).emit(
     SOCKET_EVENTS.UPDATE_DELIVERY_STATUS,
     delivery
   );
+
   return getResponse(res, {});
 });
 
