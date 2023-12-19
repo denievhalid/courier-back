@@ -65,11 +65,7 @@ export const createMessage = asyncHandler(
       systemAction,
     });
 
-    const data = {
-      isOwn: true,
-    };
-
-    _.set(data, "newMessage", newMessage);
+    const data = { message, type, isSystemMessage, systemAction, isOwn: true };
 
     io.to(conversation?._id?.toString()).emit(SOCKET_EVENTS.NEW_MESSAGE, data);
 
