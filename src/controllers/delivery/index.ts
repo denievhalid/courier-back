@@ -83,7 +83,7 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
 
   const delivery = await deliveryService.update(
     {
-      ad: toObjectId(ad),
+      ad: toObjectId(ad._id),
       user: toObjectId(user._id),
     },
     {
