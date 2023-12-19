@@ -12,7 +12,7 @@ import _ from "lodash";
 
 export const createMessageHelper = async ({
   io,
-  user,
+  sender,
   conversationId,
   message,
   type,
@@ -20,7 +20,7 @@ export const createMessageHelper = async ({
   systemAction,
 }: {
   io: IOType;
-  user: UserType;
+  sender: UserType;
   conversationId: string;
   message: string;
   type: number;
@@ -39,7 +39,7 @@ export const createMessageHelper = async ({
     isSystemMessage,
     conversation,
     message,
-    user,
+    sender,
     type,
     systemAction,
   });
@@ -103,7 +103,7 @@ export const createMessageHelper = async ({
     const delivery = (newMessage.delivery = (
       await getService("delivery").findOne({
         ad: toObjectId(adId),
-        user: toObjectId(user._id),
+        user: toObjectId(sender._id),
       })
     )?.status);
   }

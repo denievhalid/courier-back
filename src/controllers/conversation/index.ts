@@ -11,6 +11,8 @@ import { getUserByConversationType } from "./utils";
 import { getMessagesListAggregate } from "./aggregate";
 import { ConversationTypes } from "./types";
 import { isEqual } from "lodash";
+import { getAttributes } from "@/utils/getAttributes";
+import { createMessageHelper } from "@/controllers/message/helpers/createMessage";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   //const io = getParam(req, "io");
@@ -38,6 +40,33 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
   return getResponse(res, { data: conversation }, StatusCodes.CREATED);
 });
+
+export const createMessage = asyncHandler(
+  async (req: Request, res: Response) => {
+    const io = getParam(req, "io");
+    const conversation = getParam(req, "conversation") as ConversationType;
+
+    const user = getParam(req, "user") as UserType;
+
+    const { message, type, isSystemMessage, systemAction } = getAttributes(
+      req.body,
+      ["message", "type", "isSystemMessage", "systemAction"]
+    );
+
+    const messageService = getService(Services.MESSAGE);
+
+    const newMessage = await messageService.create({
+      isSystemMessage,
+      conversation,
+      message,
+      sender: user,
+      type,
+      systemAction,
+    });
+
+    return getResponse(res, { data: newMessage }, StatusCodes.CREATED);
+  }
+);
 
 export const getConversationsList = asyncHandler(
   async (req: Request, res: Response) => {
