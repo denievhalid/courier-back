@@ -21,6 +21,8 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   ]);
   const user = getParam(req, "user") as UserType;
 
+  console.log(conversation, "conversation");
+
   const adService = getService(Services.AD);
   const deliveryService = getService(Services.DELIVERY);
 
