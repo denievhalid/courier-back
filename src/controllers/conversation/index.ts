@@ -65,14 +65,15 @@ export const createMessage = asyncHandler(
       systemAction,
     });
 
-    _.set(newMessage, "isOwn", true);
+    const data = {
+      isOwn: true,
+    };
 
-    io.to(conversation?._id?.toString()).emit(
-      SOCKET_EVENTS.NEW_MESSAGE,
-      newMessage
-    );
+    _.set(data, "newMessage", newMessage);
 
-    return getResponse(res, { data: newMessage }, StatusCodes.CREATED);
+    io.to(conversation?._id?.toString()).emit(SOCKET_EVENTS.NEW_MESSAGE, data);
+
+    return getResponse(res, { data }, StatusCodes.CREATED);
   }
 );
 
