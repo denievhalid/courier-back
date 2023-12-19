@@ -55,21 +55,24 @@ export const createMessage = asyncHandler(
 
     const messageService = getService(Services.MESSAGE);
 
-    const newMessage = await messageService.create({
-      isSystemMessage,
-      conversation,
-      message,
-      sender: user,
-      type,
-      systemAction,
-    });
+    const newMessage = await messageService
+      .create({
+        isSystemMessage,
+        conversation,
+        message,
+        sender: user,
+        type,
+        systemAction,
+      })
+      .lean();
+
+    newMessage.isOwn = newMessage.sender._id === user._id;
 
     const data = {
       message,
       type,
       isSystemMessage,
       systemAction,
-      isOwn: newMessage.sender._id === user._id,
     };
 
     io.to(conversation?._id?.toString()).emit(
