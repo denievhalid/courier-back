@@ -200,10 +200,12 @@ export const getMessagesList = asyncHandler(
       })
     );
 
-    const delivery = await getService(Services.DELIVERY).findOne({
-      ad: toObjectId(conversation.ad._id),
-      user: toObjectId(user._id),
-    });
+    const delivery = (
+      await getService(Services.DELIVERY).findOne({
+        ad: toObjectId(conversation.ad._id),
+        user: toObjectId(user._id),
+      })
+    )?.status;
 
     const data = {
       ad: conversation.ad,
