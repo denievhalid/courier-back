@@ -81,7 +81,7 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
   const conversationService = getService(Services.CONVERSATION);
   const deliveryService = getService(Services.DELIVERY);
 
-  const delivery = await deliveryService.update(
+  await deliveryService.update(
     {
       ad: toObjectId(ad._id),
       user: toObjectId(user._id),
@@ -97,7 +97,7 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
 
   io.to(conversation?._id?.toString()).emit(
     SOCKET_EVENTS.UPDATE_DELIVERY_STATUS,
-    delivery.status
+    status
   );
 
   return getResponse(res, {});
