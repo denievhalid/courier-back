@@ -65,6 +65,8 @@ export const createMessage = asyncHandler(
       systemAction,
     });
 
+    newMessage.isOwn = true;
+
     io.to(conversation?._id?.toString()).emit(
       SOCKET_EVENTS.NEW_MESSAGE,
       newMessage
