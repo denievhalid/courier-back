@@ -50,6 +50,11 @@ export const getConversationById = asyncHandler(
           courier: { $first: "$courier" },
         },
       },
+      {
+        $addFields: {
+          cover: { $first: "$ad.images" },
+        },
+      },
     ]);
 
     if (!conversation) {
