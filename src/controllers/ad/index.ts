@@ -21,7 +21,6 @@ import { UserType } from "@/types";
 import { StatusCodes } from "http-status-codes";
 import dayjs from "dayjs";
 import { toObjectId } from "@/utils/toObjectId";
-import { string } from "yup";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   await createAdSchema.validate(req.body, { abortEarly: false });
@@ -57,6 +56,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const update = asyncHandler(async (req: Request, res: Response) => {
+  const io = getParam(req, "io");
   const id = getParam(req.params, "id");
   const user = getParam(req, "user") as UserType;
 
@@ -72,6 +72,8 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
     "weight",
     "comment",
   ]);
+
+  console.log(attributes);
 
   await getService("ad").update(id, attributes);
 
