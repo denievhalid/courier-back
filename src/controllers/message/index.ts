@@ -165,7 +165,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
   const newMessage = await createMessageHelper({
     io,
-    user,
+    sender: user,
     conversationId,
     message,
     type,
