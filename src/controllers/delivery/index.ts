@@ -136,10 +136,5 @@ export const getByAdId = asyncHandler(async (req: Request, res: Response) => {
     user: toObjectId(user._id),
   });
 
-  io.to(conversation.toString()).emit(
-    SOCKET_EVENTS.UPDATE_DELIVERY_STATUS,
-    status
-  );
-
   return getResponse(res, { data: delivery.toObject() });
 });
