@@ -97,7 +97,7 @@ export const createMessage = asyncHandler(
     };
 
     io.to(conversation?._id?.toString()).emit(
-      SOCKET_EVENTS[isSystemMessage ? "SYSTEM_ACTION" : "NEW_MESSAGE"],
+      SOCKET_EVENTS.NEW_MESSAGE,
       _.first(newMessage)
     );
 
