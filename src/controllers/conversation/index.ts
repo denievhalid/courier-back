@@ -56,23 +56,22 @@ export const createMessage = asyncHandler(
 
     const messageService = getService(Services.MESSAGE);
 
-    const newMessage = await messageService.create({
-      isSystemMessage,
-      conversation,
-      message,
-      sender: user,
-      type,
-      systemAction,
-    });
-    console.log(
-      serializeMessage(newMessage, {
-        isOwn: newMessage.sender._id === user._id,
-      })
-    );
-    const data = {
-      message: serializeMessage(newMessage, {
-        isOwn: newMessage.sender._id === user._id,
+    const newMessage = serializeMessage(
+      await messageService.create({
+        isSystemMessage,
+        conversation,
+        message,
+        sender: user,
+        type,
+        systemAction,
       }),
+      {
+        isOwn: true,
+      }
+    );
+
+    const data = {
+      message: newMessage,
       type,
       isSystemMessage,
       systemAction,
