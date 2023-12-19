@@ -66,6 +66,12 @@ export const createMessage = asyncHandler(
 
     newMessage.isOwn = newMessage.sender._id === user._id;
 
+    console.log(newMessage);
+
+    _.set(newMessage, "test", 1);
+
+    console.log(newMessage);
+
     const data = {
       message,
       type,
