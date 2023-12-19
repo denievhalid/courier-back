@@ -3,7 +3,7 @@ import { FilterQuery, PipelineStage, UpdateQuery } from "mongoose";
 import { AdType, ConversationType, Services } from "@/types";
 
 export const create = (payload: ConversationType) => {
-  return getModel("conversation").create(payload);
+  return getModel(Services.CONVERSATION).create(payload);
 };
 
 export const update = (
@@ -18,13 +18,13 @@ export const update = (
 };
 
 export const find = (filter: FilterQuery<ConversationType>) => {
-  return getModel("conversation").find(filter);
+  return getModel(Services.CONVERSATION).find(filter);
 };
 
 export const findOne = (filter: FilterQuery<ConversationType>) => {
-  return getModel("conversation").findOne(filter);
+  return getModel(Services.CONVERSATION).findOne(filter);
 };
 
 export const aggregate = (pipeline: PipelineStage[]) => {
-  return getModel("conversation").aggregate(pipeline);
+  return getModel(Services.CONVERSATION).aggregate(pipeline);
 };

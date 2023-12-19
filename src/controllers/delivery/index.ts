@@ -10,7 +10,6 @@ import { getAttributes } from "@/utils/getAttributes";
 import { Services, SystemActionCodes } from "@/types";
 import { getConversationAggregate } from "@/controllers/delivery/aggregate";
 import { SOCKET_EVENTS } from "@/const";
-import { createMessageHelper } from "@/controllers/message/helpers/createMessage";
 import _ from "lodash";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
