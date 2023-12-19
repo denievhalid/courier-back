@@ -81,7 +81,7 @@ export const createMessage = asyncHandler(
       },
       {
         $project: {
-          sender: 1,
+          sender: { $first: "$sender" },
           message: 1,
           systemAction: 1,
           isSystemMessage: 1,
