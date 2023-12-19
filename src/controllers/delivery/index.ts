@@ -76,7 +76,11 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
 export const update = asyncHandler(async (req: Request, res: Response) => {
   const io = getParam(req, "io");
   const user = getParam(req, "user") as UserType;
-  const { ad, status } = getAttributes(req.body, ["ad", "status"]);
+  const { ad, courier, status } = getAttributes(req.body, [
+    "ad",
+    "courier",
+    "status",
+  ]);
 
   const conversationService = getService(Services.CONVERSATION);
   const deliveryService = getService(Services.DELIVERY);
@@ -84,7 +88,7 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
   await deliveryService.update(
     {
       ad: toObjectId(ad._id),
-      user: toObjectId(user._id),
+      user: toObjectId(courier),
     },
     {
       status,
