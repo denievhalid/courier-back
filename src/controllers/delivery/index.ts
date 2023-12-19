@@ -77,8 +77,8 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
   const io = getParam(req, "io");
   const user = getParam(req, "user") as UserType;
   const { ad, status } = getAttributes(req.body, ["ad", "status"]);
-  const conversationService = getService("conversation");
 
+  const conversationService = getService(Services.CONVERSATION);
   const deliveryService = getService(Services.DELIVERY);
 
   const delivery = await deliveryService.update(
@@ -88,9 +88,6 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
     },
     {
       status,
-    },
-    {
-      new: true,
     }
   );
 
