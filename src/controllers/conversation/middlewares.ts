@@ -43,17 +43,19 @@ export const getConversationById = asyncHandler(
         },
       },
       {
-        $addFields: {
-          cover: { $first: "$ad.images" },
-        },
-      },
-      {
         $project: {
           _id: 1,
           ad: { $first: "$ad" },
           adAuthor: { $first: "$adAuthor" },
           courier: { $first: "$courier" },
           cover: 1,
+        },
+      },
+      {
+        $addFields: {
+          ad: {
+            cover: { $first: "$ad.images" },
+          },
         },
       },
     ]);
