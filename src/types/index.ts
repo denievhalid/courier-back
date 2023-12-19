@@ -109,7 +109,7 @@ export enum Gender {
 export type DeliveryType = {
   ad: AdType;
   user: UserType;
-  status: string;
+  status: DeliveryStatus;
 };
 
 export type FavoriteType = {
