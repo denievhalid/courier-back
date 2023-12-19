@@ -47,10 +47,12 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     status,
   });
 
-  io.to(conversation.toString()).emit(
-    SOCKET_EVENTS.UPDATE_DELIVERY_STATUS,
-    status
-  );
+  if (conversation) {
+    io.to(conversation.toString()).emit(
+      SOCKET_EVENTS.UPDATE_DELIVERY_STATUS,
+      status
+    );
+  }
 
   return getResponse(res, {}, StatusCodes.CREATED);
 });
@@ -117,10 +119,12 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
     user: toObjectId(user._id),
   });
 
-  io.to(conversation.toString()).emit(
-    SOCKET_EVENTS.UPDATE_DELIVERY_STATUS,
-    null
-  );
+  if (conversation) {
+    io.to(conversation.toString()).emit(
+      SOCKET_EVENTS.UPDATE_DELIVERY_STATUS,
+      null
+    );
+  }
 
   return getResponse(res, {}, StatusCodes.OK);
 });
