@@ -53,7 +53,7 @@ export const getMessagesListAggregate = (
   {
     $addFields: {
       isOwn: {
-        $cond: [{ $eq: ["$sender_id", user._id] }, true, false],
+        $cond: [{ $eq: ["$sender._id", user._id] }, true, false],
       },
     },
   },
