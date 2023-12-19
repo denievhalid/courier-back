@@ -13,6 +13,7 @@ import { ConversationTypes } from "./types";
 import { isEqual } from "lodash";
 import { getAttributes } from "@/utils/getAttributes";
 import { createMessageHelper } from "@/controllers/message/helpers/createMessage";
+import { SOCKET_EVENTS } from "@/const";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   //const io = getParam(req, "io");
@@ -63,6 +64,11 @@ export const createMessage = asyncHandler(
       type,
       systemAction,
     });
+
+    io.to(conversation?._id?.toString()).emit(
+      SOCKET_EVENTS.NEW_MESSAGE,
+      newMessage
+    );
 
     return getResponse(res, { data: newMessage }, StatusCodes.CREATED);
   }
