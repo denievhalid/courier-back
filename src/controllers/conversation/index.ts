@@ -64,7 +64,11 @@ export const createMessage = asyncHandler(
       type,
       systemAction,
     });
-
+    console.log(
+      serializeMessage(newMessage, {
+        isOwn: newMessage.sender._id === user._id,
+      })
+    );
     const data = {
       message: serializeMessage(newMessage, {
         isOwn: newMessage.sender._id === user._id,
