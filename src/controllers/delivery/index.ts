@@ -92,7 +92,7 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
   );
 
   const conversation = await conversationService.findOne({
-    ad: toObjectId(ad),
+    ad: toObjectId(ad._id),
   });
 
   io.to(conversation?._id?.toString()).emit(
