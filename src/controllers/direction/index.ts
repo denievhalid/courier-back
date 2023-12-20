@@ -14,19 +14,23 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   const ads = getParam(req.body, "ads");
   const filter = getParam(req.body, "filter");
 
-  const payload = { ads, hash, filter, user: toObjectId(user._id) };
-
   const directionService = getService("direction");
 
-  const exists = await directionService.count(payload);
+  let direction = await directionService.findOne({
+    hash,
+    user: toObjectId(user._id),
+  });
 
-  if (!exists) {
-    await directionService.create(payload);
+  if (!direction) {
+    await directionService.create({
+      ads,
+      hash,
+      filter,
+      user: toObjectId(user._id),
+    });
   }
 
-  const data = await directionService.findOne(payload);
-
-  return getResponse(res, { data }, StatusCodes.CREATED);
+  return getResponse(res, { data: direction }, StatusCodes.CREATED);
 });
 
 export const getList = asyncHandler(async (req: Request, res: Response) => {
