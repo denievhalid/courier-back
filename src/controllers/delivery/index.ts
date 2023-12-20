@@ -85,7 +85,7 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
   await deliveryService.update(
     {
       ad: toObjectId(ad._id),
-      user: toObjectId(courier),
+      user: toObjectId(courier._id),
     },
     {
       status,
