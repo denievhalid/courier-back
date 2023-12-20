@@ -22,7 +22,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   });
 
   if (!direction) {
-    await directionService.create({
+    direction = await directionService.create({
       ads,
       hash,
       filter,
