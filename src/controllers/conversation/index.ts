@@ -111,14 +111,6 @@ export const createMessage = asyncHandler(
           : ConversationTypes.SENT,
     });
 
-    console.log({
-      message: _.first(newMessage),
-      type:
-        conversation.courier._id === user._id
-          ? ConversationTypes.INBOX
-          : ConversationTypes.SENT,
-    });
-
     return getResponse(res, { data }, StatusCodes.CREATED);
   }
 );
