@@ -46,7 +46,7 @@ export const getConversationById = asyncHandler(
         $project: {
           _id: 1,
           ad: { $first: "$ad" },
-          adAuthor: { $first: "$ad.adAuthor" },
+          adAuthor: { $first: "$adAuthor" },
           courier: { $first: "$courier" },
           cover: 1,
         },
