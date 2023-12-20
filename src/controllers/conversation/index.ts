@@ -22,7 +22,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   const service = getService(Services.CONVERSATION);
 
   const payload = {
-    ad: ad?._id,
+    ad: toObjectId(ad?._id),
     adAuthor: toObjectId(ad?.user?._id),
     courier: toObjectId(user._id),
   };

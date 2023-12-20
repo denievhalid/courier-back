@@ -8,9 +8,7 @@ import type { Request, Response } from "express";
 import { toObjectId } from "@/utils/toObjectId";
 import { getAttributes } from "@/utils/getAttributes";
 import { Services, SystemActionCodes } from "@/types";
-import { getConversationAggregate } from "@/controllers/delivery/aggregate";
 import { SOCKET_EVENTS } from "@/const";
-import _ from "lodash";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   const io = getParam(req, "io");
@@ -29,9 +27,13 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     courier: { $exists: false },
   })) as AdType;
 
+  console.log(1);
+
   if (!adDoc) {
     throw new Error("Объявление не найдено");
   }
+
+  console.log(2);
 
   const payload = { ad: toObjectId(ad._id), user: toObjectId(user._id) };
 
@@ -40,13 +42,13 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   if (deliveryDoc) {
     throw new Error("Запрос уже отправлен");
   }
-
+  console.log(3);
   await deliveryService.create({
     ad: toObjectId(ad._id),
     user: toObjectId(user._id),
     status,
   });
-
+  console.log(4);
   if (conversation) {
     io.to(conversation.toString()).emit(
       SOCKET_EVENTS.UPDATE_DELIVERY_STATUS,
