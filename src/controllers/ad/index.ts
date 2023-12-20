@@ -223,6 +223,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
       status: { $in: status },
     },
   });
+
   if (attributes.user) {
     query.push({
       $match: {
@@ -230,8 +231,6 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
       },
     });
   }
-
-  console.log(attributes.to, "attributes.to");
 
   if (attributes.from) {
     query.push({
@@ -250,11 +249,23 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
   }
 
   if (attributes.startDate) {
-    date["$gte"] = new Date(attributes.startDate);
+    query.push({
+      $match: {
+        startDate: {
+          $gte: new Date(attributes.startDate),
+        },
+      },
+    });
   }
 
   if (attributes.endDate) {
-    date["$lte"] = new Date(attributes.endDate);
+    query.push({
+      $match: {
+        startDate: {
+          $lte: new Date(attributes.endDate),
+        },
+      },
+    });
   }
 
   if (attributes.sort) {
