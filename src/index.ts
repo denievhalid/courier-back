@@ -43,6 +43,9 @@ initDatabase()
       socket.on(SOCKET_EVENTS.JOIN_ROOM, ({ room }: { room: string }) => {
         socket.join(room);
       });
+      socket.on(SOCKET_EVENTS.LEAVE_ROOM, ({ room }: { room: string }) => {
+        socket.leave(room);
+      });
     });
 
     server.listen(getEnv("port"));
