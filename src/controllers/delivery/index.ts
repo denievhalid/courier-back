@@ -24,7 +24,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
   const adDoc = (await adService.findOne({
     _id: toObjectId(ad._id),
-    courier: { $exists: false },
+    courier: { $eq: null },
   })) as AdType;
 
   console.log(adDoc, "adDoc");
