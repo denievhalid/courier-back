@@ -33,6 +33,7 @@ const schema = new Schema(
         SystemActionCodes.DELIVERY_REQUESTED,
         SystemActionCodes.DELIVERY_CANCELED,
         SystemActionCodes.DELIVERY_CONFIRMED,
+        SystemActionCodes.DELIVERY_EXPIRED,
       ],
     },
     type: {
