@@ -103,10 +103,21 @@ export const createMessage = asyncHandler(
       _.first(newMessage)
     );
 
-    io.to(companion?._id?.toString()).emit(
-      SOCKET_EVENTS.UPDATE_CONVERSATION,
-      _.first(newMessage)
-    );
+    io.to(companion?._id?.toString()).emit(SOCKET_EVENTS.UPDATE_CONVERSATION, {
+      message: _.first(newMessage),
+      type:
+        conversation.courier._id === user._id
+          ? ConversationTypes.INBOX
+          : ConversationTypes.SENT,
+    });
+
+    console.log({
+      message: _.first(newMessage),
+      type:
+        conversation.courier._id === user._id
+          ? ConversationTypes.INBOX
+          : ConversationTypes.SENT,
+    });
 
     return getResponse(res, { data }, StatusCodes.CREATED);
   }
