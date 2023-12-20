@@ -113,7 +113,7 @@ export const createMessage = asyncHandler(
     );
 
     io.to(companion?._id?.toString()).emit(SOCKET_EVENTS.UPDATE_CONVERSATION, {
-      message: _.first(newMessage),
+      conversation,
       type:
         conversation.courier._id === user._id
           ? ConversationTypes.INBOX
