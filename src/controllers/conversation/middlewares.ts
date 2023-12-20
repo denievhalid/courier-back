@@ -56,6 +56,9 @@ export const getConversationById = asyncHandler(
           ad: {
             cover: { $first: "$ad.images" },
           },
+          courier: {
+            courier: "$courier",
+          },
         },
       },
     ]);
