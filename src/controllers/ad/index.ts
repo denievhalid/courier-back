@@ -17,7 +17,7 @@ import { getParam } from "@/utils/getParam";
 import { LIMIT } from "@/controllers/ad/const";
 import mongoose, { PipelineStage } from "mongoose";
 import { createAdSchema } from "@/controllers/ad/validation";
-import { UserType } from "@/types";
+import { Services, UserType } from "@/types";
 import { StatusCodes } from "http-status-codes";
 import dayjs from "dayjs";
 import { toObjectId } from "@/utils/toObjectId";
@@ -204,7 +204,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
 
   const user = getParam(req, "user") as UserType;
 
-  const directionService = getService("direction");
+  const directionService = getService(Services.DIRECTION);
 
   const page = attributes.page || 1;
 
@@ -223,7 +223,6 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
       status: { $in: status },
     },
   });
-
   if (attributes.user) {
     query.push({
       $match: {
@@ -232,10 +231,12 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
     });
   }
 
+  console.log(attributes.to, "attributes.to");
+
   if (attributes.from) {
     query.push({
       $match: {
-        from: toObjectId(attributes.from),
+        from: attributes.from,
       },
     });
   }
@@ -243,7 +244,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
   if (attributes.to) {
     query.push({
       $match: {
-        to: toObjectId(attributes.to),
+        to: attributes.to,
       },
     });
   }
