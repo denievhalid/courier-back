@@ -75,7 +75,6 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
 
 export const update = asyncHandler(async (req: Request, res: Response) => {
   const io = getParam(req, "io");
-  const user = getParam(req, "user") as UserType;
   const { ad, courier, status } = getAttributes(req.body, [
     "ad",
     "courier",
@@ -102,6 +101,11 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
   io.to(conversation?._id?.toString()).emit(
     SOCKET_EVENTS.UPDATE_DELIVERY_STATUS,
     status
+  );
+
+  io.to(conversation?._id?.toString()).emit(
+    SOCKET_EVENTS.UPDATE_AD_COURIER,
+    courier
   );
 
   return getResponse(res, {});

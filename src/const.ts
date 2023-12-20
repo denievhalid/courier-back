@@ -11,4 +11,5 @@ export const SOCKET_EVENTS = {
   TYPING: "typing",
   SYSTEM_ACTION: "systemAction",
   UPDATE_DELIVERY_STATUS: "updateDeliveryStatus",
+  UPDATE_AD_COURIER: "updateAdCourier",
 };
