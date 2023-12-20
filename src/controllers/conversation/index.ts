@@ -7,7 +7,7 @@ import { getResponse } from "@/utils/getResponse";
 import { StatusCodes } from "http-status-codes";
 import { PipelineStage } from "mongoose";
 import { toObjectId } from "@/utils/toObjectId";
-import { getUserByConversationType } from "./utils";
+import { getConversationCompanion, getUserByConversationType } from "./utils";
 import { getMessagesListAggregate } from "./aggregate";
 import { ConversationTypes } from "./types";
 import _, { isEqual } from "lodash";
@@ -96,8 +96,15 @@ export const createMessage = asyncHandler(
       type,
     };
 
+    const companion = getConversationCompanion(conversation, user);
+
     io.to(conversation?._id?.toString()).emit(
       SOCKET_EVENTS.NEW_MESSAGE,
+      _.first(newMessage)
+    );
+
+    io.to(companion?._id?.toString()).emit(
+      SOCKET_EVENTS.UPDATE_CONVERSATION,
       _.first(newMessage)
     );
 
