@@ -27,13 +27,9 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     courier: { $eq: null },
   })) as AdType;
 
-  console.log(adDoc, "adDoc");
-
   if (!adDoc) {
     throw new Error("Объявление не найдено");
   }
-
-  console.log(2);
 
   const payload = { ad: toObjectId(ad._id), user: toObjectId(user._id) };
 
@@ -42,13 +38,13 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   if (deliveryDoc) {
     throw new Error("Запрос уже отправлен");
   }
-  console.log(3);
+
   await deliveryService.create({
     ad: toObjectId(ad._id),
     user: toObjectId(user._id),
     status,
   });
-  console.log(4);
+
   if (conversation) {
     io.to(conversation.toString()).emit(
       SOCKET_EVENTS.UPDATE_DELIVERY_STATUS,

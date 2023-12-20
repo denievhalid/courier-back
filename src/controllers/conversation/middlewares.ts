@@ -43,18 +43,28 @@ export const getConversationById = asyncHandler(
         },
       },
       {
+        $lookup: {
+          from: "users",
+          localField: "$ad.courier",
+          foreignField: "_id",
+          as: "adCourier",
+        },
+      },
+      {
         $project: {
           _id: 1,
           ad: { $first: "$ad" },
-          adAuthor: { $first: "$adAuthor" },
-          courier: { $first: "$courier" },
+          adAuthor: { $first: "$ad.adAuthor" },
           cover: 1,
+          courier: 1,
+          adCourier: 1,
         },
       },
       {
         $addFields: {
           ad: {
             cover: { $first: "$ad.images" },
+            courier: { $first: "$adCourier" },
           },
         },
       },
