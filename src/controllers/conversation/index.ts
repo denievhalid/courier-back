@@ -216,9 +216,10 @@ export const getMessagesList = asyncHandler(
   async (req: Request, res: Response) => {
     const conversation = getParam(req, "conversation") as ConversationType;
     const user = getParam(req, "user") as UserType;
-
     const blockService = getService(Services.BLOCK);
     const messageService = getService(Services.MESSAGE);
+
+    console.log(conversation, "123232");
 
     const messages = await messageService.aggregate(
       getMessagesListAggregate(conversation, user)
