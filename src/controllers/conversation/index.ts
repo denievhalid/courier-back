@@ -72,6 +72,14 @@ export const createMessage = asyncHandler(
       },
       {
         $lookup: {
+          from: "conversations",
+          localField: "conversation",
+          foreignField: "_id",
+          as: "conversation",
+        },
+      },
+      {
+        $lookup: {
           from: "users",
           localField: "sender",
           foreignField: "_id",
@@ -82,6 +90,7 @@ export const createMessage = asyncHandler(
         $project: {
           sender: { $first: "$sender" },
           message: 1,
+          conversation: { $first: "$conversation" },
           systemAction: 1,
           isSystemMessage: 1,
           type: 1,
