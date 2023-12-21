@@ -127,7 +127,7 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
       SOCKET_EVENTS.UPDATE_DELIVERY_STATUS,
       null
     );
-    io.to(conversation?.toString()).emit(SOCKET_EVENTS.UPDATE_AD_COURIER, user);
+    io.to(conversation?.toString()).emit(SOCKET_EVENTS.UPDATE_AD_COURIER, null);
   }
 
   return getResponse(res, {}, StatusCodes.OK);
