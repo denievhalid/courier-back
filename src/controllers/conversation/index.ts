@@ -119,20 +119,23 @@ export const createMessage = asyncHandler(
       type,
     };
 
-    const companion = getConversationCompanion(conversation, user);
+    // const companion = getConversationCompanion(conversation, user);
 
     io.to(conversation?._id?.toString()).emit(
       SOCKET_EVENTS.NEW_MESSAGE,
       _.first(newMessage)
     );
 
-    io.to(companion?._id?.toString()).emit(SOCKET_EVENTS.UPDATE_CONVERSATION, {
-      conversation,
-      type:
-        conversation.courier._id === user._id
-          ? ConversationTypes.INBOX
-          : ConversationTypes.SENT,
-    });
+    io.to(conversation?._id?.toString()).emit(
+      SOCKET_EVENTS.UPDATE_CONVERSATION,
+      {
+        conversation,
+        type:
+          conversation.courier._id === user._id
+            ? ConversationTypes.INBOX
+            : ConversationTypes.SENT,
+      }
+    );
 
     return getResponse(res, { data }, StatusCodes.CREATED);
   }

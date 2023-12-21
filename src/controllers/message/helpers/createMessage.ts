@@ -117,11 +117,11 @@ export const createMessageHelper = async ({
   const allConversations = await conversationService.find({
     _id: toObjectId(conversationId),
   });
-
   // Для страницы ConversationScreen
   io.to(conversation?._id?.toString()).emit(
     SOCKET_EVENTS.UPDATE_CONVERSATION,
     allConversations
   );
+
   return newMessage;
 };
