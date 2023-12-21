@@ -119,11 +119,7 @@ export const createMessageHelper = async ({
   });
 
   // Для страницы ConversationScreen
-  io.to(conversation?.receiver?._id?.toString()).emit(
-    SOCKET_EVENTS.UPDATE_CONVERSATION,
-    allConversations
-  );
-  io.to(conversation?.sender?._id?.toString()).emit(
+  io.to(conversation?._id?.toString()).emit(
     SOCKET_EVENTS.UPDATE_CONVERSATION,
     allConversations
   );
