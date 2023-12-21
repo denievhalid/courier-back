@@ -71,7 +71,7 @@ export const createMessage = asyncHandler(
       systemAction,
     });
 
-    const conversationDoc = await conversationService.update(
+    await conversationService.update(
       { _id: toObjectId(conversation._id) },
       {
         lastMessage: messageDoc,
@@ -127,7 +127,7 @@ export const createMessage = asyncHandler(
     io.to(conversation?._id?.toString()).emit(
       SOCKET_EVENTS.UPDATE_CONVERSATION,
       {
-        conversation: conversationDoc || {
+        conversation: {
           ...conversation,
           lastMessage: messageDoc,
         },
