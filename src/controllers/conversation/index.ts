@@ -128,22 +128,20 @@ export const createMessage = asyncHandler(
       _.first(newMessage)
     );
 
+    const companion = getConversationCompanion(conversation, user);
     const AllMessages = await messageService.find({}).limit(100);
 
-    io.to(conversation?._id?.toString()).emit(
-      SOCKET_EVENTS.UPDATE_CONVERSATION,
-      {
-        conversation: {
-          ...conversation,
-          lastMessage: messageDoc,
-          unreadMessagesCount: handleUnReadMessagesCount(AllMessages, user),
-        },
-        type:
-          JSON.stringify(conversation.courier._id) === JSON.stringify(user._id)
-            ? ConversationTypes.SENT
-            : ConversationTypes.INBOX,
-      }
-    );
+    io.to(companion?._id?.toString()).emit(SOCKET_EVENTS.UPDATE_CONVERSATION, {
+      conversation: {
+        ...conversation,
+        lastMessage: messageDoc,
+        unreadMessagesCount: handleUnReadMessagesCount(AllMessages, user),
+      },
+      type:
+        JSON.stringify(conversation.courier._id) === JSON.stringify(user._id)
+          ? ConversationTypes.SENT
+          : ConversationTypes.INBOX,
+    });
 
     return getResponse(res, { data }, StatusCodes.CREATED);
   }
