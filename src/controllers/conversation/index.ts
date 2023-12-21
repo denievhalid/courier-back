@@ -134,11 +134,16 @@ export const createMessage = asyncHandler(
       .sort({ createdAt: -1 })
       .limit(100);
 
+    const unreadMessagesCount = handleUnReadMessagesCount(
+      AllMessages,
+      companion
+    );
+
     io.to(companion?._id?.toString()).emit(SOCKET_EVENTS.UPDATE_CONVERSATION, {
       conversation: {
         ...conversation,
         lastMessage: messageDoc,
-        unreadMessagesCount: handleUnReadMessagesCount(AllMessages, companion),
+        unreadMessagesCount,
         companion,
         cover: conversation?.ad?.images[0],
       },
