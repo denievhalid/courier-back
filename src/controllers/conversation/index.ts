@@ -140,6 +140,7 @@ export const createMessage = asyncHandler(
         lastMessage: messageDoc,
         unreadMessagesCount: handleUnReadMessagesCount(AllMessages, companion),
         companion,
+        cover: conversation?.ad?.images[0],
       },
       type:
         JSON.stringify(conversation.courier._id) ===

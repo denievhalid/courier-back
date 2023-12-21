@@ -18,6 +18,7 @@ export type AdType = {
   route: DaDataRouteType;
   courier?: UserType;
   user: UserType;
+  images: string[];
 };
 
 export type ParticipantType = {
