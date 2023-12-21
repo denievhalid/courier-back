@@ -40,11 +40,11 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   ]);
 
   if (attributes.startDate) {
-    attributes.startDate = dayjs(attributes.startDate).toDate();
+    attributes.startDate = new Date(attributes.startDate);
   }
 
   if (attributes.endDate) {
-    attributes.endDate = dayjs(attributes.endDate).toDate();
+    attributes.endDate = new Date(attributes.endDate);
   }
 
   const data = await getService("ad").create({
@@ -248,25 +248,17 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
     });
   }
 
-  if (attributes.startDate) {
+  if (attributes.endDate) {
     query.push({
       $match: {
-        startDate: {
-          $gte: new Date(attributes.startDate),
+        endDate: {
+          $lte: dayjs(attributes.endDate).toDate(),
         },
       },
     });
   }
 
-  if (attributes.endDate) {
-    query.push({
-      $match: {
-        startDate: {
-          $lte: new Date(attributes.endDate),
-        },
-      },
-    });
-  }
+  console.log(dayjs(attributes.endDate).toDate());
 
   if (attributes.sort) {
     query.push({
@@ -280,7 +272,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
   query.push(getProjectPipeline());
   query.push(getAddFieldsPipeline());
 
-  const data = await getService("ad").aggregate(query);
+  const data = await getService(Services.AD).aggregate(query);
 
   let isFavoriteDirection = false;
 
