@@ -240,7 +240,19 @@ export const getConversationsList = asyncHandler(
           courier: { $first: "$courier" },
           unreadMessagesCount: {
             $function: {
-              body: handleUnReadMessagesCount,
+              body: function (messages: MessageType[], user: UserType) {
+                const partnerMessages = messages.filter(
+                  (messageObject: MessageType) =>
+                    JSON.stringify(messageObject.sender) !==
+                    JSON.stringify(user._id)
+                );
+                const lastReadIndex = partnerMessages.findIndex(
+                  (message: MessageType) => message.status === "read"
+                );
+                const unreadCount =
+                  lastReadIndex !== -1 ? lastReadIndex : partnerMessages.length;
+                return unreadCount;
+              },
               args: ["$messages", user],
               lang: "js",
             },
