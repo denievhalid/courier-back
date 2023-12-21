@@ -132,8 +132,8 @@ export const createMessage = asyncHandler(
         conversation,
         type:
           JSON.stringify(conversation.courier._id) === JSON.stringify(user._id)
-            ? ConversationTypes.INBOX
-            : ConversationTypes.SENT,
+            ? ConversationTypes.SENT
+            : ConversationTypes.INBOX,
       }
     );
 
