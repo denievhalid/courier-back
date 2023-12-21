@@ -144,7 +144,7 @@ export const createMessage = asyncHandler(
         ...conversation,
         lastMessage: messageDoc,
         unreadMessagesCount,
-        companion,
+        companion: user,
         cover: conversation?.ad?.images[0],
       },
       type:
