@@ -1,7 +1,13 @@
 import { asyncHandler } from "@/utils/asyncHandler";
 import { Request, Response } from "express";
 import { getParam } from "@/utils/getParam";
-import { AdType, ConversationType, Services, UserType } from "@/types";
+import {
+  AdType,
+  ConversationType,
+  MessageType,
+  Services,
+  UserType,
+} from "@/types";
 import { getService } from "@/lib/container";
 import { getResponse } from "@/utils/getResponse";
 import { StatusCodes } from "http-status-codes";
@@ -15,7 +21,7 @@ import { getAttributes } from "@/utils/getAttributes";
 import { SOCKET_EVENTS } from "@/const";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
-  //const io = getParam(req, "io");
+  // const io = getParam(req, "io");
   const ad = getParam(req.body, "ad") as AdType;
   const user = getParam(req, "user") as UserType;
 
@@ -181,10 +187,27 @@ export const getConversationsList = asyncHandler(
       {
         $lookup: {
           from: "messages",
-          localField: "lastMessage",
-          foreignField: "_id",
-
-          as: "lastMessage",
+          let: {
+            conversation: "$_id",
+          },
+          pipeline: [
+            {
+              $sort: {
+                createdAt: -1,
+              },
+            },
+            {
+              $limit: 100,
+            },
+            {
+              $match: {
+                $expr: {
+                  $eq: ["$conversation", "$$conversation"],
+                },
+              },
+            },
+          ],
+          as: "messages",
         },
       },
       {
@@ -194,7 +217,28 @@ export const getConversationsList = asyncHandler(
           companion: {
             $first: type === ConversationTypes.INBOX ? "$courier" : "$adAuthor",
           },
-          lastMessage: { $first: "$lastMessage" },
+          unreadMessagesCount: {
+            $function: {
+              body: function (messages: MessageType[], user: UserType) {
+                const partnerMessages = messages
+                  .slice()
+                  .filter(
+                    (messageObject: MessageType) =>
+                      JSON.stringify(messageObject.sender) !==
+                      JSON.stringify(user._id)
+                  );
+                const lastReadIndex = partnerMessages.findIndex(
+                  (message: MessageType) => message.status === "read"
+                );
+                const unreadCount =
+                  lastReadIndex !== -1 ? lastReadIndex : partnerMessages.length;
+                return unreadCount;
+              },
+              args: ["$messages", user],
+              lang: "js",
+            },
+          },
+          lastMessage: { $arrayElemAt: ["$messages", 0] },
         },
       },
     ]);
