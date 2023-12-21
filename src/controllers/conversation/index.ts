@@ -65,6 +65,13 @@ export const createMessage = asyncHandler(
       systemAction,
     });
 
+    await conversationService.update(
+      { _id: toObjectId(conversation._id) },
+      {
+        lastMessage: messageDoc,
+      }
+    );
+
     const newMessage = await messageService.aggregate([
       {
         $match: {
@@ -98,13 +105,6 @@ export const createMessage = asyncHandler(
         },
       },
     ]);
-
-    await conversationService.update(
-      { _id: toObjectId(conversation._id) },
-      {
-        lastMessage: _.first(newMessage),
-      }
-    );
 
     const data = {
       message: _.first(newMessage),
