@@ -217,6 +217,7 @@ export const getConversationsList = asyncHandler(
           companion: {
             $first: type === ConversationTypes.INBOX ? "$courier" : "$adAuthor",
           },
+          courier: 1,
           unreadMessagesCount: {
             $function: {
               body: function (messages: MessageType[], user: UserType) {
