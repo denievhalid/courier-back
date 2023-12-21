@@ -125,13 +125,13 @@ export const createMessage = asyncHandler(
       SOCKET_EVENTS.NEW_MESSAGE,
       _.first(newMessage)
     );
-
+    console.log({ conversation });
     io.to(conversation?._id?.toString()).emit(
       SOCKET_EVENTS.UPDATE_CONVERSATION,
       {
         conversation,
         type:
-          conversation.courier._id === user._id
+          JSON.stringify(conversation.courier._id) === JSON.stringify(user._id)
             ? ConversationTypes.INBOX
             : ConversationTypes.SENT,
       }
