@@ -183,6 +183,7 @@ export const getConversationsList = asyncHandler(
           from: "messages",
           localField: "lastMessage",
           foreignField: "_id",
+
           as: "lastMessage",
         },
       },
