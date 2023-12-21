@@ -138,7 +138,8 @@ export const createMessage = asyncHandler(
         unreadMessagesCount: handleUnReadMessagesCount(AllMessages, user),
       },
       type:
-        JSON.stringify(conversation.courier._id) === JSON.stringify(user._id)
+        JSON.stringify(conversation.courier._id) ===
+        JSON.stringify(companion._id)
           ? ConversationTypes.SENT
           : ConversationTypes.INBOX,
     });
