@@ -136,6 +136,7 @@ export const createMessage = asyncHandler(
         ...conversation,
         lastMessage: messageDoc,
         unreadMessagesCount: handleUnReadMessagesCount(AllMessages, user),
+        companion,
       },
       type:
         JSON.stringify(conversation.courier._id) ===
