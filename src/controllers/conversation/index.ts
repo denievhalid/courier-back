@@ -13,7 +13,11 @@ import { getResponse } from "@/utils/getResponse";
 import { StatusCodes } from "http-status-codes";
 import { PipelineStage } from "mongoose";
 import { toObjectId } from "@/utils/toObjectId";
-import { getConversationCompanion, getUserByConversationType } from "./utils";
+import {
+  getConversationCompanion,
+  getUserByConversationType,
+  handleUnReadMessagesCount,
+} from "./utils";
 import { getMessagesListAggregate } from "./aggregate";
 import { ConversationTypes } from "./types";
 import _, { isEqual } from "lodash";
@@ -124,12 +128,15 @@ export const createMessage = asyncHandler(
       _.first(newMessage)
     );
 
+    const AllMessages = await messageService.find({}).limit(100);
+
     io.to(conversation?._id?.toString()).emit(
       SOCKET_EVENTS.UPDATE_CONVERSATION,
       {
         conversation: {
           ...conversation,
           lastMessage: messageDoc,
+          unreadMessagesCount: handleUnReadMessagesCount(AllMessages, user),
         },
         type:
           JSON.stringify(conversation.courier._id) === JSON.stringify(user._id)
@@ -224,21 +231,7 @@ export const getConversationsList = asyncHandler(
           courier: { $first: "$courier" },
           unreadMessagesCount: {
             $function: {
-              body: function (messages: MessageType[], user: UserType) {
-                const partnerMessages = messages
-                  .slice()
-                  .filter(
-                    (messageObject: MessageType) =>
-                      JSON.stringify(messageObject.sender) !==
-                      JSON.stringify(user._id)
-                  );
-                const lastReadIndex = partnerMessages.findIndex(
-                  (message: MessageType) => message.status === "read"
-                );
-                const unreadCount =
-                  lastReadIndex !== -1 ? lastReadIndex : partnerMessages.length;
-                return unreadCount;
-              },
+              body: handleUnReadMessagesCount,
               args: ["$messages", user],
               lang: "js",
             },
