@@ -65,13 +65,6 @@ export const createMessage = asyncHandler(
       systemAction,
     });
 
-    await conversationService.update(
-      { _id: toObjectId(conversation._id) },
-      {
-        lastMessage: messageDoc,
-      }
-    );
-
     const newMessage = await messageService.aggregate([
       {
         $match: {
@@ -105,6 +98,13 @@ export const createMessage = asyncHandler(
         },
       },
     ]);
+
+    await conversationService.update(
+      { _id: toObjectId(conversation._id) },
+      {
+        lastMessage: newMessage,
+      }
+    );
 
     const data = {
       message: _.first(newMessage),
@@ -208,8 +208,6 @@ export const getMessagesList = asyncHandler(
     const user = getParam(req, "user") as UserType;
     const blockService = getService(Services.BLOCK);
     const messageService = getService(Services.MESSAGE);
-
-    console.log(conversation, "123232");
 
     const messages = await messageService.aggregate(
       getMessagesListAggregate(conversation, user)
