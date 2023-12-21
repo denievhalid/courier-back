@@ -129,7 +129,10 @@ export const createMessage = asyncHandler(
     );
 
     const companion = getConversationCompanion(conversation, user);
-    const AllMessages = await messageService.find({}).limit(100);
+    const AllMessages = await messageService
+      .find({ conversation: toObjectId(conversation?._id) })
+      .sort({ createdAt: -1 })
+      .limit(100);
 
     io.to(companion?._id?.toString()).emit(SOCKET_EVENTS.UPDATE_CONVERSATION, {
       conversation: {
