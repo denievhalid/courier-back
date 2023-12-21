@@ -138,7 +138,7 @@ export const createMessage = asyncHandler(
       conversation: {
         ...conversation,
         lastMessage: messageDoc,
-        unreadMessagesCount: handleUnReadMessagesCount(AllMessages, user),
+        unreadMessagesCount: handleUnReadMessagesCount(AllMessages, companion),
         companion,
       },
       type:
