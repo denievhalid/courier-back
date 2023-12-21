@@ -71,7 +71,7 @@ export const createMessage = asyncHandler(
       systemAction,
     });
 
-    await conversationService.update(
+    const conversationDoc = await conversationService.update(
       { _id: toObjectId(conversation._id) },
       {
         lastMessage: messageDoc,
@@ -119,17 +119,18 @@ export const createMessage = asyncHandler(
       type,
     };
 
-    // const companion = getConversationCompanion(conversation, user);
-
     io.to(conversation?._id?.toString()).emit(
       SOCKET_EVENTS.NEW_MESSAGE,
       _.first(newMessage)
     );
-    console.log({ conversation });
+
     io.to(conversation?._id?.toString()).emit(
       SOCKET_EVENTS.UPDATE_CONVERSATION,
       {
-        conversation,
+        conversation: conversationDoc || {
+          ...conversation,
+          lastMessage: messageDoc,
+        },
         type:
           JSON.stringify(conversation.courier._id) === JSON.stringify(user._id)
             ? ConversationTypes.SENT
