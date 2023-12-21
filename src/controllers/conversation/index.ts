@@ -102,7 +102,7 @@ export const createMessage = asyncHandler(
     await conversationService.update(
       { _id: toObjectId(conversation._id) },
       {
-        lastMessage: newMessage,
+        lastMessage: _.first(newMessage),
       }
     );
 
