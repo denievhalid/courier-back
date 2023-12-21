@@ -20,7 +20,7 @@ export const handleUnReadMessagesCount = (
 ) => {
   const partnerMessages = messages.filter(
     (messageObject: MessageType) =>
-      JSON.stringify(messageObject.sender._id) !== JSON.stringify(user._id)
+      JSON.stringify(messageObject.sender) !== JSON.stringify(user._id)
   );
   const lastReadIndex = partnerMessages.findIndex(
     (message: MessageType) => message.status === "read"
