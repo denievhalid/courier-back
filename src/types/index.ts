@@ -37,6 +37,7 @@ export type ConversationType = {
   ad: AdType;
   adAuthor: UserType;
   courier: UserType;
+  lastMessage?: MessageType;
 };
 
 export type DirectionType = {

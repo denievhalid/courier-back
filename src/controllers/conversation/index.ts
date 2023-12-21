@@ -53,6 +53,7 @@ export const createMessage = asyncHandler(
       ["message", "type", "isSystemMessage", "systemAction"]
     );
 
+    const conversationService = getService(Services.CONVERSATION);
     const messageService = getService(Services.MESSAGE);
 
     const messageDoc = await messageService.create({
@@ -63,6 +64,13 @@ export const createMessage = asyncHandler(
       type,
       systemAction,
     });
+
+    await conversationService.update(
+      { _id: toObjectId(conversation._id) },
+      {
+        lastMessage: messageDoc,
+      }
+    );
 
     const newMessage = await messageService.aggregate([
       {

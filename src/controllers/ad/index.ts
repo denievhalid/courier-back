@@ -268,8 +268,6 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
     });
   }
 
-  console.log(dayjs(attributes.endDate).toDate());
-
   if (attributes.sort) {
     query.push({
       $sort: { [attributes.sort]: -1 },
