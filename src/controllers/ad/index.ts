@@ -248,11 +248,21 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
     });
   }
 
+  if (attributes.startDate) {
+    query.push({
+      $match: {
+        startDate: {
+          $gte: new Date(attributes.startDate),
+        },
+      },
+    });
+  }
+
   if (attributes.endDate) {
     query.push({
       $match: {
         endDate: {
-          $lte: dayjs(attributes.endDate).toDate(),
+          $lte: new Date(attributes.endDate),
         },
       },
     });
