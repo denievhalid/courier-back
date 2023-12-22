@@ -168,9 +168,9 @@ export const createMessage = asyncHandler(
         )
       : newMessageObject?.message;
 
-    companion?.notificationTokens &&
+    true &&
       handlePushNotification(
-        companion?.notificationTokens,
+        ["ExponentPushToken[7_JdAEO2uNM07sC5_dVHNd]"],
         newMessageObject.sender.firstname,
         messageText
       );

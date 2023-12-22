@@ -40,7 +40,7 @@ export const handleSystemMessageByUserType = (
   return isSender ? messageBlock?.sender : messageBlock?.receiver;
 };
 
-let expo = new Expo({});
+let expo = new Expo();
 
 export const handlePushNotification = (
   notificationTokens: string[],

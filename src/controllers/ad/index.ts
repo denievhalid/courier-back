@@ -247,19 +247,18 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
       },
     });
   }
-
-  if (attributes.endDate) {
+  if (attributes.startDate) {
     query.push({
       $match: {
         $and: [
           {
             startDate: {
-              $gte: new Date(attributes.endDate),
+              $lte: new Date(attributes.endDate),
             },
           },
           {
             endDate: {
-              $lte: new Date(attributes.endDate),
+              $gte: new Date(attributes.startDate),
             },
           },
         ],
