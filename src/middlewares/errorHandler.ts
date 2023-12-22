@@ -10,6 +10,7 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
       name: err.name,
       message: err.message,
       details: err.details,
+      errorCode: err.errorCode,
     },
   };
 

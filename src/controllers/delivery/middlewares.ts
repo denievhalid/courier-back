@@ -5,6 +5,10 @@ import { AdType, Services, UserType } from "@/types";
 import { getParam } from "@/utils/getParam";
 import { toObjectId } from "@/utils/toObjectId";
 import { getAttributes } from "@/utils/getAttributes";
+import {
+  AdNotFoundException,
+  CourierExistsException,
+} from "@/exceptions/forbidden";
 
 export const getAdMiddleware = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -20,11 +24,11 @@ export const getAdMiddleware = asyncHandler(
     })) as AdType;
 
     if (!adDoc) {
-      throw new Error("Объявление не найдено");
+      throw new AdNotFoundException();
     }
 
     if (adDoc.courier) {
-      throw new Error("Извините, курьер уже найден");
+      throw new CourierExistsException();
     }
 
     return next();
