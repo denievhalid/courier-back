@@ -20,7 +20,8 @@ export const findOne = (filter: FilterQuery<MessageType>) => {
 
 export const update = (
   filter: FilterQuery<UserType>,
-  update: UpdateQuery<UserType>
+  update: UpdateQuery<UserType>,
+  options = {}
 ) => {
-  return getModel(Services.MESSAGE).findOneAndUpdate(filter, update);
+  return getModel(Services.MESSAGE).findOneAndUpdate(filter, update, options);
 };
