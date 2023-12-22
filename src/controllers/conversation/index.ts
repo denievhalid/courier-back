@@ -23,6 +23,7 @@ import { ConversationTypes } from "./types";
 import _, { isEqual } from "lodash";
 import { getAttributes } from "@/utils/getAttributes";
 import { SOCKET_EVENTS } from "@/const";
+import { handlePushNotification } from "@/services/notification";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   // const io = getParam(req, "io");
@@ -154,6 +155,8 @@ export const createMessage = asyncHandler(
           : ConversationTypes.INBOX,
     });
 
+    companion?.notificationTokens &&
+      handlePushNotification(companion?.notificationTokens);
     return getResponse(res, { data }, StatusCodes.CREATED);
   }
 );

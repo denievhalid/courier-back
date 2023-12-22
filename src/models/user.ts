@@ -28,6 +28,9 @@ const schema = new Schema({
     type: String,
     required: true,
   },
+  notificationTokens: {
+    type: Array,
+  },
 });
 
 export default model("User", schema);

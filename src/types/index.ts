@@ -76,6 +76,7 @@ export type UserType = {
   firstname: string;
   phoneNumber: number;
   courier?: boolean | undefined;
+  notificationTokens?: string[];
 };
 
 export interface IService {
