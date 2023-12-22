@@ -9,7 +9,7 @@ const router = Router();
 router.get("/", getUser, getList);
 router.get("/:id", getUser, getById);
 router.post("/", authenticate, create);
-router.patch("/:id", authenticate, getAdMiddleware, update);
+router.patch("/:id", authenticate, update);
 router.delete("/:id", authenticate, remove);
 
 export default router;
