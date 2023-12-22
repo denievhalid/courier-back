@@ -1,3 +1,4 @@
+import { MessageType, SystemActionCodes } from "@/types";
 import {
   Expo,
   ExpoPushMessage,
@@ -6,9 +7,46 @@ import {
   ExpoPushTicket,
 } from "expo-server-sdk";
 
+export const getSystemMessageText = (
+  systemAction: SystemActionCodes,
+  userName: string
+) => {
+  switch (systemAction) {
+    case SystemActionCodes.DELIVERY_REQUESTED:
+    case SystemActionCodes.DELIVERY_EXPIRED:
+      return {
+        sender: "Вы отправили заявку на доставку посылки. Ждем...",
+        receiver: `${userName} предлагает доставить вашу посылку`,
+      };
+    case SystemActionCodes.DELIVERY_CONFIRMED:
+      return {
+        sender: `Вашу посылку доставит ${userName}`,
+        receiver: "Вас выбрали в качестве курьера",
+      };
+    case SystemActionCodes.DELIVERY_CANCELED:
+      return {
+        sender: "Вы отказались доставлять посылку",
+        receiver: `${userName} передумал доставлять вашу посылку`,
+      };
+  }
+};
+
+export const handleSystemMessageByUserType = (
+  systemAction: SystemActionCodes,
+  userName: string,
+  isSender: boolean
+) => {
+  const messageBlock = getSystemMessageText(systemAction, userName);
+  return isSender ? messageBlock?.sender : messageBlock?.receiver;
+};
+
 let expo = new Expo({});
 
-export const handlePushNotification = (notificationTokens: string[]) => {
+export const handlePushNotification = (
+  notificationTokens: string[],
+  sender: string,
+  messageText: string
+) => {
   let messages: ExpoPushMessage[] = [];
   for (let notificationToken of notificationTokens) {
     if (!Expo.isExpoPushToken(notificationToken)) {
@@ -20,8 +58,9 @@ export const handlePushNotification = (notificationTokens: string[]) => {
     messages.push({
       to: notificationToken,
       sound: "default",
-      body: "This is a test notification",
-      data: { withSome: "data" },
+      title: sender + " - " + "find courier",
+      body: messageText,
+      data: {},
     });
   }
 

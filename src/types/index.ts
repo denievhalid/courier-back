@@ -53,7 +53,7 @@ export type MessageType = {
   sender: UserType;
   status: string;
   isSystemMessage?: boolean;
-  systemAction?: string;
+  systemAction?: SystemActionCodes;
   type?: number;
 };
 

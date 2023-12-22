@@ -23,7 +23,10 @@ import { ConversationTypes } from "./types";
 import _, { isEqual } from "lodash";
 import { getAttributes } from "@/utils/getAttributes";
 import { SOCKET_EVENTS } from "@/const";
-import { handlePushNotification } from "@/services/notification";
+import {
+  handlePushNotification,
+  handleSystemMessageByUserType,
+} from "@/services/notification";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   // const io = getParam(req, "io");
@@ -116,9 +119,10 @@ export const createMessage = asyncHandler(
         },
       },
     ]);
+    const newMessageObject = _.first(newMessage) as MessageType;
 
     const data = {
-      message: _.first(newMessage),
+      message: newMessageObject,
       isSystemMessage,
       systemAction,
       type,
@@ -126,7 +130,7 @@ export const createMessage = asyncHandler(
 
     io.to(conversation?._id?.toString()).emit(
       SOCKET_EVENTS.NEW_MESSAGE,
-      _.first(newMessage)
+      newMessageObject
     );
 
     const companion = getConversationCompanion(conversation, user);
@@ -155,8 +159,21 @@ export const createMessage = asyncHandler(
           : ConversationTypes.INBOX,
     });
 
+    const messageText = newMessageObject?.isSystemMessage
+      ? newMessageObject?.systemAction &&
+        handleSystemMessageByUserType(
+          newMessageObject?.systemAction,
+          conversation?.courier?.firstname,
+          user._id === newMessageObject?.sender._id
+        )
+      : message?.message;
+
     companion?.notificationTokens &&
-      handlePushNotification(companion?.notificationTokens);
+      handlePushNotification(
+        companion?.notificationTokens,
+        newMessageObject.sender.firstname,
+        messageText
+      );
     return getResponse(res, { data }, StatusCodes.CREATED);
   }
 );
