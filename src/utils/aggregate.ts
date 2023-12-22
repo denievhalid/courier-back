@@ -57,6 +57,7 @@ export const getUserAggregate = (phoneNumber: number | string) => {
         gender: 1,
         phoneNumber: 1,
         city: 1,
+        notificationTokens: 1,
         deliveries: { $size: "$deliveries" },
         counters: {
           favoriteAds: { $size: "$favorites" },
