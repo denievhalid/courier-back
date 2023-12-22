@@ -247,7 +247,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
       },
     });
   }
-  if (attributes.startDate) {
+  if (attributes.endDate) {
     query.push({
       $match: {
         $and: [
