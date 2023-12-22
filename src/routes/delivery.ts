@@ -7,7 +7,7 @@ const router = Router();
 
 router.post("/", authenticate, getAdMiddleware, create);
 router.get("/", authenticate, getByAdId);
-router.patch("/", authenticate, getAdMiddleware, update);
+router.patch("/", authenticate, update);
 router.delete("/:ad", authenticate, remove);
 
 export default router;
