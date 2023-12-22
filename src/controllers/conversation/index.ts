@@ -166,7 +166,7 @@ export const createMessage = asyncHandler(
           conversation?.courier?.firstname,
           user._id === newMessageObject?.sender._id
         )
-      : message?.message;
+      : newMessageObject?.message;
 
     companion?.notificationTokens &&
       handlePushNotification(

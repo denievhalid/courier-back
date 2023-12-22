@@ -45,7 +45,7 @@ let expo = new Expo({});
 export const handlePushNotification = (
   notificationTokens: string[],
   sender: string,
-  messageText: string
+  messageText?: string
 ) => {
   let messages: ExpoPushMessage[] = [];
   for (let notificationToken of notificationTokens) {
