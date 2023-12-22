@@ -9,12 +9,17 @@ import {
   AdNotFoundException,
   CourierExistsException,
 } from "@/exceptions/forbidden";
+import { isObject } from "lodash";
 
 export const getAdMiddleware = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const adService = getService(Services.AD);
-    const { ad, status } = getAttributes(req.body, ["ad", "status"]);
+    let { ad, status } = getAttributes(req.body, ["ad", "status"]);
     const user = getParam(req, "user") as UserType;
+
+    if (isObject(ad)) {
+      ad = (ad as AdType)._id;
+    }
 
     const adDoc = (await adService.findOne({
       _id: toObjectId(ad),
