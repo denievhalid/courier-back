@@ -116,11 +116,25 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
   const conversation = getParam(req.body, "conversation");
 
   const deliveryService = getService(Services.DELIVERY);
+  const adService = getService(Services.AD);
 
   await deliveryService.remove({
     ad: toObjectId(ad),
     user: toObjectId(user._id),
   });
+
+  const adObject = await adService.findOne({
+    _id: toObjectId(ad),
+    courier: toObjectId(user._id),
+  });
+
+  adObject &&
+    (await adService.update(
+      {
+        _id: toObjectId(ad),
+      },
+      { courier: null }
+    ));
 
   if (conversation) {
     io.to(conversation.toString()).emit(
