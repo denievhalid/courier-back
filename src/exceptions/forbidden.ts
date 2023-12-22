@@ -9,14 +9,14 @@ export class InvalidCredentialsException extends BaseException {
 }
 
 export class CourierExistsException extends BaseException {
-  constructor(message = "Invalid user credentials.") {
+  constructor(message = "курьер уже найден") {
     super(message, 400, ERROR_CODES.COURIER_NOT_FOUND);
     this.errorCode = 2000;
   }
 }
 
 export class AdNotFoundException extends BaseException {
-  constructor(message = "Invalid user credentials.") {
+  constructor(message = "обьявление не найдено") {
     super(message, 400, ERROR_CODES.AD_NOT_FOUND);
     this.errorCode = 3000;
   }
