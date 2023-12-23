@@ -47,6 +47,21 @@ export const getMessagesListAggregate = (
       from: "messages",
       localField: "replayedMessage",
       foreignField: "_id",
+      pipeline: [
+        {
+          $lookup: {
+            from: "users",
+            localField: "replayedMessage.sender",
+            foreignField: "user",
+            as: "sender",
+          },
+        },
+        {
+          $addFields: {
+            sender: { $size: "$sender" },
+          },
+        },
+      ],
       as: "replayedMessage",
     },
   },
