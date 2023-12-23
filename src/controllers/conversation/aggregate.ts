@@ -56,6 +56,11 @@ export const getMessagesListAggregate = (
             as: "sender",
           },
         },
+        {
+          $addFields: {
+            sender: { $first: "$sender" },
+          },
+        },
       ],
       as: "replayedMessage",
     },
