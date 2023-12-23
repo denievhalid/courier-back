@@ -110,22 +110,22 @@ export const createMessage = asyncHandler(
           from: "messages",
           localField: "replayedMessage",
           foreignField: "_id",
-          as: "replayedMessage",
           pipeline: [
             {
               $lookup: {
                 from: "users",
-                localField: "replayedMessage.sender",
-                foreignField: "user",
+                localField: "sender",
+                foreignField: "_id",
                 as: "sender",
               },
             },
             {
               $addFields: {
-                sender: { $size: "$sender" },
+                sender: { $first: "$sender" },
               },
             },
           ],
+          as: "replayedMessage",
         },
       },
       {
