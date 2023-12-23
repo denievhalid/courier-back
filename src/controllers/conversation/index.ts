@@ -62,10 +62,14 @@ export const createMessage = asyncHandler(
 
     const user = getParam(req, "user") as UserType;
 
-    const { message, type, isSystemMessage, systemAction } = getAttributes(
-      req.body,
-      ["message", "type", "isSystemMessage", "systemAction"]
-    );
+    const { message, type, isSystemMessage, systemAction, replayedMessage } =
+      getAttributes(req.body, [
+        "message",
+        "type",
+        "isSystemMessage",
+        "systemAction",
+        "replayedMessage",
+      ]);
 
     const conversationService = getService(Services.CONVERSATION);
     const messageService = getService(Services.MESSAGE);
@@ -77,6 +81,7 @@ export const createMessage = asyncHandler(
       sender: user,
       type,
       systemAction,
+      replayedMessage,
     });
 
     await conversationService.update(
@@ -116,6 +121,7 @@ export const createMessage = asyncHandler(
           systemAction: 1,
           isSystemMessage: 1,
           type: 1,
+          replayedMessage: 1,
         },
       },
     ]);

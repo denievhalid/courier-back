@@ -16,6 +16,9 @@ export const getMessagesListAggregate = (
     },
   },
   {
+    $limit: 100,
+  },
+  {
     $lookup: {
       from: "conversations",
       localField: "conversation",
@@ -40,6 +43,14 @@ export const getMessagesListAggregate = (
     },
   },
   {
+    $lookup: {
+      from: "messages",
+      localField: "replayedMessage",
+      foreignField: "_id",
+      as: "replayedMessage",
+    },
+  },
+  {
     $project: {
       ad: { $first: "$ad" },
       createdAt: 1,
@@ -48,6 +59,7 @@ export const getMessagesListAggregate = (
       type: 1,
       systemAction: 1,
       sender: { $first: "$sender" },
+      replayedMessage: { $first: "$replayedMessage" },
     },
   },
   {
