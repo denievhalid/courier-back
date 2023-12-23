@@ -12,6 +12,10 @@ const schema = new Schema(
       type: String,
       trim: true,
     },
+    replayedMessage: {
+      type: Schema.Types.ObjectId,
+      ref: "Message",
+    },
     sender: {
       type: Schema.Types.ObjectId,
       ref: "User",
