@@ -144,7 +144,7 @@ export const createMessage = asyncHandler(
           systemAction: 1,
           isSystemMessage: 1,
           type: 1,
-          replayedMessage: 1,
+          replayedMessage: { $first: "$replayedMessage" },
         },
       },
     ]);
