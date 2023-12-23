@@ -51,14 +51,9 @@ export const getMessagesListAggregate = (
         {
           $lookup: {
             from: "users",
-            localField: "replayedMessage.sender",
-            foreignField: "user",
+            localField: "sender",
+            foreignField: "_id",
             as: "sender",
-          },
-        },
-        {
-          $addFields: {
-            sender: { $size: "$sender" },
           },
         },
       ],
