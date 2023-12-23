@@ -55,6 +55,7 @@ export type MessageType = {
   isSystemMessage?: boolean;
   systemAction?: SystemActionCodes;
   type?: number;
+  replayedMessage?: MessageType;
 };
 
 export type TCreateMessage = {

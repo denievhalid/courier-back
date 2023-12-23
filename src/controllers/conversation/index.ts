@@ -107,6 +107,29 @@ export const createMessage = asyncHandler(
       },
       {
         $lookup: {
+          from: "messages",
+          localField: "replayedMessage",
+          foreignField: "_id",
+          as: "replayedMessage",
+          pipeline: [
+            {
+              $lookup: {
+                from: "users",
+                localField: "replayedMessage.sender",
+                foreignField: "user",
+                as: "sender",
+              },
+            },
+            {
+              $addFields: {
+                sender: { $size: "$sender" },
+              },
+            },
+          ],
+        },
+      },
+      {
+        $lookup: {
           from: "users",
           localField: "sender",
           foreignField: "_id",
@@ -125,6 +148,7 @@ export const createMessage = asyncHandler(
         },
       },
     ]);
+
     const newMessageObject = _.first(newMessage) as MessageType;
 
     const data = {
