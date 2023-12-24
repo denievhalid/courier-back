@@ -50,7 +50,8 @@ initDatabase()
 
     io.on("connection", (socket) => {
       // @ts-ignore
-      const session = socket.request.session;
+      const sessionId = socket.request.session.id;
+      socket.join(sessionId);
       console.log(session);
       socket.on(SOCKET_EVENTS.JOIN_ROOM, ({ room }: { room: string }) => {
         socket.join(room);
