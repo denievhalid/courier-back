@@ -31,6 +31,7 @@ initDatabase()
 
     const io = new Server(server, {
       serveClient: false,
+      pingInterval: 10000,
     });
 
     app.use((req, res, next) => {
