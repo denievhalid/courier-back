@@ -164,9 +164,6 @@ export const createMessage = asyncHandler(
       newMessageObject
     );
 
-    // @ts-ignore
-    io.to(req.session.id).emit(SOCKET_EVENTS.NEW_MESSAGE, newMessageObject);
-
     const companion = getConversationCompanion(conversation, user);
     const AllMessages = await messageService
       .find({ conversation: toObjectId(conversation?._id) })
