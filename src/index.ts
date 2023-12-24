@@ -31,7 +31,7 @@ initDatabase()
 
     const io = new Server(server, {
       serveClient: false,
-      pingInterval: 10000,
+      pingInterval: 1000,
       pingTimeout: 1000,
     });
 
