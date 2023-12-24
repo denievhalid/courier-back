@@ -55,6 +55,7 @@ export type MessageType = {
   isSystemMessage?: boolean;
   systemAction?: SystemActionCodes;
   type?: number;
+  isLiked?: number;
   replayedMessage?: MessageType;
 };
 

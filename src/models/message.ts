@@ -25,6 +25,10 @@ const schema = new Schema(
       type: Boolean,
       default: false,
     },
+    isLiked: {
+      type: Boolean,
+      default: false,
+    },
     status: {
       type: String,
       enum: [MessageStatus.PENDING, MessageStatus.READ, MessageStatus.SEND],
