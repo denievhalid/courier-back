@@ -6,6 +6,7 @@ import {
   ConversationType,
   MessageType,
   Services,
+  TNotificationData,
   UserType,
 } from "@/types";
 import { getService } from "@/lib/container";
@@ -198,10 +199,15 @@ export const createMessage = asyncHandler(
         )
       : newMessageObject?.message;
 
+    const notificationData: TNotificationData = {
+      screen: "Message",
+      params: { conversationId: conversation._id },
+    };
     companion?.notificationTokens &&
       handlePushNotification(
         companion?.notificationTokens,
         newMessageObject.sender.firstname,
+        notificationData,
         messageText
       );
     return getResponse(res, { data }, StatusCodes.CREATED);

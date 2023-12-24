@@ -161,3 +161,10 @@ export type IOType = {
     emit: (event: string, data: any) => void;
   };
 };
+
+export type TNotificationData = {
+  screen: string;
+  params: {
+    conversationId: string;
+  };
+};

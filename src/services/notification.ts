@@ -1,4 +1,4 @@
-import { MessageType, SystemActionCodes } from "@/types";
+import { MessageType, SystemActionCodes, TNotificationData } from "@/types";
 import {
   Expo,
   ExpoPushMessage,
@@ -45,6 +45,7 @@ let expo = new Expo();
 export const handlePushNotification = (
   notificationTokens: string[],
   sender: string,
+  notificationData: TNotificationData,
   messageText?: string
 ) => {
   let messages: ExpoPushMessage[] = [];
@@ -60,7 +61,7 @@ export const handlePushNotification = (
       sound: "default",
       title: sender + " - " + "find courier",
       body: messageText,
-      data: {},
+      data: notificationData,
     });
   }
 

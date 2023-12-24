@@ -11,6 +11,7 @@ import { closeApp } from "@/utils/closeApp";
 import { extractToken } from "@/middlewares/extractToken";
 import _ from "lodash";
 import { SOCKET_EVENTS } from "@/const";
+const session = require("express-session");
 
 const app = express();
 
@@ -36,10 +37,21 @@ initDatabase()
       _.set(req, "io", io);
       next();
     });
+    const sessionMiddleware = session({
+      secret: "courierSecret123",
+      resave: true,
+      saveUninitialized: true,
+    });
+
+    app.use(sessionMiddleware);
 
     createRoutes(app);
+    io.engine.use(sessionMiddleware);
 
     io.on("connection", (socket) => {
+      // @ts-ignore
+      const session = socket.request.session;
+      console.log(session);
       socket.on(SOCKET_EVENTS.JOIN_ROOM, ({ room }: { room: string }) => {
         socket.join(room);
       });
