@@ -72,6 +72,7 @@ export const getMessagesListAggregate = (
       isSystemMessage: 1,
       message: 1,
       type: 1,
+      isLiked: 1,
       systemAction: 1,
       sender: { $first: "$sender" },
       replayedMessage: { $first: "$replayedMessage" },
