@@ -264,6 +264,14 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
         ],
       },
     });
+  } else {
+    query.push({
+      $match: {
+        endDate: {
+          $gte: new Date(),
+        },
+      },
+    });
   }
 
   if (attributes.sort) {
