@@ -60,7 +60,12 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
   return getResponse(
     res,
-    { accessToken, user: _.assign(sanitizeUser(user), { deliveries: 0 }) },
+    {
+      accessToken,
+      user: _.assign(sanitizeUser(_.first(user) as UserType), {
+        deliveries: 0,
+      }),
+    },
     StatusCodes.CREATED
   );
 });
