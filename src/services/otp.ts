@@ -54,6 +54,7 @@ export const getOtpPayload = (payload: OtpType) => {
   }
 
   return {
+    deadline,
     otpLength: payload.otp.toString().length,
     timeout,
   };
