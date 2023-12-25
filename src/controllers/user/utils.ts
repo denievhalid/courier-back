@@ -9,5 +9,6 @@ export const sanitizeUser = (user: UserType) => {
     "firstname",
     "phoneNumber",
     "avatar",
+    "notificationTokens",
   ]);
 };
