@@ -43,9 +43,13 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
   const userExists = await userService.exists(payload);
 
+  console.log(111);
+
   if (userExists) {
     throw new Error("Пользователь уже существует");
   }
+
+  console.log(222);
 
   const tokenService = getService("token");
 
@@ -57,6 +61,15 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     { phoneNumber: attributes.phoneNumber },
     getEnv("JWT_SECRET")
   );
+
+  console.log(333);
+
+  console.log({
+    accessToken,
+    user: _.assign(sanitizeUser(_.first(user) as UserType), {
+      deliveries: 0,
+    }),
+  });
 
   return getResponse(
     res,
