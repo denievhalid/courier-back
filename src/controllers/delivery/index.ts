@@ -101,7 +101,7 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
     status
   );
 
-  io.to(conversation?._id?.toString()).emit(
+  io.to(`room${conversation?._id?.toString()}`).emit(
     SOCKET_EVENTS.UPDATE_AD_COURIER,
     courier
   );
@@ -141,7 +141,10 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
       SOCKET_EVENTS.UPDATE_DELIVERY_STATUS,
       null
     );
-    io.to(conversation?.toString()).emit(SOCKET_EVENTS.UPDATE_AD_COURIER, null);
+    io.to(`room${conversation?.toString()}`).emit(
+      SOCKET_EVENTS.UPDATE_AD_COURIER,
+      null
+    );
   }
 
   return getResponse(res, {}, StatusCodes.OK);
