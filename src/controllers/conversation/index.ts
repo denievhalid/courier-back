@@ -345,11 +345,12 @@ export const getMessagesList = asyncHandler(
   async (req: Request, res: Response) => {
     const conversation = getParam(req, "conversation") as ConversationType;
     const user = getParam(req, "user") as UserType;
+    const timeZone = getParam(req.query, "timeZone");
     const blockService = getService(Services.BLOCK);
     const messageService = getService(Services.MESSAGE);
 
     const messages = await messageService.aggregate(
-      getMessagesListAggregate(conversation, user)
+      getMessagesListAggregate(conversation, user, timeZone)
     );
 
     const companion =

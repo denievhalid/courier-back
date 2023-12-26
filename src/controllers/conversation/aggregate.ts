@@ -3,7 +3,8 @@ import { ConversationType, UserType } from "@/types";
 
 export const getMessagesListAggregate = (
   conversation: ConversationType,
-  user: UserType
+  user: UserType,
+  timeZone: string
 ) => [
   {
     $match: {
@@ -91,6 +92,7 @@ export const getMessagesListAggregate = (
         $dateToString: {
           format: "%Y-%m-%d",
           date: "$createdAt",
+          timezone: timeZone ?? "Europe/Moscow",
         },
       },
       data: { $push: "$$ROOT" },
