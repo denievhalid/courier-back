@@ -46,7 +46,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   });
 
   if (conversation) {
-    io.to(conversation.toString()).emit(
+    io.to(`room${conversation.toString()}`).emit(
       SOCKET_EVENTS.UPDATE_DELIVERY_STATUS,
       status
     );
@@ -96,7 +96,7 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
     ad: toObjectId(ad._id),
   });
 
-  io.to(conversation?._id?.toString()).emit(
+  io.to(`room${conversation?._id?.toString()}`).emit(
     SOCKET_EVENTS.UPDATE_DELIVERY_STATUS,
     status
   );
@@ -137,7 +137,7 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
     ));
 
   if (conversation) {
-    io.to(conversation.toString()).emit(
+    io.to(`room${conversation.toString()}`).emit(
       SOCKET_EVENTS.UPDATE_DELIVERY_STATUS,
       null
     );
