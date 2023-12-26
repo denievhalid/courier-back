@@ -6,6 +6,7 @@ import {
   ConversationType,
   MessageType,
   Services,
+  SystemActionCodes,
   TNotificationData,
   UserType,
 } from "@/types";
@@ -85,11 +86,23 @@ export const createMessage = asyncHandler(
       replayedMessage,
     });
 
+    const conversationUpdatedPayload: {
+      lastRequestedDeliveryMessage?: MessageType;
+      lastMessage: MessageType;
+    } = {
+      lastMessage: messageDoc,
+    };
+
+    if (messageDoc.isSystemMessage) {
+      conversationUpdatedPayload.lastRequestedDeliveryMessage =
+        messageDoc.systemAction === SystemActionCodes.DELIVERY_REQUESTED
+          ? messageDoc
+          : null;
+    }
+
     await conversationService.update(
       { _id: toObjectId(conversation._id) },
-      {
-        lastMessage: messageDoc,
-      }
+      conversationUpdatedPayload
     );
 
     const newMessage = await messageService.aggregate([
@@ -151,7 +164,6 @@ export const createMessage = asyncHandler(
     ]);
 
     const newMessageObject = _.first(newMessage) as MessageType;
-
     const data = {
       message: newMessageObject,
       isSystemMessage,

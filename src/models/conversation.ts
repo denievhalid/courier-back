@@ -21,6 +21,10 @@ const schema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Message",
     },
+    lastRequestedDeliveryMessage: {
+      type: Schema.Types.ObjectId,
+      ref: "Message",
+    },
   },
   {
     timestamps: true,
