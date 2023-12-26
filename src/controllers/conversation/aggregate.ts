@@ -93,7 +93,7 @@ export const getMessagesListAggregate = (
           date: "$createdAt",
         },
       },
-      messages: { $push: "$$ROOT" },
+      data: { $push: "$$ROOT" },
     },
   },
 ];
