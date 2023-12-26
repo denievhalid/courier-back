@@ -388,6 +388,7 @@ export const getMessagesList = asyncHandler(
       isBlocked,
       canWrite,
       companion,
+      lastRequestedDeliveryMessage: conversation?.lastRequestedDeliveryMessage,
     };
 
     return getResponse(res, { data }, StatusCodes.OK);
