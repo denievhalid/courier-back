@@ -28,6 +28,7 @@ import {
   handlePushNotification,
   handleSystemMessageByUserType,
 } from "@/services/notification";
+import { serializeMessages } from "@/controllers/conversation/serialize";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   // const io = getParam(req, "io");
@@ -368,11 +369,11 @@ export const getMessagesList = asyncHandler(
     const data = {
       ad: conversation.ad,
       adAuthor: conversation.adAuthor,
+      messages: serializeMessages(messages),
       delivery,
       isBlocked,
       canWrite,
       companion,
-      messages,
     };
 
     return getResponse(res, { data }, StatusCodes.OK);
