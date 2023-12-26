@@ -109,7 +109,7 @@ export const createMessageHelper = async ({
   }
 
   // для диалога
-  io.to(conversation?._id?.toString()).emit(
+  io.to(`room${conversation?._id?.toString()}`).emit(
     SOCKET_EVENTS[isSystemMessage ? "SYSTEM_ACTION" : "NEW_MESSAGE"],
     newMessage
   );
