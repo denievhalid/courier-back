@@ -96,4 +96,9 @@ export const getMessagesListAggregate = (
       data: { $push: "$$ROOT" },
     },
   },
+  {
+    $sort: {
+      _id: 1,
+    },
+  },
 ];
