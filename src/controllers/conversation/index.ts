@@ -195,7 +195,7 @@ export const createMessage = asyncHandler(
         companion: user,
         cover: conversation?.ad?.images[0],
         lastRequestedDeliveryMessage:
-          conversationUpdatedPayload?.lastRequestedDeliveryMessage,
+          conversationUpdatedPayload?.lastRequestedDeliveryMessage?._id,
       },
       type:
         JSON.stringify(conversation.courier._id) ===
