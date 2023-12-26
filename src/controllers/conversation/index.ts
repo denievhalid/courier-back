@@ -172,7 +172,7 @@ export const createMessage = asyncHandler(
     };
 
     io.to(conversation?._id?.toString()).emit(SOCKET_EVENTS.NEW_MESSAGE, {
-      ...newMessageObject,
+      message: newMessageObject,
       lastRequestedDeliveryMessage:
         conversationUpdatedPayload?.lastRequestedDeliveryMessage?._id,
     });
