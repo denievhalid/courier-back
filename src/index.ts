@@ -59,6 +59,9 @@ initDatabase()
       socket.on(SOCKET_EVENTS.LEAVE_ROOM, ({ room }: { room: string }) => {
         socket.leave(room);
       });
+      socket.on(SOCKET_EVENTS.TYPING, ({ room }: { room: string }) => {
+        socket.broadcast.to(room).emit(SOCKET_EVENTS.TYPING);
+      });
     });
 
     server.listen(getEnv("port"));
