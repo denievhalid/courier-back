@@ -194,6 +194,8 @@ export const createMessage = asyncHandler(
         unreadMessagesCount,
         companion: user,
         cover: conversation?.ad?.images[0],
+        lastRequestedDeliveryMessage:
+          conversationUpdatedPayload?.lastRequestedDeliveryMessage,
       },
       type:
         JSON.stringify(conversation.courier._id) ===
@@ -326,6 +328,7 @@ export const getConversationsList = asyncHandler(
             },
           },
           lastMessage: { $arrayElemAt: ["$messages", 0] },
+          lastRequestedDeliveryMessage: 1,
         },
       },
     ]);
