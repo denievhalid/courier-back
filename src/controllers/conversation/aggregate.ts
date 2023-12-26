@@ -85,4 +85,15 @@ export const getMessagesListAggregate = (
       },
     },
   },
+  {
+    $group: {
+      _id: {
+        $dateToString: {
+          format: "%Y-%m-%d",
+          date: "$createdAt",
+        },
+      },
+      messages: { $push: "$$ROOT" },
+    },
+  },
 ];
