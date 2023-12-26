@@ -55,7 +55,6 @@ initDatabase()
 
       socket.on(SOCKET_EVENTS.JOIN_ROOM, ({ room }: { room: string }) => {
         socket.join(room);
-        console.log(socket.rooms);
       });
       socket.on(SOCKET_EVENTS.LEAVE_ROOM, ({ room }: { room: string }) => {
         socket.leave(room);
