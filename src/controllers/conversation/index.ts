@@ -171,10 +171,11 @@ export const createMessage = asyncHandler(
       type,
     };
 
-    io.to(conversation?._id?.toString()).emit(
-      SOCKET_EVENTS.NEW_MESSAGE,
-      newMessageObject
-    );
+    io.to(conversation?._id?.toString()).emit(SOCKET_EVENTS.NEW_MESSAGE, {
+      ...newMessageObject,
+      lastRequestedDeliveryMessage:
+        conversationUpdatedPayload?.lastRequestedDeliveryMessage?._id,
+    });
 
     const companion = getConversationCompanion(conversation, user);
     const AllMessages = await messageService
