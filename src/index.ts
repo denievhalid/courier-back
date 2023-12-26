@@ -52,7 +52,7 @@ initDatabase()
       // @ts-ignore
       const sessionId = socket.request.session.id;
       socket.join(sessionId);
-      console.log(sessionId);
+      console.log(socket.rooms);
       socket.on(SOCKET_EVENTS.JOIN_ROOM, ({ room }: { room: string }) => {
         socket.join(room);
       });
