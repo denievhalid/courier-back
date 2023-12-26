@@ -8,7 +8,7 @@ import _ from "lodash";
 
 export const getConversationById = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const id = getParam(req.params, "id");
+    const id = getParam(req.params, "id") || getParam(req.body, "conversation");
 
     const service = getService(Services.CONVERSATION);
 

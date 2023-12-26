@@ -147,33 +147,33 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
-  const io = getParam(req, "io");
-  const user = getParam(req, "user") as UserType;
-  const {
-    conversation: conversationId,
-    message,
-    type,
-    isSystemMessage,
-    systemAction,
-  } = getAttributes(req.body, [
-    "conversation",
-    "message",
-    "type",
-    "isSystemMessage",
-    "systemAction",
-  ]);
+  // const io = getParam(req, "io");
+  // const user = getParam(req, "user") as UserType;
+  // const {
+  //   conversation: conversationId,
+  //   message,
+  //   type,
+  //   isSystemMessage,
+  //   systemAction,
+  // } = getAttributes(req.body, [
+  //   "conversation",
+  //   "message",
+  //   "type",
+  //   "isSystemMessage",
+  //   "systemAction",
+  // ]);
 
-  const newMessage = await createMessageHelper({
-    io,
-    sender: user,
-    conversationId,
-    message,
-    type,
-    isSystemMessage,
-    systemAction,
-  });
+  // const newMessage = await createMessageHelper({
+  //   io,
+  //   sender: user,
+  //   conversationId,
+  //   message,
+  //   type,
+  //   isSystemMessage,
+  //   systemAction,
+  // });
 
-  return getResponse(res, { data: newMessage }, StatusCodes.CREATED);
+  return getResponse(res, { data: "" }, StatusCodes.CREATED);
 });
 
 export const update = asyncHandler(async (req: Request, res: Response) => {

@@ -1,10 +1,22 @@
 import { SOCKET_EVENTS } from "@/const";
+import { ConversationTypes } from "@/controllers/conversation/types";
+import {
+  getConversationCompanion,
+  handleUnReadMessagesCount,
+} from "@/controllers/conversation/utils";
 import { getService } from "@/lib/container";
 import {
+  handlePushNotification,
+  handleSystemMessageByUserType,
+} from "@/services/notification";
+import {
+  ConversationType,
   IOType,
+  MessageType,
   Services,
   SystemActionCodes,
   TCreateMessage,
+  TNotificationData,
   UserType,
 } from "@/types";
 import { toObjectId } from "@/utils/toObjectId";
@@ -12,39 +24,56 @@ import _ from "lodash";
 
 export const createMessageHelper = async ({
   io,
-  sender,
-  conversationId,
+  user,
+  conversation,
   message,
   type,
   isSystemMessage,
   systemAction,
+  replayedMessage,
 }: {
   io: IOType;
-  sender: UserType;
-  conversationId: string;
+  user: UserType;
+  conversation: ConversationType;
   message: string;
   type: number;
   isSystemMessage: boolean;
   systemAction: SystemActionCodes;
+  replayedMessage?: MessageType;
 }) => {
   const conversationService = getService(Services.CONVERSATION);
-
-  const conversation = await conversationService.findOne({
-    _id: toObjectId(conversationId),
-  });
-
   const messageService = getService(Services.MESSAGE);
 
   const messageDoc = await messageService.create({
     isSystemMessage,
     conversation,
     message,
-    sender,
+    sender: user,
     type,
     systemAction,
+    replayedMessage,
   });
 
-  const data = await messageService.aggregate([
+  const conversationUpdatedPayload: {
+    lastRequestedDeliveryMessage?: MessageType;
+    lastMessage: MessageType;
+  } = {
+    lastMessage: messageDoc,
+  };
+
+  if (messageDoc.isSystemMessage) {
+    conversationUpdatedPayload.lastRequestedDeliveryMessage =
+      messageDoc.systemAction === SystemActionCodes.DELIVERY_REQUESTED
+        ? messageDoc
+        : null;
+  }
+
+  await conversationService.update(
+    { _id: toObjectId(conversation._id) },
+    conversationUpdatedPayload
+  );
+
+  const newMessage = await messageService.aggregate([
     {
       $match: {
         _id: toObjectId(messageDoc._id),
@@ -60,68 +89,109 @@ export const createMessageHelper = async ({
     },
     {
       $lookup: {
-        from: "users",
-        localField: "user",
+        from: "messages",
+        localField: "replayedMessage",
         foreignField: "_id",
-        as: "user",
-      },
-    },
-    {
-      $project: {
-        ad: { $first: "$conversation.ad" },
-        message: 1,
-        systemAction: 1,
-        isSystemMessage: 1,
-        type: 1,
-        user: { $first: "$user" },
+        pipeline: [
+          {
+            $lookup: {
+              from: "users",
+              localField: "sender",
+              foreignField: "_id",
+              as: "sender",
+            },
+          },
+          {
+            $addFields: {
+              sender: { $first: "$sender" },
+            },
+          },
+        ],
+        as: "replayedMessage",
       },
     },
     {
       $lookup: {
-        from: "ads",
-        localField: "ad",
+        from: "users",
+        localField: "sender",
         foreignField: "_id",
-        as: "ad",
+        as: "sender",
       },
     },
     {
       $project: {
-        ad: { $first: "$ad" },
-        user: 1,
+        sender: { $first: "$sender" },
         message: 1,
+        conversation: { $first: "$conversation" },
         systemAction: 1,
         isSystemMessage: 1,
         type: 1,
+        replayedMessage: { $first: "$replayedMessage" },
       },
     },
   ]);
 
-  const newMessage: TCreateMessage | undefined = _.first(data);
-  const adId = _.get(newMessage, "ad._id", null);
+  const newMessageObject = _.first(newMessage) as MessageType;
+  const data = {
+    message: newMessageObject,
+    isSystemMessage,
+    systemAction,
+    type,
+  };
 
-  if (adId && newMessage) {
-    const delivery = (newMessage.delivery = (
-      await getService("delivery").findOne({
-        ad: toObjectId(adId),
-        user: toObjectId(sender._id),
-      })
-    )?.status);
-  }
-
-  // для диалога
   io.to(`room${conversation?._id?.toString()}`).emit(
-    SOCKET_EVENTS[isSystemMessage ? "SYSTEM_ACTION" : "NEW_MESSAGE"],
-    newMessage
+    SOCKET_EVENTS.NEW_MESSAGE,
+    {
+      message: newMessageObject,
+      lastRequestedDeliveryMessage:
+        conversationUpdatedPayload?.lastRequestedDeliveryMessage?._id,
+    }
   );
 
-  const allConversations = await conversationService.find({
-    _id: toObjectId(conversationId),
+  const companion = getConversationCompanion(conversation, user);
+  const AllMessages = await messageService
+    .find({ conversation: toObjectId(conversation?._id) })
+    .sort({ createdAt: -1 })
+    .limit(100);
+
+  const unreadMessagesCount = handleUnReadMessagesCount(AllMessages, companion);
+
+  io.to(companion?._id?.toString()).emit(SOCKET_EVENTS.UPDATE_CONVERSATION, {
+    conversation: {
+      ...conversation,
+      lastMessage: messageDoc,
+      unreadMessagesCount,
+      companion: user,
+      cover: conversation?.ad?.images[0],
+      lastRequestedDeliveryMessage:
+        conversationUpdatedPayload?.lastRequestedDeliveryMessage?._id,
+    },
+    type:
+      JSON.stringify(conversation.courier._id) === JSON.stringify(companion._id)
+        ? ConversationTypes.SENT
+        : ConversationTypes.INBOX,
   });
-  // Для страницы ConversationScreen
-  io.to(conversation?._id?.toString()).emit(
-    SOCKET_EVENTS.UPDATE_CONVERSATION,
-    allConversations
-  );
 
-  return newMessage;
+  const messageText = newMessageObject?.isSystemMessage
+    ? newMessageObject?.systemAction &&
+      handleSystemMessageByUserType(
+        newMessageObject?.systemAction,
+        conversation?.courier?.firstname,
+        user._id === newMessageObject?.sender._id
+      )
+    : newMessageObject?.message;
+
+  const notificationData: TNotificationData = {
+    screen: "Message",
+    params: { conversationId: conversation._id },
+  };
+  companion?.notificationTokens &&
+    handlePushNotification(
+      companion?.notificationTokens,
+      newMessageObject.sender.firstname,
+      notificationData,
+      messageText
+    );
+
+  return newMessageObject;
 };

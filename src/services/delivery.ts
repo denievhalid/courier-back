@@ -1,4 +1,9 @@
-import { FilterQuery, PipelineStage, UpdateQuery } from "mongoose";
+import {
+  ClientSession,
+  FilterQuery,
+  PipelineStage,
+  UpdateQuery,
+} from "mongoose";
 import { getModel } from "@/lib/container";
 import { DeliveryType } from "@/types";
 
@@ -10,8 +15,11 @@ export const create = (pipeline: PipelineStage[]) => {
   return getModel("delivery").create(pipeline);
 };
 
-export const findOne = (filter: FilterQuery<DeliveryType>) => {
-  return getModel("delivery").findOne(filter);
+export const findOne = (
+  filter: FilterQuery<DeliveryType>,
+  session?: { session: ClientSession }
+) => {
+  return getModel("delivery").findOne(filter, null, session ?? {});
 };
 
 export const update = (
@@ -21,6 +29,9 @@ export const update = (
   return getModel("delivery").findOneAndUpdate(filter, update);
 };
 
-export const remove = (filter: FilterQuery<DeliveryType>) => {
-  return getModel("delivery").findOneAndRemove(filter);
+export const remove = (
+  filter: FilterQuery<DeliveryType>,
+  session?: { session: ClientSession }
+) => {
+  return getModel("delivery").findOneAndRemove(filter, session ?? {});
 };

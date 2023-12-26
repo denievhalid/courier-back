@@ -1,5 +1,10 @@
 import { getModel } from "@/lib/container";
-import type { FilterQuery, PipelineStage, UpdateQuery } from "mongoose";
+import type {
+  ClientSession,
+  FilterQuery,
+  PipelineStage,
+  UpdateQuery,
+} from "mongoose";
 import type { AdType } from "@/types";
 import { DeliveryType } from "@/types";
 
@@ -17,9 +22,14 @@ export const findOne = (filter: FilterQuery<DeliveryType>) => {
 
 export const update = (
   _id: FilterQuery<AdType>,
-  update: UpdateQuery<AdType>
+  update: UpdateQuery<AdType>,
+  session?: { session: ClientSession }
 ) => {
-  return getModel("ad").findOneAndUpdate({ _id }, { ...update }, { new: true });
+  return getModel("ad").findOneAndUpdate(
+    { _id },
+    { ...update },
+    { new: true, ...session }
+  );
 };
 
 export const getList = (pipeline: PipelineStage[]) => {

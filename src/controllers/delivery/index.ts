@@ -9,6 +9,8 @@ import { toObjectId } from "@/utils/toObjectId";
 import { getAttributes } from "@/utils/getAttributes";
 import { Services, SystemActionCodes } from "@/types";
 import { SOCKET_EVENTS } from "@/const";
+import mongoose from "mongoose";
+import { createMessageHelper } from "../message/helpers/createMessage";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   const io = getParam(req, "io");
@@ -113,41 +115,69 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
   const io = getParam(req, "io");
   const user = getParam(req, "user") as UserType;
   const ad = getParam(req.params, "ad");
-  const conversation = getParam(req.body, "conversation");
+  const conversation = getParam(req, "conversation");
 
   const deliveryService = getService(Services.DELIVERY);
   const adService = getService(Services.AD);
 
-  await deliveryService.remove({
-    ad: toObjectId(ad),
-    user: toObjectId(user._id),
-  });
+  const session = await mongoose.startSession();
 
-  const adObject = await adService.findOne({
-    _id: toObjectId(ad),
-    courier: toObjectId(user._id),
-  });
+  session.startTransaction();
 
-  adObject &&
-    (await adService.update(
+  try {
+    await deliveryService.remove(
+      {
+        ad: toObjectId(ad),
+        user: toObjectId(user._id),
+      },
+      { session: session }
+    );
+    const adObject = await adService.findOne(
       {
         _id: toObjectId(ad),
+        courier: toObjectId(user._id),
       },
-      { courier: null }
-    ));
+      { session: session }
+    );
 
-  if (conversation) {
-    io.to(`room${conversation.toString()}`).emit(
-      SOCKET_EVENTS.UPDATE_DELIVERY_STATUS,
-      null
-    );
-    io.to(`room${conversation?.toString()}`).emit(
-      SOCKET_EVENTS.UPDATE_AD_COURIER,
-      null
-    );
+    adObject &&
+      (await adService.update(
+        {
+          _id: toObjectId(ad),
+        },
+        { courier: null }
+      ),
+      { session: session });
+
+    if (conversation) {
+      io.to(`room${conversation?._id.toString()}`).emit(
+        SOCKET_EVENTS.UPDATE_DELIVERY_STATUS,
+        null
+      );
+      io.to(`room${conversation?._id?.toString()}`).emit(
+        SOCKET_EVENTS.UPDATE_AD_COURIER,
+        null
+      );
+    }
+
+    await createMessageHelper({
+      io,
+      user,
+      conversation,
+      message: "",
+      type: 0,
+      isSystemMessage: true,
+      systemAction: SystemActionCodes.DELIVERY_CANCELED,
+    });
+
+    await session.commitTransaction();
+    return getResponse(res, {}, StatusCodes.OK);
+  } catch (error) {
+    await session.abortTransaction();
+    return res.sendStatus(400);
+  } finally {
+    await session.endSession();
   }
-
-  return getResponse(res, {}, StatusCodes.OK);
 });
 
 export const getByAdId = asyncHandler(async (req: Request, res: Response) => {
