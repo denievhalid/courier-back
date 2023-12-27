@@ -25,6 +25,20 @@ const schema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Message",
     },
+    deleted: [
+      {
+        forUser: {
+          type: Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+        toMessage: {
+          type: Schema.Types.ObjectId,
+          ref: "Message",
+          required: true,
+        },
+      },
+    ],
   },
   {
     timestamps: true,

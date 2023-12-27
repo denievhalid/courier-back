@@ -40,6 +40,12 @@ export type ConversationType = {
   courier: UserType;
   lastMessage?: MessageType;
   lastRequestedDeliveryMessage?: MessageType;
+  deleted?: TDeletedConversationType[];
+};
+
+export type TDeletedConversationType = {
+  forUser: string;
+  toMessage: string;
 };
 
 export type DirectionType = {

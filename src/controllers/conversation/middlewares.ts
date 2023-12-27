@@ -60,6 +60,8 @@ export const getConversationById = asyncHandler(
           courier: { $first: "$courier" },
           cover: 1,
           lastRequestedDeliveryMessage: 1,
+          deleted: 1,
+          lastMessage: 1,
         },
       },
       {

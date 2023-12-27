@@ -7,6 +7,7 @@ import {
   MessageType,
   Services,
   SystemActionCodes,
+  TDeletedConversationType,
   TNotificationData,
   UserType,
 } from "@/types";
@@ -22,7 +23,7 @@ import {
 } from "./utils";
 import { getMessagesListAggregate } from "./aggregate";
 import { ConversationTypes } from "./types";
-import _, { isEqual } from "lodash";
+import _, { isEqual, set } from "lodash";
 import { getAttributes } from "@/utils/getAttributes";
 import { SOCKET_EVENTS } from "@/const";
 import {
@@ -397,6 +398,59 @@ export const getMessagesList = asyncHandler(
       lastRequestedDeliveryMessage: conversation?.lastRequestedDeliveryMessage,
     };
 
-    return getResponse(res, { data }, StatusCodes.OK);
+    return getResponse(res, { messages }, StatusCodes.OK);
+  }
+);
+
+export const removeConversation = asyncHandler(
+  async (req: Request, res: Response) => {
+    const conversation = getParam(req, "conversation") as ConversationType;
+    const user = getParam(req, "user") as UserType;
+
+    const conversationService = getService(Services.CONVERSATION);
+
+    const handlepushOrSet = () => {
+      if (Number(conversation?.deleted?.length)) {
+        const isAlreadyDeletedIndex = conversation?.deleted?.findIndex(
+          (e) => e.forUser.toString() === user._id.toString()
+        );
+
+        if (isAlreadyDeletedIndex !== -1) {
+          set(
+            conversation,
+            `deleted[${isAlreadyDeletedIndex}].toMessage`,
+            toObjectId((conversation.lastMessage as MessageType)?._id)
+          );
+
+          return {
+            $set: {
+              deleted: conversation?.deleted,
+            },
+          };
+        }
+      }
+      return {
+        $push: {
+          deleted: {
+            forUser: toObjectId(user._id),
+            toMessage: toObjectId(
+              (conversation.lastMessage as MessageType)?._id
+            ),
+          },
+        },
+      };
+    };
+
+    if (Boolean(conversation.lastMessage)) {
+      const doc = await conversationService.update(
+        {
+          _id: toObjectId(conversation._id),
+        },
+        handlepushOrSet()
+      );
+      console.log(doc, "dsds");
+    }
+
+    return getResponse(res, {}, StatusCodes.OK);
   }
 );
