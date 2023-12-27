@@ -398,7 +398,7 @@ export const getMessagesList = asyncHandler(
       lastRequestedDeliveryMessage: conversation?.lastRequestedDeliveryMessage,
     };
 
-    return getResponse(res, { messages }, StatusCodes.OK);
+    return getResponse(res, { data }, StatusCodes.OK);
   }
 );
 
