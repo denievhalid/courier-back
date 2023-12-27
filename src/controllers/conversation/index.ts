@@ -176,7 +176,8 @@ export const createMessage = asyncHandler(
       {
         message: newMessageObject,
         lastRequestedDeliveryMessage:
-          conversationUpdatedPayload?.lastRequestedDeliveryMessage?._id,
+          conversationUpdatedPayload?.lastRequestedDeliveryMessage?._id ||
+          conversationUpdatedPayload?.lastRequestedDeliveryMessage,
       }
     );
 
