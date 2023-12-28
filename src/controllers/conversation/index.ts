@@ -30,6 +30,7 @@ import {
   handlePushNotification,
   handleSystemMessageByUserType,
 } from "@/services/notification";
+import { removeDelivery } from "../delivery/helpers";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   // const io = getParam(req, "io");
@@ -455,6 +456,7 @@ export const getMessagesList = asyncHandler(
 
 export const removeConversation = asyncHandler(
   async (req: Request, res: Response) => {
+    const io = getParam(req, "io");
     const conversation = getParam(req, "conversation") as ConversationType;
     const user = getParam(req, "user") as UserType;
 
@@ -499,8 +501,19 @@ export const removeConversation = asyncHandler(
         },
         handlepushOrSet()
       );
-      console.log(doc, "dsds");
     }
+
+    const adService = getService(Services.AD);
+    const userService = getService(Services.USER);
+    const ad = adService.findOne({ _id: conversation.ad });
+    const courier = userService.findOne({ _id: conversation.courier });
+
+    removeDelivery({
+      io,
+      ad,
+      user: courier,
+      conversation,
+    });
 
     return getResponse(res, {}, StatusCodes.OK);
   }

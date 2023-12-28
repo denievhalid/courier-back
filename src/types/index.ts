@@ -148,6 +148,7 @@ export enum Services {
   DELIVERY = "delivery",
   DIRECTION = "direction",
   MESSAGE = "message",
+  USER = "user",
 }
 
 export enum Routes {
