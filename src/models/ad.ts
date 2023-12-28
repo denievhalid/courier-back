@@ -22,6 +22,11 @@ const schema = new Schema({
     type: String,
     required: true,
   },
+  weightCategory: {
+    type: Number,
+    enum: [1, 2, 3, 4],
+    required: true,
+  },
   images: [
     {
       uri: String,
