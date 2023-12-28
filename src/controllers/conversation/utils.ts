@@ -27,6 +27,5 @@ export const handleUnReadMessagesCount = (
   );
   const unreadCount =
     lastReadIndex !== -1 ? lastReadIndex : partnerMessages.length;
-  console.log({ partnerMessages, lastReadIndex, unreadCount });
   return unreadCount;
 };
