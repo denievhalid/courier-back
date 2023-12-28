@@ -243,7 +243,6 @@ export const getConversationsList = asyncHandler(
     const match: PipelineStage.Match = {
       $match: {},
     };
-    console.log(user._id);
     match.$match[getUserByConversationType[type]] = toObjectId(user._id);
 
     const data = await service.aggregate([
@@ -290,7 +289,9 @@ export const getConversationsList = asyncHandler(
                   as: "element",
                   in: {
                     $cond: {
-                      if: { $eq: ["$$element.forUser", user._id] },
+                      if: {
+                        $eq: ["$$element.forUser", toObjectId(user._id)],
+                      },
                       then: "$$element.toMessage",
                       else: null,
                     },
