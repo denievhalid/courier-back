@@ -503,14 +503,12 @@ export const removeConversation = asyncHandler(
       );
     }
 
-    const adService = getService(Services.AD);
     const userService = getService(Services.USER);
-    const ad = adService.findOne({ _id: conversation.ad });
-    const courier = userService.findOne({ _id: conversation.courier });
+    const courier = await userService.findOne({ _id: conversation.courier });
 
-    removeDelivery({
+    await removeDelivery({
       io,
-      ad,
+      ad: conversation.ad._id.toString(),
       user: courier,
       conversation,
     });
