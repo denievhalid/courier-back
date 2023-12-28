@@ -243,7 +243,7 @@ export const getConversationsList = asyncHandler(
     const match: PipelineStage.Match = {
       $match: {},
     };
-
+    console.log(user._id);
     match.$match[getUserByConversationType[type]] = toObjectId(user._id);
 
     const data = await service.aggregate([
@@ -281,10 +281,33 @@ export const getConversationsList = asyncHandler(
         },
       },
       {
+        $addFields: {
+          deletedMessageId: {
+            $arrayElemAt: [
+              {
+                $map: {
+                  input: "$deleted",
+                  as: "element",
+                  in: {
+                    $cond: {
+                      if: { $eq: ["$$element.forUser", user._id] },
+                      then: "$$element.toMessage",
+                      else: null,
+                    },
+                  },
+                },
+              },
+              0,
+            ],
+          },
+        },
+      },
+      {
         $lookup: {
           from: "messages",
           let: {
             conversation: "$_id",
+            deletedMessageId: "$deletedMessageId",
           },
           pipeline: [
             {
@@ -298,7 +321,14 @@ export const getConversationsList = asyncHandler(
             {
               $match: {
                 $expr: {
-                  $eq: ["$conversation", "$$conversation"],
+                  $and: [
+                    {
+                      $eq: ["$conversation", "$$conversation"],
+                    },
+                    {
+                      $gt: ["$_id", "$$deletedMessageId"],
+                    },
+                  ],
                 },
               },
             },
@@ -335,10 +365,10 @@ export const getConversationsList = asyncHandler(
           },
           lastMessage: { $arrayElemAt: ["$messages", 0] },
           lastRequestedDeliveryMessage: 1,
+          deletedMessageId: 1,
         },
       },
     ]);
-
     return getResponse(res, { data }, StatusCodes.OK);
   }
 );
