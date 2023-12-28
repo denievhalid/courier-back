@@ -175,4 +175,8 @@ export type TNotificationData = {
   params: {
     conversationId: string;
   };
+  systemMessage?: {
+    sender: string;
+    receiver: string;
+  };
 };

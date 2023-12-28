@@ -6,8 +6,8 @@ import {
 } from "@/controllers/conversation/utils";
 import { getService } from "@/lib/container";
 import {
+  getSystemMessageText,
   handlePushNotification,
-  handleSystemMessageByUserType,
 } from "@/services/notification";
 import {
   ConversationType,
@@ -174,24 +174,27 @@ export const createMessageHelper = async ({
 
   const messageText = newMessageObject?.isSystemMessage
     ? newMessageObject?.systemAction &&
-      handleSystemMessageByUserType(
+      getSystemMessageText(
         newMessageObject?.systemAction,
-        conversation?.courier?.firstname,
-        user._id === newMessageObject?.sender._id
+        conversation?.courier?.firstname
       )
-    : newMessageObject?.message;
+    : {
+        sender: newMessageObject?.message,
+        receiver: newMessageObject?.message,
+      };
 
   const notificationData: TNotificationData = {
     screen: "Message",
     params: { conversationId: conversation._id },
+    systemMessage: messageText,
   };
   companion?.notificationTokens &&
     handlePushNotification(
       companion?.notificationTokens,
       newMessageObject.sender.firstname,
       notificationData,
-      messageText
+      newMessageObject?.message
     );
 
-  return newMessageObject;
+  return data;
 };
