@@ -281,25 +281,45 @@ export const getConversationsList = asyncHandler(
       },
       {
         $addFields: {
-          deletedMessageId: {
-            $arrayElemAt: [
-              {
-                $map: {
-                  input: "$deleted",
-                  as: "element",
-                  in: {
-                    $cond: {
-                      if: {
-                        $eq: ["$$element.forUser", toObjectId(user._id)],
-                      },
-                      then: "$$element.toMessage",
-                      else: null,
-                    },
-                  },
-                },
+          deletedArray: {
+            $filter: {
+              input: "$deleted",
+              as: "element",
+              cond: {
+                $eq: ["$$element.forUser", toObjectId(user._id)],
               },
-              0,
-            ],
+            },
+          },
+        },
+      },
+      {
+        $addFields: {
+          deletedObject: {
+            $cond: {
+              if: {
+                $and: [
+                  {
+                    $isArray: "$deletedArray",
+                  },
+                  {
+                    $gt: [{ $size: "$deletedArray" }, 0],
+                  },
+                ],
+              },
+              then: { $first: "$deletedArray" },
+              else: null,
+            },
+          },
+        },
+      },
+      {
+        $addFields: {
+          deletedMessageId: {
+            $cond: {
+              if: { $ne: ["$deletedObject", null] },
+              then: "$deletedObject.toMessage",
+              else: null,
+            },
           },
         },
       },
