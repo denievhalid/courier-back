@@ -123,6 +123,7 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
   const user = getParam(req, "user") as UserType;
   const ad = getParam(req.params, "ad");
   const conversation = getParam(req, "conversation");
+  const byOwner = getParam(req.body, "byOwner");
 
   await removeDelivery({
     io,
@@ -130,6 +131,7 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
     user,
     conversation,
     shouldSendMessage: true,
+    byOwner,
   });
 
   return getResponse(res, {}, StatusCodes.OK);

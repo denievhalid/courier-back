@@ -21,12 +21,14 @@ export const removeDelivery = async ({
   user,
   conversation,
   shouldSendMessage = false,
+  byOwner = false,
 }: {
   io: IOType;
   ad: string;
   user: UserType;
   conversation: ConversationType;
   shouldSendMessage?: boolean;
+  byOwner?: boolean;
 }) => {
   const deliveryService = getService(Services.DELIVERY);
   const adService = getService(Services.AD);
@@ -79,7 +81,9 @@ export const removeDelivery = async ({
         message: "",
         type: 0,
         isSystemMessage: true,
-        systemAction: SystemActionCodes.DELIVERY_CANCELED,
+        systemAction: byOwner
+          ? SystemActionCodes.DELIVERY_CANCELED_BY_OWNER
+          : SystemActionCodes.DELIVERY_CANCELED,
       });
     }
 
