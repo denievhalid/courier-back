@@ -55,9 +55,11 @@ initDatabase()
 
       socket.on(SOCKET_EVENTS.JOIN_ROOM, ({ room }: { room: string }) => {
         socket.join(room);
+        socket.broadcast.to(room).emit(SOCKET_EVENTS.USER_ONLINE, true);
       });
       socket.on(SOCKET_EVENTS.LEAVE_ROOM, ({ room }: { room: string }) => {
         socket.leave(room);
+        socket.broadcast.to(room).emit(SOCKET_EVENTS.USER_ONLINE, false);
       });
       socket.on(SOCKET_EVENTS.TYPING, ({ room }: { room: string }) => {
         socket.broadcast.to(room).emit(SOCKET_EVENTS.TYPING);

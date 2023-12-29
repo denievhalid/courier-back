@@ -9,6 +9,7 @@ export const SOCKET_EVENTS = {
   NEW_MESSAGE: "newMessage",
   JOIN_ROOM: "joinRoom",
   LEAVE_ROOM: "leaveRoom",
+  USER_ONLINE: "userOnline",
   TYPING: "typing",
   SYSTEM_ACTION: "systemAction",
   UPDATE_DELIVERY_STATUS: "updateDeliveryStatus",
