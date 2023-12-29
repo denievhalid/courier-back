@@ -7,9 +7,10 @@ import type { AdType, UserType } from "@/types";
 import type { Request, Response } from "express";
 import { toObjectId } from "@/utils/toObjectId";
 import { getAttributes } from "@/utils/getAttributes";
-import { Services } from "@/types";
+import { Services, SystemActionCodes } from "@/types";
 import { SOCKET_EVENTS } from "@/const";
 import { removeDelivery } from "./helpers";
+import { createMessageHelper } from "@/controllers/message/helpers/createMessage";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   const io = getParam(req, "io");
@@ -52,6 +53,16 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
       status
     );
   }
+
+  await createMessageHelper({
+    io,
+    user,
+    conversation,
+    message: "Вы оправили заявку на доставку",
+    type: 0,
+    isSystemMessage: true,
+    systemAction: SystemActionCodes.DELIVERY_REQUESTED,
+  });
 
   return getResponse(res, {}, StatusCodes.CREATED);
 });
