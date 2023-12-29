@@ -59,7 +59,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     user,
     conversation,
     message: "Вы оправили заявку на доставку",
-    type: 0,
+    type: 2,
     isSystemMessage: true,
     systemAction: SystemActionCodes.DELIVERY_REQUESTED,
   });
