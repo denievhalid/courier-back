@@ -6,7 +6,7 @@ import { getConversationById } from "@/controllers/conversation/middlewares";
 
 const router = Router();
 
-router.post("/", authenticate, getAdMiddleware, create);
+router.post("/", authenticate, getAdMiddleware, getConversationById, create);
 router.get("/", authenticate, getByAdId);
 router.patch("/", authenticate, update);
 router.delete("/:ad", authenticate, getConversationById, remove);

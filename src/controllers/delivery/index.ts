@@ -14,11 +14,8 @@ import { createMessageHelper } from "@/controllers/message/helpers/createMessage
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   const io = getParam(req, "io");
-  const { ad, conversation, status } = getAttributes(req.body, [
-    "ad",
-    "conversation",
-    "status",
-  ]);
+  const { ad, status } = getAttributes(req.body, ["ad", "status"]);
+  const conversation = getParam(req, "conversation");
   const user = getParam(req, "user") as UserType;
 
   const adService = getService(Services.AD);
@@ -48,7 +45,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   });
 
   if (conversation) {
-    io.to(`room${conversation.toString()}`).emit(
+    io.to(`room${conversation._id?.toString()}`).emit(
       SOCKET_EVENTS.UPDATE_DELIVERY_STATUS,
       status
     );
