@@ -36,19 +36,19 @@ export const removeDelivery = async ({
   const session = await mongoose.startSession();
 
   session.startTransaction();
-
+  console.log(session);
   try {
-    await deliveryService.remove(
-      {
-        ad: toObjectId(ad),
-        user: toObjectId(user._id),
-      },
-      { session: session }
-    );
     const adObject = await adService.findOne(
       {
         _id: toObjectId(ad),
-        courier: toObjectId(user._id),
+      },
+      { session: session }
+    );
+
+    await deliveryService.remove(
+      {
+        ad: toObjectId(ad),
+        user: byOwner ? toObjectId(adObject.courier) : toObjectId(user._id),
       },
       { session: session }
     );
@@ -89,6 +89,7 @@ export const removeDelivery = async ({
 
     await session.commitTransaction();
   } catch (error) {
+    console.log(error);
     await session.abortTransaction();
   } finally {
     await session.endSession();

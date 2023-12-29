@@ -42,6 +42,9 @@ const schema = new Schema(
         SystemActionCodes.DELIVERY_CANCELED,
         SystemActionCodes.DELIVERY_CONFIRMED,
         SystemActionCodes.DELIVERY_EXPIRED,
+        SystemActionCodes.DELIVERY_CANCELED_BY_OWNER,
+        SystemActionCodes.DELIVERY_COMPLETED,
+        SystemActionCodes.DELIVERY_RECEIVED,
       ],
     },
     type: {
