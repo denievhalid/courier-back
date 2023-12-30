@@ -6,9 +6,6 @@ import {
   ConversationType,
   MessageType,
   Services,
-  SystemActionCodes,
-  TDeletedConversationType,
-  TNotificationData,
   UserType,
 } from "@/types";
 import { getService } from "@/lib/container";
@@ -16,26 +13,15 @@ import { getResponse } from "@/utils/getResponse";
 import { StatusCodes } from "http-status-codes";
 import { PipelineStage } from "mongoose";
 import { toObjectId } from "@/utils/toObjectId";
-import {
-  getConversationCompanion,
-  getUserByConversationType,
-  handleUnReadMessagesCount,
-} from "./utils";
+import { getUserByConversationType } from "./utils";
 import { getMessagesListAggregate } from "./aggregate";
 import { ConversationTypes } from "./types";
 import _, { isEqual, set } from "lodash";
 import { getAttributes } from "@/utils/getAttributes";
-import { SOCKET_EVENTS } from "@/const";
-import {
-  getSystemMessageText,
-  handlePushNotification,
-  handleSystemMessageByUserType,
-} from "@/services/notification";
 import { removeDelivery } from "../delivery/helpers";
 import { createMessageHelper } from "../message/helpers/createMessage";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
-  // const io = getParam(req, "io");
   const ad = getParam(req.body, "ad") as AdType;
   const user = getParam(req, "user") as UserType;
 
@@ -52,11 +38,6 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   if (!conversation) {
     conversation = await service.create(payload);
   }
-
-  // io.to(attributes?.receiver?._id).emit(
-  //   SOCKET_EVENTS.NEW_CONVERSATION,
-  //   conversation
-  // );
 
   return getResponse(res, { data: conversation }, StatusCodes.CREATED);
 });
