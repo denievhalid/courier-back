@@ -48,6 +48,8 @@ export const useSocket = asyncHandler(
     const io = getParam(req, "io");
     const user = getParam(req, "user") as UserType;
 
+    console.log(111);
+
     emitSocket({
       io,
       event: SocketEvents.UPDATE_DELIVERY_STATUS,
