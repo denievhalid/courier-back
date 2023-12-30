@@ -5,5 +5,7 @@ export const getRoomNameByConversation = (conversation: ConversationType) => {
 };
 
 export const emitSocket = ({ io, event, room, data }: EmitSocketType) => {
+  console.log({ event, room, data, io });
+
   io.to(room).emit(event, data);
 };
