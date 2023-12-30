@@ -6,6 +6,7 @@ import deliveryRoutes from "@/routes/delivery";
 import directionRoutes from "@/routes/direction";
 import favoriteRoutes from "@/routes/favorite";
 import fileRoutes from "@/routes/file";
+import userRoutes from "@/routes/user";
 import { getEndpoint } from "@/utils/getEndpoint";
 import { errorHandler } from "@/middlewares/errorHandler";
 import { Routes } from "@/types";
@@ -20,5 +21,6 @@ export const createRoutes = (app: Application) => {
   app.use(getEndpoint(Routes.DIRECTIONS), directionRoutes);
   app.use(getEndpoint(Routes.FAVORITES), favoriteRoutes);
   app.use(getEndpoint(Routes.FILES), fileRoutes);
+  app.use(getEndpoint(Routes.USERS), userRoutes);
   app.use(errorHandler);
 };

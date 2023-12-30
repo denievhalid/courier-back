@@ -13,12 +13,8 @@ export const initSocket = (app: Application, server: HttpServer) => {
     serveClient: false,
   });
 
-  console.log("123123");
-
   io.on(SocketEvents.CONNECTION, (socket) => {
-    console.log("socket", socket);
     socket.on(SocketEvents.JOIN_ROOM, ({ room }: SocketJoinRoomType) => {
-      console.log(room, "room");
       socket.join(room);
     });
     socket.on(SocketEvents.LEAVE_ROOM, socket.leave);
