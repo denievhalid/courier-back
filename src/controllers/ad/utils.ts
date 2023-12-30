@@ -202,12 +202,6 @@ export const getListAggregateBuilder = (queryParams: { [k: string]: any }) => {
         foreignField: "_id",
         as: "user",
       },
-      {
-        from: "deliveries",
-        localField: "_id",
-        foreignField: "ad",
-        as: "delivery",
-      },
     ])
     .project({
       _id: 1,
@@ -223,7 +217,6 @@ export const getListAggregateBuilder = (queryParams: { [k: string]: any }) => {
       price: 1,
       weight: 1,
       routes: 1,
-      deliveryStatus: { $first: "$delivery.status" },
       user: { $first: "$user" },
     })
     .addFields({
