@@ -4,14 +4,15 @@ import { getParam } from "@/utils/getParam";
 import { getService } from "@/lib/container";
 import { StatusCodes } from "http-status-codes";
 import type { AdType, ConversationType, UserType } from "@/types";
+import { DeliveryStatus, Services, SystemActionCodes } from "@/types";
 import type { Request, Response } from "express";
 import { toObjectId } from "@/utils/toObjectId";
 import { getAttributes } from "@/utils/getAttributes";
-import { DeliveryStatus, Services, SystemActionCodes } from "@/types";
 import { SOCKET_EVENTS } from "@/const";
 import { removeDelivery } from "./helpers";
 import { DeliveryFacade } from "@/controllers/delivery/facade";
 import { emitSocket, getRoomNameByConversation } from "@/utils/socket";
+import { MessageFacade } from "@/controllers/conversation/facade";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   const ad = getParam(req.body, "ad") as AdType;
@@ -25,6 +26,15 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     user,
   }).create();
 
+  await new MessageFacade({
+    conversation,
+    isSystemMessage: true,
+    message: "Вы оправили заявку на доставку",
+    systemAction: SystemActionCodes.DELIVERY_REQUESTED,
+    type: 2,
+    user,
+  }).create();
+
   if (conversation) {
     emitSocket({
       io: getParam(req, "io"),
@@ -34,7 +44,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     });
   }
 
-  return getResponse(res);
+  return getResponse(res, {}, StatusCodes.CREATED);
 });
 
 export const getList = asyncHandler(async (req: Request, res: Response) => {
