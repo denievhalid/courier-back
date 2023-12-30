@@ -14,15 +14,15 @@ export const initSocket = (app: Application, server: HttpServer) => {
   });
 
   io.on(SocketEvents.CONNECTION, (socket) => {
+    app.use((req, res, next) => {
+      _.set(req, "io", socket);
+      next();
+    });
+
     socket.on(SocketEvents.JOIN_ROOM, socket.join);
     socket.on(SocketEvents.LEAVE_ROOM, socket.leave);
     socket.on(SocketEvents.TYPING, ({ room }: SocketJoinRoomType) => {
       socket.broadcast.to(room).emit(SocketEvents.TYPING);
     });
-  });
-
-  app.use((req, res, next) => {
-    _.set(req, "io", io);
-    next();
   });
 };
