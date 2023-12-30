@@ -190,7 +190,7 @@ export const getListAggregateBuilder = (queryParams: { [k: string]: any }) => {
 
   if (queryParams.sort) {
     aggregateBuilder.sort({
-      $sort: { [queryParams.sort]: -1 },
+      [queryParams.sort]: -1,
     });
   }
 
