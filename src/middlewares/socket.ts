@@ -16,7 +16,7 @@ export const initSocket = (app: Application, server: HttpServer) => {
   console.log("123123");
 
   io.on(SocketEvents.CONNECTION, (socket) => {
-    console.log("socket");
+    console.log("socket", socket);
     socket.on(SocketEvents.JOIN_ROOM, ({ room }: SocketJoinRoomType) => {
       console.log(room, "room");
       socket.join(room);
