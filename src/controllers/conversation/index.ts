@@ -364,7 +364,7 @@ export const removeConversation = asyncHandler(
     };
 
     if (Boolean(conversation.lastMessage)) {
-      const doc = await conversationService.update(
+      await conversationService.update(
         {
           _id: toObjectId(conversation._id),
         },

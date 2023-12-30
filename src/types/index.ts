@@ -1,5 +1,4 @@
 import type { Aggregate, PipelineStage, Query } from "mongoose";
-import { string } from "yup";
 
 export type HttpMethods = "get" | "post" | "patch" | "put" | "delete";
 
@@ -150,6 +149,7 @@ export enum Services {
   CONVERSATION = "conversation",
   DELIVERY = "delivery",
   DIRECTION = "direction",
+  FAVORITE = "favorite",
   MESSAGE = "message",
   USER = "user",
 }
@@ -183,3 +183,15 @@ export type TNotificationData = {
     receiver: string;
   };
 };
+
+export enum Models {
+  AD = "ad",
+  BLOCK = "block",
+  CONVERSATION = "conversation",
+  DELIVERY = "delivery",
+  DIRECTION = "direction",
+  FAVORITE = "favorite",
+  FILE = "file",
+  MESSAGE = "message",
+  USER = "user",
+}

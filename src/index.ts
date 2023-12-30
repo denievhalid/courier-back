@@ -56,11 +56,6 @@ initDatabase()
       socket.on(SOCKET_EVENTS.JOIN_ROOM, ({ room }: { room: string }) => {
         socket.join(room);
         socket.broadcast.to(room).emit(SOCKET_EVENTS.USER_ONLINE, true);
-        io.to(room)
-          .fetchSockets()
-          .then((res) => {
-            console.log("res", res);
-          });
       });
       socket.on(SOCKET_EVENTS.LEAVE_ROOM, ({ room }: { room: string }) => {
         socket.leave(room);

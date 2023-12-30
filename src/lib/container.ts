@@ -20,6 +20,7 @@ import * as OtpService from "@/services/otp";
 import * as TokenService from "@/services/token";
 import * as UserService from "@/services/user";
 import type { Model } from "mongoose";
+import { BaseService } from "@/services/base";
 
 interface Container {
   services: any;
@@ -70,8 +71,8 @@ export const createContainer = () => {
   return container;
 };
 
-export const getService = (name: string) => {
-  return createContainer().services.get(name);
+export const getService = (name: string): BaseService => {
+  return new (createContainer().services.get(name))();
 };
 
 export const getModel = (name: string): Model<any> => {

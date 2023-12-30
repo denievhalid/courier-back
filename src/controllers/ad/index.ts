@@ -17,7 +17,7 @@ import { getParam } from "@/utils/getParam";
 import { LIMIT } from "@/controllers/ad/const";
 import mongoose, { PipelineStage } from "mongoose";
 import { createAdSchema } from "@/controllers/ad/validation";
-import { Services, UserType } from "@/types";
+import { DeliveryType, Services, UserType } from "@/types";
 import { StatusCodes } from "http-status-codes";
 import dayjs from "dayjs";
 import { toObjectId } from "@/utils/toObjectId";
@@ -47,7 +47,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     attributes.endDate = new Date(attributes.endDate);
   }
 
-  const data = await getService("ad").create({
+  const data = await getService(Services.AD).create({
     ...attributes,
     user: user._id,
   });
@@ -56,30 +56,19 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const update = asyncHandler(async (req: Request, res: Response) => {
-  const id = getParam(req.params, "id");
+  const _id = getParam(req.params, "id");
   const user = getParam(req, "user") as UserType;
 
-  const attributes = _.pick(req.body, [
-    "title",
-    "date",
-    "courier",
-    "to",
-    "price",
-    "status",
-    "from",
-    "images",
-    "weight",
-    "comment",
-  ]);
+  const adService = getService(Services.AD);
 
-  await getService("ad").update(id, attributes);
+  await adService.update({ _id }, req.body);
 
   const pipeline: PipelineStage[] = [];
 
   pipeline.push(
     {
       $match: {
-        _id: toObjectId(id),
+        _id: toObjectId(_id),
       },
     },
     {
@@ -111,13 +100,13 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
       $addFields: {
         isFavorite: { $toBool: { $size: "$favorites" } },
         isOwn: {
-          $cond: [{ $eq: ["$user._id", user._id] }, true, false],
+          $cond: [{ $eq: ["$user._id", toObjectId(user._id)] }, true, false],
         },
       },
     });
   }
 
-  const data = await getService("ad").aggregate(pipeline);
+  const data = await adService.aggregate(pipeline);
 
   return getResponse(res, { data: _.first(data) });
 });
@@ -168,7 +157,7 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
   );
 
   if (user) {
-    const isFavorite = await getService("favorite").count({
+    const isFavorite = await getService(Services.FAVORITE).count({
       ad: toObjectId(id),
       user: toObjectId(user._id),
     });
@@ -177,26 +166,26 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
       $addFields: {
         isFavorite: Boolean(isFavorite),
         isOwn: {
-          $cond: [{ $eq: ["$user._id", user._id] }, true, false],
+          $cond: [{ $eq: ["$user._id", toObjectId(user._id)] }, true, false],
         },
       },
     });
 
     delivery = (
-      await getService("delivery").findOne({
+      await getService(Services.DELIVERY).findOne({
         ad: toObjectId(id),
         user: toObjectId(user._id),
       })
     )?.status;
   }
 
-  const data = _.first(await getService("ad").aggregate(pipeline));
+  const data = _.first(await getService(Services.AD).aggregate(pipeline));
 
   if (_.isObject(data)) {
     _.set(data, "delivery", delivery || null);
   }
 
-  return getResponse(res, { data });
+  return getResponse(res, { data }, StatusCodes.OK);
 });
 
 export const getList = asyncHandler(async (req: Request, res: Response) => {
@@ -312,7 +301,9 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const remove = asyncHandler(async (req: Request, res: Response) => {
-  await getService("ad").remove(getParam(req.params, "id"));
+  const id = getParam(req.params, "id");
+
+  await getService(Services.AD).remove(id);
 
   return getResponse(res, {}, StatusCodes.NO_CONTENT);
 });

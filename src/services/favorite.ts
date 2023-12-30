@@ -1,23 +1,9 @@
-import type { FilterQuery, PipelineStage } from "mongoose";
+import { BaseService } from "@/services/base";
 import { getModel } from "@/lib/container";
-import { FavoriteType } from "@/types";
+import { Models } from "@/types";
 
-export const create = (payload: FavoriteType) => {
-  return getModel("favorite").create(payload);
-};
-
-export const remove = (filter: FilterQuery<FavoriteType>) => {
-  return getModel("favorite").findOneAndRemove(filter);
-};
-
-export const getList = (pipeline: PipelineStage[]) => {
-  return getModel("favorite").aggregate(pipeline);
-};
-
-export const count = (filter: FilterQuery<FavoriteType>) => {
-  return getModel("favorite").countDocuments(filter);
-};
-
-export const exists = (filter: FilterQuery<FavoriteType>) => {
-  return getModel("favorite").countDocuments(filter);
-};
+export class FavoriteService extends BaseService {
+  constructor() {
+    super(getModel(Models.FAVORITE));
+  }
+}
