@@ -5,13 +5,12 @@ import {
   useGetAdMiddleware,
   useSocket,
 } from "@/controllers/delivery/middlewares";
-import { getConversationById } from "@/controllers/conversation/middlewares";
 
 const router = Router();
 
 router.post("/", authenticate, useGetAdMiddleware, create, useSocket);
 router.get("/", authenticate, getByAdId);
 router.patch("/", authenticate, update);
-router.delete("/:ad", authenticate, getConversationById, remove);
+router.delete("/:ad", authenticate, remove, useSocket);
 
 export default router;
