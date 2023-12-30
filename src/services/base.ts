@@ -5,6 +5,7 @@ import type {
   PipelineStage,
   UpdateQuery,
   QueryOptions,
+  Query,
 } from "mongoose";
 
 export class BaseService {

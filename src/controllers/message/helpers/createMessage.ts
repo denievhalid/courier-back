@@ -149,10 +149,11 @@ export const createMessageHelper = async ({
   );
 
   const companion = getConversationCompanion(conversation, user);
-  const AllMessages = await messageService
-    .find({ conversation: toObjectId(conversation?._id) })
-    .sort({ createdAt: -1 })
-    .limit(100);
+  const AllMessages = await messageService.find({
+    conversation: toObjectId(conversation?._id),
+  });
+  //.sort({ createdAt: -1 })
+  //.limit(100);
 
   const unreadMessagesCount = handleUnReadMessagesCount(AllMessages, companion);
 

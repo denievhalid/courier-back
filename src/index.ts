@@ -49,6 +49,7 @@ initDatabase()
     io.engine.use(sessionMiddleware);
 
     io.on("connection", (socket) => {
+      console.log(io);
       // @ts-ignore
       const sessionId = socket.request.session.id;
       socket.join(sessionId);

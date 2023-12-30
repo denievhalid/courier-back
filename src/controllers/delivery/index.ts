@@ -3,65 +3,39 @@ import { getResponse } from "@/utils/getResponse";
 import { getParam } from "@/utils/getParam";
 import { getService } from "@/lib/container";
 import { StatusCodes } from "http-status-codes";
-import type { AdType, UserType } from "@/types";
+import type { AdType, ConversationType, UserType } from "@/types";
 import type { Request, Response } from "express";
 import { toObjectId } from "@/utils/toObjectId";
 import { getAttributes } from "@/utils/getAttributes";
-import { Services, SystemActionCodes } from "@/types";
+import { DeliveryStatus, Services, SystemActionCodes } from "@/types";
 import { SOCKET_EVENTS } from "@/const";
 import { removeDelivery } from "./helpers";
-import { createMessageHelper } from "@/controllers/message/helpers/createMessage";
+import { DeliveryFacade } from "@/controllers/delivery/facade";
+import { emitSocket, getRoomNameByConversation } from "@/utils/socket";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   const io = getParam(req, "io");
-  const { ad, status } = getAttributes(req.body, ["ad", "status"]);
-  const conversation = getParam(req, "conversation");
+  const ad = getParam(req.body, "ad") as AdType;
+  const conversation = getParam(req, "conversation") as ConversationType;
+  const status = getParam(req.body, "status") as DeliveryStatus;
   const user = getParam(req, "user") as UserType;
 
-  const adService = getService(Services.AD);
-  const deliveryService = getService(Services.DELIVERY);
-
-  const adDoc = (await adService.findOne({
-    _id: toObjectId(ad._id),
-    courier: { $eq: null },
-  })) as AdType;
-
-  if (!adDoc) {
-    throw new Error("Объявление не найдено");
-  }
-
-  const payload = { ad: toObjectId(ad._id), user: toObjectId(user._id) };
-
-  const deliveryDoc = await deliveryService.findOne(payload);
-
-  if (deliveryDoc) {
-    throw new Error("Запрос уже отправлен");
-  }
-
-  await deliveryService.create({
-    ad: toObjectId(ad._id),
-    user: toObjectId(user._id),
+  await new DeliveryFacade({
+    ad,
     status,
-  });
+    user,
+  }).create();
 
   if (conversation) {
-    io.to(`room${conversation._id?.toString()}`).emit(
-      SOCKET_EVENTS.UPDATE_DELIVERY_STATUS,
-      status
-    );
+    emitSocket({
+      io,
+      room: getRoomNameByConversation(conversation),
+      event: SOCKET_EVENTS.UPDATE_DELIVERY_STATUS,
+      data: { status },
+    });
   }
 
-  await createMessageHelper({
-    io,
-    user,
-    conversation,
-    message: "Вы оправили заявку на доставку",
-    type: 2,
-    isSystemMessage: true,
-    systemAction: SystemActionCodes.DELIVERY_REQUESTED,
-  });
-
-  return getResponse(res, {}, StatusCodes.CREATED);
+  return getResponse(res);
 });
 
 export const getList = asyncHandler(async (req: Request, res: Response) => {

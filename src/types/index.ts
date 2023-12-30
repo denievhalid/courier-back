@@ -1,4 +1,5 @@
 import type { Aggregate, PipelineStage, Query } from "mongoose";
+import type { Server } from "socket.io";
 
 export type HttpMethods = "get" | "post" | "patch" | "put" | "delete";
 
@@ -195,3 +196,12 @@ export enum Models {
   MESSAGE = "message",
   USER = "user",
 }
+
+export type EmitSocketType = {
+  io: Server;
+  event: string;
+  room: string;
+  data: {
+    [k: string]: unknown;
+  };
+};
