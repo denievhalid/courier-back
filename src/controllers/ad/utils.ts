@@ -4,6 +4,7 @@ import type { FilterQuery, PipelineStage } from "mongoose";
 import * as mongoose from "mongoose";
 import { isValidObjectId } from "@/utils/isValidObjectId";
 import { toObjectId } from "@/utils/toObjectId";
+import { AggregateBuilder } from "@/lib/builder";
 
 const dateSet = new Set(["startDate", "endDate"]);
 
@@ -129,4 +130,69 @@ export const getLookupPipeline = (): PipelineStage.Lookup[] => {
 
 export const parseMatchParam = (param: string): any[] => {
   return _.split(decodeURIComponent(param), MATCH_PARAM_SEPARATOR);
+};
+
+export const getListAggregateBuilder = (queryParams: { [k: string]: any }) => {
+  const aggregateBuilder = AggregateBuilder.init();
+
+  if (queryParams.staus) {
+    aggregateBuilder.match({
+      status: {
+        $eq: queryParams.status,
+      },
+    });
+  }
+
+  if (queryParams.user) {
+    aggregateBuilder.match({
+      user: toObjectId(queryParams.user),
+    });
+  }
+
+  if (queryParams.from) {
+    aggregateBuilder.match({
+      $match: {
+        from: queryParams.from,
+      },
+    });
+  }
+
+  if (queryParams.to) {
+    aggregateBuilder.match({
+      $match: {
+        to: queryParams.to,
+      },
+    });
+  }
+
+  if (queryParams.endDate) {
+    aggregateBuilder.match({
+      $and: [
+        {
+          startDate: {
+            $lte: new Date(queryParams.endDate),
+          },
+        },
+        {
+          endDate: {
+            $gte: new Date(queryParams.startDate),
+          },
+        },
+      ],
+    });
+  } else {
+    aggregateBuilder.match({
+      endDate: {
+        $gte: new Date(),
+      },
+    });
+  }
+
+  if (queryParams.sort) {
+    aggregateBuilder.sort({
+      $sort: { [queryParams.sort]: -1 },
+    });
+  }
+
+  return aggregateBuilder.build();
 };

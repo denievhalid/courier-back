@@ -1,7 +1,7 @@
 import { asyncHandler } from "@/utils/asyncHandler";
 import { Request, Response } from "express";
 import { getResponse } from "@/utils/getResponse";
-import { getAttributes } from "@/controllers/ad/utils";
+import { getAttributes, getListAggregateBuilder } from "@/controllers/ad/utils";
 import _ from "lodash";
 import { getService } from "@/lib/container";
 import { getParam } from "@/utils/getParam";
@@ -180,68 +180,10 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
 
 export const getList = asyncHandler(async (req: Request, res: Response) => {
   const queryParams = getAttributes(req.query);
-  const user = getParam(req, "user") as UserType;
 
   const adService = await getService(Services.AD);
 
-  const aggregateBuilder = AggregateBuilder.init().match({
-    status: {
-      $eq: queryParams.status,
-    },
-  });
-
-  if (queryParams.user) {
-    aggregateBuilder.match({
-      user: toObjectId(queryParams.user),
-    });
-  }
-
-  if (queryParams.from) {
-    aggregateBuilder.match({
-      $match: {
-        from: queryParams.from,
-      },
-    });
-  }
-
-  if (queryParams.to) {
-    aggregateBuilder.match({
-      $match: {
-        to: queryParams.to,
-      },
-    });
-  }
-
-  if (queryParams.endDate) {
-    aggregateBuilder.match({
-      $and: [
-        {
-          startDate: {
-            $lte: new Date(queryParams.endDate),
-          },
-        },
-        {
-          endDate: {
-            $gte: new Date(queryParams.startDate),
-          },
-        },
-      ],
-    });
-  } else {
-    aggregateBuilder.match({
-      endDate: {
-        $gte: new Date(),
-      },
-    });
-  }
-
-  if (queryParams.sort) {
-    aggregateBuilder.sort({
-      $sort: { [queryParams.sort]: -1 },
-    });
-  }
-
-  const ads = await adService.aggregate(aggregateBuilder.build());
+  const ads = await adService.aggregate(getListAggregateBuilder(queryParams));
 
   return getResponse(res, { ads, adsCount: ads?.length }, StatusCodes.OK);
 });
