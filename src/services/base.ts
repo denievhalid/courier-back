@@ -31,6 +31,10 @@ export class BaseService {
     return this.model.findOne(filter);
   }
 
+  async exists<T>(filter: FilterQuery<T>): Promise<boolean> {
+    return Boolean(this.model.count(filter));
+  }
+
   async update<T>(filter: FilterQuery<T>, update: UpdateQuery<T>) {
     return this.model.findOneAndUpdate(filter, update);
   }
@@ -39,7 +43,7 @@ export class BaseService {
     return this.model.findByIdAndRemove();
   }
 
-  async count<T>(filter: FilterQuery<T>) {
+  async count<T>(filter: FilterQuery<T>): Promise<number> {
     return this.model.countDocuments(filter);
   }
 }

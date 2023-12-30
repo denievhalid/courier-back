@@ -5,32 +5,34 @@ import { getService } from "@/lib/container";
 import { StatusCodes } from "http-status-codes";
 import type { AdType, ConversationType, UserType } from "@/types";
 import { DeliveryStatus, Services } from "@/types";
-import type { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import { toObjectId } from "@/utils/toObjectId";
 import { getAttributes } from "@/utils/getAttributes";
 import { SOCKET_EVENTS } from "@/const";
 import { removeDelivery } from "./helpers";
 
-export const create = asyncHandler(async (req: Request, res: Response) => {
-  const ad = getParam(req.body, "ad") as AdType;
-  const status = getParam(req.body, "status") as DeliveryStatus;
-  const user = getParam(req, "user") as UserType;
+export const create = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const ad = getParam(req.body, "ad") as AdType;
+    const status = getParam(req.body, "status") as DeliveryStatus;
+    const user = getParam(req, "user") as UserType;
 
-  const deliveryService = getService(Services.DELIVERY);
+    const deliveryService = getService(Services.DELIVERY);
 
-  const payload = { ad: toObjectId(ad._id), user: toObjectId(user._id) };
+    const payload = { ad: toObjectId(ad._id), user: toObjectId(user._id) };
 
-  const deliveryDoc = await deliveryService.findOne(payload);
+    const alreadyExists = await deliveryService.exists(payload);
 
-  if (!deliveryDoc) {
-    await deliveryService.create({
-      ...payload,
-      status,
-    });
+    if (!alreadyExists) {
+      await deliveryService.create({
+        ...payload,
+        status,
+      });
+    }
+
+    return next();
   }
-
-  return getResponse(res, {}, StatusCodes.CREATED);
-});
+);
 
 export const getList = asyncHandler(async (req: Request, res: Response) => {
   const user = getParam(req, "user") as UserType;
