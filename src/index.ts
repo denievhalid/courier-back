@@ -1,16 +1,14 @@
+import * as http from "http";
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import path from "path";
 import { getEnv } from "@/utils/env";
-import { Server } from "socket.io";
-const http = require("http");
 import { createRoutes } from "@/lib/createRoutes";
 import { initDatabase } from "@/lib/database";
 import { closeApp } from "@/utils/closeApp";
 import { extractToken } from "@/middlewares/extractToken";
-import _ from "lodash";
-import { Env, SocketEvents } from "@/const";
+import { Env } from "@/const";
 import { initSocket } from "@/middlewares/socket";
 
 const app = express();
