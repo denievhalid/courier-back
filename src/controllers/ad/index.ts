@@ -147,7 +147,7 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
     {
       $addFields: {
         user: { $first: "$user" },
-        conversation: { $first: "#conversation" },
+        conversation: { $first: "$conversation" },
       },
     }
   );
