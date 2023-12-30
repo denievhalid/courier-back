@@ -10,8 +10,8 @@ import { initDatabase } from "@/lib/database";
 import { closeApp } from "@/utils/closeApp";
 import { extractToken } from "@/middlewares/extractToken";
 import _ from "lodash";
-import { SOCKET_EVENTS } from "@/const";
-const session = require("express-session");
+import { Env, SocketEvents } from "@/const";
+import { initSocket } from "@/middlewares/socket";
 
 const app = express();
 
@@ -29,44 +29,9 @@ initDatabase()
   .then(() => {
     const server = http.createServer(app);
 
-    const io = new Server(server, {
-      serveClient: false,
-    });
-
-    app.use((req, res, next) => {
-      _.set(req, "io", io);
-      next();
-    });
-    const sessionMiddleware = session({
-      secret: "courierSecret123",
-      resave: true,
-      saveUninitialized: true,
-    });
-
-    app.use(sessionMiddleware);
-
     createRoutes(app);
-    io.engine.use(sessionMiddleware);
+    initSocket(app, server);
 
-    io.on("connection", (socket) => {
-      console.log(io);
-      // @ts-ignore
-      const sessionId = socket.request.session.id;
-      socket.join(sessionId);
-
-      socket.on(SOCKET_EVENTS.JOIN_ROOM, ({ room }: { room: string }) => {
-        socket.join(room);
-        socket.broadcast.to(room).emit(SOCKET_EVENTS.USER_ONLINE, true);
-      });
-      socket.on(SOCKET_EVENTS.LEAVE_ROOM, ({ room }: { room: string }) => {
-        socket.leave(room);
-        socket.broadcast.to(room).emit(SOCKET_EVENTS.USER_ONLINE, false);
-      });
-      socket.on(SOCKET_EVENTS.TYPING, ({ room }: { room: string }) => {
-        socket.broadcast.to(room).emit(SOCKET_EVENTS.TYPING);
-      });
-    });
-
-    server.listen(getEnv("port"));
+    server.listen(getEnv(Env.PORT));
   })
   .catch(closeApp);

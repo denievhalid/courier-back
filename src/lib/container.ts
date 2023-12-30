@@ -71,7 +71,7 @@ export const createContainer = () => {
   return container;
 };
 
-export const getService = (name: string): BaseService => {
+export const getService = <T extends BaseService>(name: string): T => {
   return new (createContainer().services.get(name))();
 };
 
