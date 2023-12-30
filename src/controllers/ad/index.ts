@@ -107,8 +107,6 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
 
   const pipeline: PipelineStage[] = [];
 
-  let delivery = null;
-
   pipeline.push(
     {
       $match: {
@@ -146,6 +144,8 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
     }
   );
 
+  let deliveryStatus = null;
+
   if (user) {
     const isFavorite = await getService(Services.FAVORITE).count({
       ad: toObjectId(id),
@@ -161,7 +161,7 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
       },
     });
 
-    delivery = (
+    deliveryStatus = (
       await getService(Services.DELIVERY).findOne({
         ad: toObjectId(id),
         user: toObjectId(user._id),
@@ -172,7 +172,7 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
   const data = _.first(await getService(Services.AD).aggregate(pipeline));
 
   if (_.isObject(data)) {
-    _.set(data, "delivery", delivery || null);
+    _.set(data, "deliveryStatus", deliveryStatus);
   }
 
   return getResponse(res, { data }, StatusCodes.OK);

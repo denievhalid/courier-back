@@ -40,7 +40,7 @@ export class BaseService {
   }
 
   async remove<T>(id: string, options?: QueryOptions<T>) {
-    return this.model.findByIdAndRemove();
+    return this.model.findByIdAndRemove(id, options);
   }
 
   async count<T>(filter: FilterQuery<T>): Promise<number> {
