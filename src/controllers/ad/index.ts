@@ -21,6 +21,7 @@ import { DeliveryType, Services, UserType } from "@/types";
 import { StatusCodes } from "http-status-codes";
 import dayjs from "dayjs";
 import { toObjectId } from "@/utils/toObjectId";
+import { AggregateBuilder } from "@/lib/builder";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   await createAdSchema.validate(req.body, { abortEarly: false });
@@ -189,115 +190,44 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const getList = asyncHandler(async (req: Request, res: Response) => {
-  const attributes = getAttributes(req.query);
-
+  const queryParams = getAttributes(req.query);
   const user = getParam(req, "user") as UserType;
 
-  const directionService = getService(Services.DIRECTION);
+  const adService = await getService(Services.AD);
 
-  const page = attributes.page || 1;
-
-  const query: PipelineStage[] = [];
-
-  let date: { $gte?: Date; $lte?: Date } = {};
-
-  let status = attributes.status;
-
-  if (!_.isArray(status)) {
-    status = [status];
-  }
-
-  query.push({
-    $match: {
-      status: { $in: status },
-    },
-  });
-
-  if (attributes.user) {
-    query.push({
-      $match: {
-        user: toObjectId(attributes.user),
-      },
-    });
-  }
-
-  if (attributes.from) {
-    query.push({
-      $match: {
-        from: attributes.from,
-      },
-    });
-  }
-
-  if (attributes.to) {
-    query.push({
-      $match: {
-        to: attributes.to,
-      },
-    });
-  }
-  if (attributes.endDate) {
-    query.push({
-      $match: {
-        $and: [
-          {
-            startDate: {
-              $lte: new Date(attributes.endDate),
-            },
-          },
-          {
-            endDate: {
-              $gte: new Date(attributes.startDate),
-            },
-          },
-        ],
-      },
-    });
-  } else {
-    query.push({
-      $match: {
-        endDate: {
-          $gte: new Date(),
-        },
-      },
-    });
-  }
-
-  if (attributes.sort) {
-    query.push({
-      $sort: { [attributes.sort]: -1 },
-    });
-  }
-
-  query.push(getSkipPipeline((page - 1) * LIMIT));
-  query.push(getLimitPipeline(LIMIT));
-  query.push(...getLookupPipeline());
-  query.push(getProjectPipeline());
-  query.push(getAddFieldsPipeline());
-
-  const data = await getService(Services.AD).aggregate(query);
-
-  let isFavoriteDirection = false;
-
-  if (user) {
-    let directionDoc = await directionService.findOne({
-      hash: attributes.filterHash,
-      user: toObjectId(user._id),
-    });
-
-    isFavoriteDirection = Boolean(directionDoc);
-  }
-
-  return getResponse(
-    res,
+  const aggregateBuilder = AggregateBuilder.init().match([
     {
-      data: {
-        isFavoriteDirection,
-        ads: data,
+      endDate: {
+        $gte: new Date(),
+      },
+      status: {
+        $eq: queryParams.status,
       },
     },
-    StatusCodes.OK
-  );
+  ]);
+
+  if (queryParams.user) {
+    aggregateBuilder.match({
+      user: toObjectId(queryParams.user),
+    });
+  }
+
+  const ads = await adService.aggregate(aggregateBuilder.build());
+
+  // const ads = await adService.aggregate([
+  //   {
+  //     $match: {
+  //       endDate: {
+  //         $gte: new Date(),
+  //       },
+  //       status: {
+  //         $eq: queryParams.status,
+  //       },
+  //     },
+  //   },
+  // ]);
+
+  return getResponse(res, { ads, adsCount: ads.length });
 });
 
 export const remove = asyncHandler(async (req: Request, res: Response) => {
