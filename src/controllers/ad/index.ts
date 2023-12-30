@@ -212,20 +212,29 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
     });
   }
 
-  const ads = await adService.aggregate(aggregateBuilder.build());
+  if (queryParams.from) {
+    aggregateBuilder.match({
+      $match: {
+        from: queryParams.from,
+      },
+    });
+  }
 
-  // const ads = await adService.aggregate([
-  //   {
-  //     $match: {
-  //       endDate: {
-  //         $gte: new Date(),
-  //       },
-  //       status: {
-  //         $eq: queryParams.status,
-  //       },
-  //     },
-  //   },
-  // ]);
+  if (queryParams.to) {
+    aggregateBuilder.match({
+      $match: {
+        to: queryParams.to,
+      },
+    });
+  }
+
+  if (queryParams.sort) {
+    aggregateBuilder.sort({
+      $sort: { [queryParams.sort]: -1 },
+    });
+  }
+
+  const ads = await adService.aggregate(aggregateBuilder.build());
 
   return getResponse(res, { ads, adsCount: ads.length });
 });

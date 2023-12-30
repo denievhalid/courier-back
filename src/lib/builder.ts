@@ -22,6 +22,14 @@ export class AggregateBuilder {
     return this;
   }
 
+  sort(sort: FilterQuery<unknown>) {
+    this.pipeline.push({
+      $sort: sort,
+    });
+
+    return this;
+  }
+
   static init() {
     return new AggregateBuilder();
   }
