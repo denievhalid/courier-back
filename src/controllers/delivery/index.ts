@@ -14,7 +14,6 @@ import { DeliveryFacade } from "@/controllers/delivery/facade";
 import { emitSocket, getRoomNameByConversation } from "@/utils/socket";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
-  const io = getParam(req, "io");
   const ad = getParam(req.body, "ad") as AdType;
   const conversation = getParam(req, "conversation") as ConversationType;
   const status = getParam(req.body, "status") as DeliveryStatus;
@@ -28,7 +27,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
   if (conversation) {
     emitSocket({
-      io,
+      io: getParam(req, "io"),
       room: getRoomNameByConversation(conversation),
       event: SOCKET_EVENTS.UPDATE_DELIVERY_STATUS,
       data: { status },
