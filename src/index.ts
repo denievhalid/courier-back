@@ -10,6 +10,7 @@ import { closeApp } from "@/utils/closeApp";
 import { extractToken } from "@/middlewares/extractToken";
 import { Env } from "@/const";
 import { initSocket } from "@/middlewares/socket";
+import _ from "lodash";
 
 const app = express();
 
@@ -27,8 +28,8 @@ initDatabase()
   .then(() => {
     const server = http.createServer(app);
 
-    createRoutes(app);
     initSocket(app, server);
+    createRoutes(app);
 
     server.listen(getEnv(Env.PORT));
   })
