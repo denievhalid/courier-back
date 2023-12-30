@@ -30,8 +30,7 @@ export const create = asyncHandler(
       await deliveryService.create(payload);
     }
 
-    //return next();
-    return getResponse(res, { status: payload.status }, StatusCodes.CREATED);
+    return next();
   }
 );
 
