@@ -137,8 +137,17 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
       },
     },
     {
+      $lookup: {
+        from: "conversations",
+        localField: "_id",
+        foreignField: "ad",
+        as: "conversation",
+      },
+    },
+    {
       $addFields: {
         user: { $first: "$user" },
+        conversation: { $first: "#conversation" },
       },
     }
   );
