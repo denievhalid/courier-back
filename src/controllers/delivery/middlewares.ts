@@ -45,6 +45,7 @@ export const useGetAdMiddleware = asyncHandler(
 
 export const useSocket = asyncHandler(async (req: Request, res: Response) => {
   const io = getParam(req, "io");
+  const deliveryStatus = getParam(req, "deliveryStatus");
   const user = getParam(req, "user") as UserType;
 
   emitSocket({
@@ -52,7 +53,7 @@ export const useSocket = asyncHandler(async (req: Request, res: Response) => {
     event: SocketEvents.UPDATE_DELIVERY_STATUS,
     room: user._id,
     data: {
-      deliveryStatus: DeliveryStatus.PENDING,
+      deliveryStatus,
     },
   });
 

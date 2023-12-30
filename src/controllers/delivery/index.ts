@@ -3,13 +3,14 @@ import { getResponse } from "@/utils/getResponse";
 import { getParam } from "@/utils/getParam";
 import { getService } from "@/lib/container";
 import { StatusCodes } from "http-status-codes";
-import type { AdType, UserType } from "@/types";
+import type { AdType, ConversationType, UserType } from "@/types";
 import { DeliveryStatus, Services } from "@/types";
 import type { NextFunction, Request, Response } from "express";
 import { toObjectId } from "@/utils/toObjectId";
 import { getAttributes } from "@/utils/getAttributes";
 import { SocketEvents } from "@/const";
 import { removeDelivery } from "./helpers";
+import _ from "lodash";
 
 export const create = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -29,6 +30,8 @@ export const create = asyncHandler(
     if (!alreadyExists) {
       await deliveryService.create(payload);
     }
+
+    _.set(req, "deliveryStatus", DeliveryStatus.PENDING);
 
     return next();
   }
@@ -88,24 +91,36 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
   return getResponse(res, {});
 });
 
-export const remove = asyncHandler(async (req: Request, res: Response) => {
-  const io = getParam(req, "io");
-  const user = getParam(req, "user") as UserType;
-  const ad = getParam(req.params, "ad");
-  const conversation = getParam(req, "conversation");
-  const byOwner = getParam(req.body, "byOwner");
+export const remove = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const user = getParam(req, "user") as UserType;
+    const ad = getParam(req.params, "ad") as string;
+    const conversation = getParam(req, "conversation") as ConversationType;
+    const byOwner = getParam(req.body, "byOwner");
 
-  await removeDelivery({
-    io,
-    ad,
-    user,
-    conversation,
-    shouldSendMessage: true,
-    byOwner,
-  });
+    const deliveryService = getService(Services.DELIVERY);
 
-  return getResponse(res, {}, StatusCodes.OK);
-});
+    await deliveryService.remove({
+      ad: toObjectId(ad),
+      user: toObjectId(user._id),
+    });
+
+    _.set(req, "deliveryStatus", null);
+
+    return next();
+
+    // await removeDelivery({
+    //   io,
+    //   ad,
+    //   user,
+    //   conversation,
+    //   shouldSendMessage: true,
+    //   byOwner,
+    // });
+
+    return getResponse(res, {}, StatusCodes.OK);
+  }
+);
 
 export const getByAdId = asyncHandler(async (req: Request, res: Response) => {
   const user = getParam(req, "user") as UserType;
