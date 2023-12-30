@@ -1,25 +1,14 @@
 import { asyncHandler } from "@/utils/asyncHandler";
 import { Request, Response } from "express";
 import { getResponse } from "@/utils/getResponse";
-import {
-  getAddFieldsPipeline,
-  getAttributes,
-  getLimitPipeline,
-  getLookupPipeline,
-  getMatchPipeline,
-  getProjectPipeline,
-  getSkipPipeline,
-  getSortPipeline,
-} from "@/controllers/ad/utils";
-import _, { at } from "lodash";
+import { getAttributes } from "@/controllers/ad/utils";
+import _ from "lodash";
 import { getService } from "@/lib/container";
 import { getParam } from "@/utils/getParam";
-import { LIMIT } from "@/controllers/ad/const";
-import mongoose, { PipelineStage } from "mongoose";
+import { PipelineStage } from "mongoose";
 import { createAdSchema } from "@/controllers/ad/validation";
-import { DeliveryType, Services, UserType } from "@/types";
+import { Services, UserType } from "@/types";
 import { StatusCodes } from "http-status-codes";
-import dayjs from "dayjs";
 import { toObjectId } from "@/utils/toObjectId";
 import { AggregateBuilder } from "@/lib/builder";
 
@@ -236,7 +225,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
 
   const ads = await adService.aggregate(aggregateBuilder.build());
 
-  return getResponse(res, { ads, adsCount: ads.length });
+  return getResponse(res, { ads, adsCount: ads?.length }, StatusCodes.OK);
 });
 
 export const remove = asyncHandler(async (req: Request, res: Response) => {
