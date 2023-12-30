@@ -4,43 +4,28 @@ import { getParam } from "@/utils/getParam";
 import { getService } from "@/lib/container";
 import { StatusCodes } from "http-status-codes";
 import type { AdType, ConversationType, UserType } from "@/types";
-import { DeliveryStatus, Services, SystemActionCodes } from "@/types";
+import { DeliveryStatus, Services } from "@/types";
 import type { Request, Response } from "express";
 import { toObjectId } from "@/utils/toObjectId";
 import { getAttributes } from "@/utils/getAttributes";
 import { SOCKET_EVENTS } from "@/const";
 import { removeDelivery } from "./helpers";
-import { DeliveryFacade } from "@/controllers/delivery/facade";
-import { emitSocket, getRoomNameByConversation } from "@/utils/socket";
-import { MessageFacade } from "@/controllers/conversation/facade";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   const ad = getParam(req.body, "ad") as AdType;
-  const conversation = getParam(req, "conversation") as ConversationType;
   const status = getParam(req.body, "status") as DeliveryStatus;
   const user = getParam(req, "user") as UserType;
 
-  await new DeliveryFacade({
-    ad,
-    status,
-    user,
-  }).create();
+  const deliveryService = getService(Services.DELIVERY);
 
-  await new MessageFacade({
-    conversation,
-    isSystemMessage: true,
-    message: "Вы оправили заявку на доставку",
-    systemAction: SystemActionCodes.DELIVERY_REQUESTED,
-    type: 2,
-    user,
-  }).create();
+  const payload = { ad: toObjectId(ad._id), user: toObjectId(user._id) };
 
-  if (conversation) {
-    emitSocket({
-      io: getParam(req, "io"),
-      room: getRoomNameByConversation(conversation),
-      event: SOCKET_EVENTS.UPDATE_DELIVERY_STATUS,
-      data: { status },
+  const deliveryDoc = await deliveryService.findOne(payload);
+
+  if (!deliveryDoc) {
+    await deliveryService.create({
+      ...payload,
+      status,
     });
   }
 
