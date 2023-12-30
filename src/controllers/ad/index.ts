@@ -184,16 +184,11 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
 
   const adService = await getService(Services.AD);
 
-  const aggregateBuilder = AggregateBuilder.init().match([
-    {
-      endDate: {
-        $gte: new Date(),
-      },
-      status: {
-        $eq: queryParams.status,
-      },
+  const aggregateBuilder = AggregateBuilder.init().match({
+    status: {
+      $eq: queryParams.status,
     },
-  ]);
+  });
 
   if (queryParams.user) {
     aggregateBuilder.match({
@@ -213,6 +208,29 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
     aggregateBuilder.match({
       $match: {
         to: queryParams.to,
+      },
+    });
+  }
+
+  if (queryParams.endDate) {
+    aggregateBuilder.match({
+      $and: [
+        {
+          startDate: {
+            $lte: new Date(queryParams.endDate),
+          },
+        },
+        {
+          endDate: {
+            $gte: new Date(queryParams.startDate),
+          },
+        },
+      ],
+    });
+  } else {
+    aggregateBuilder.match({
+      endDate: {
+        $gte: new Date(),
       },
     });
   }
