@@ -47,15 +47,12 @@ export const useSocket = asyncHandler(async (req: Request, res: Response) => {
   const io = getParam(req, "io");
   const user = getParam(req, "user") as UserType;
 
-  console.log(io, "io");
-  console.log(user, "user");
-
   emitSocket({
     io,
     event: SocketEvents.UPDATE_DELIVERY_STATUS,
     room: user._id,
     data: {
-      status: DeliveryStatus.PENDING,
+      deliveryStatus: DeliveryStatus.PENDING,
     },
   });
 
