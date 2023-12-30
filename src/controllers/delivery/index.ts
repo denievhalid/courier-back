@@ -3,7 +3,7 @@ import { getResponse } from "@/utils/getResponse";
 import { getParam } from "@/utils/getParam";
 import { getService } from "@/lib/container";
 import { StatusCodes } from "http-status-codes";
-import type { AdType, ConversationType, UserType } from "@/types";
+import type { AdType, UserType } from "@/types";
 import { DeliveryStatus, Services } from "@/types";
 import type { NextFunction, Request, Response } from "express";
 import { toObjectId } from "@/utils/toObjectId";
@@ -18,19 +18,20 @@ export const create = asyncHandler(
 
     const deliveryService = getService(Services.DELIVERY);
 
-    const payload = { ad: toObjectId(ad._id), user: toObjectId(user._id) };
+    const payload = {
+      ad: toObjectId(ad._id),
+      status: DeliveryStatus.PENDING,
+      user: toObjectId(user._id),
+    };
 
     const alreadyExists = await deliveryService.exists(payload);
 
     if (!alreadyExists) {
-      await deliveryService.create({
-        ...payload,
-        status: DeliveryStatus.PENDING,
-      });
+      await deliveryService.create(payload);
     }
 
     //return next();
-    return getResponse(res, {}, 201);
+    return getResponse(res, { status: payload.status }, StatusCodes.CREATED);
   }
 );
 
