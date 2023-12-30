@@ -51,7 +51,7 @@ export const useSocket = asyncHandler(async (req: Request, res: Response) => {
   emitSocket({
     io,
     event: SocketEvents.UPDATE_DELIVERY_STATUS,
-    room: user._id,
+    room: user._id?.toString(),
     data: {
       deliveryStatus,
     },
