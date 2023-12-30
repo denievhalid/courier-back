@@ -185,7 +185,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
 
   const ads = await adService.aggregate(getListAggregateBuilder(queryParams));
 
-  return getResponse(res, { ads }, StatusCodes.OK);
+  return getResponse(res, { data: ads }, StatusCodes.OK);
 });
 
 export const remove = asyncHandler(async (req: Request, res: Response) => {
