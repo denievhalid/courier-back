@@ -217,10 +217,8 @@ export const getListAggregateBuilder = (queryParams: { [k: string]: any }) => {
       price: 1,
       weight: 1,
       routes: 1,
-      user: { $first: "$user" },
-    })
-    .addFields({
       cover: { $first: "$images" },
+      user: { $first: "$user" },
     });
 
   return aggregateBuilder.build();
