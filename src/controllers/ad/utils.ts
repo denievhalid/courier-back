@@ -194,5 +194,41 @@ export const getListAggregateBuilder = (queryParams: { [k: string]: any }) => {
     });
   }
 
+  aggregateBuilder
+    .lookup([
+      {
+        from: "users",
+        localField: "user",
+        foreignField: "_id",
+        as: "user",
+      },
+      {
+        from: "deliveries",
+        localField: "_id",
+        foreignField: "ad",
+        as: "delivery",
+      },
+    ])
+    .project({
+      _id: 1,
+      comment: 1,
+      from: 1,
+      to: 1,
+      startDate: 1,
+      endDate: 1,
+      date: 1,
+      status: 1,
+      images: 1,
+      title: 1,
+      price: 1,
+      weight: 1,
+      routes: 1,
+      deliveryStatus: { $first: "$delivery.status" },
+      user: { $first: "$user" },
+    })
+    .addFields({
+      cover: { $first: "$images" },
+    });
+
   return aggregateBuilder.build();
 };
