@@ -180,12 +180,28 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
 
 export const getList = asyncHandler(async (req: Request, res: Response) => {
   const queryParams = getAttributes(req.query);
+  const user = getParam(req, "user") as UserType;
 
   const adService = await getService(Services.AD);
 
   const ads = await adService.aggregate(getListAggregateBuilder(queryParams));
 
-  return getResponse(res, { data: { ads } }, StatusCodes.OK);
+  let isFavoriteDirection = false;
+
+  if (user) {
+    isFavoriteDirection = Boolean(
+      await getService(Services.DIRECTION).findOne({
+        hash: queryParams.filterHash,
+        user: toObjectId(user._id),
+      })
+    );
+  }
+
+  return getResponse(
+    res,
+    { data: { ads, isFavoriteDirection } },
+    StatusCodes.OK
+  );
 });
 
 export const remove = asyncHandler(async (req: Request, res: Response) => {
