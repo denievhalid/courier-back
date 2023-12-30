@@ -1,4 +1,5 @@
 import { model, Schema } from "mongoose";
+import { Models } from "@/types";
 
 const schema = new Schema(
   {
@@ -17,4 +18,4 @@ const schema = new Schema(
   }
 );
 
-export default model("File", schema);
+export default model(Models.FILE, schema);

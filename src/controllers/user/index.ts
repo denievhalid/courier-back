@@ -6,10 +6,9 @@ import { StatusCodes } from "http-status-codes";
 import { getService } from "@/lib/container";
 import { getAttributes } from "@/utils/getAttributes";
 import { getParam } from "@/utils/getParam";
-import { getEnv } from "@/utils/env";
 import _ from "lodash";
 import { sanitizeUser } from "@/controllers/user/utils";
-import { UserType } from "@/types";
+import { Services, UserType } from "@/types";
 import { getFilename } from "@/controllers/file/utils";
 import { getUserAggregate } from "@/utils/aggregate";
 import { toObjectId } from "@/utils/toObjectId";
@@ -35,7 +34,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     "phoneNumber",
   ]);
 
-  const userService = getService("user");
+  const userService = getService(Services.USER);
 
   const payload = {
     phoneNumber: attributes.phoneNumber,
@@ -51,30 +50,21 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
   console.log(222);
 
-  const tokenService = getService("token");
+  const tokenService = getService(Services.TOKEN);
 
   await userService.create(attributes);
 
   const user = await getUserAggregate(attributes.phoneNumber);
 
-  const accessToken = tokenService.create(
-    { phoneNumber: attributes.phoneNumber },
-    getEnv("JWT_SECRET")
-  );
-
-  console.log(333);
-
-  console.log({
-    accessToken,
-    user: _.assign(sanitizeUser(_.first(user) as UserType), {
-      deliveries: 0,
-    }),
-  });
+  // const accessToken = tokenService.create(
+  //   { phoneNumber: attributes.phoneNumber },
+  //   getEnv(Env.JWT_SECRET)
+  // );
 
   return getResponse(
     res,
     {
-      accessToken,
+      //accessToken,
       user: _.assign(sanitizeUser(_.first(user) as UserType), {
         deliveries: 0,
       }),
@@ -87,8 +77,8 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
   const id = getParam(req.params, "id");
   const user = getParam(req, "user") as UserType;
 
-  const blockService = getService("block");
-  const userService = getService("user");
+  const blockService = getService(Services.BLOCK);
+  const userService = getService(Services.USER);
 
   const isBlocked = Boolean(
     await blockService.count({
@@ -127,7 +117,7 @@ export const updateAvatar = asyncHandler(
     const avatar = getParam(req, "file");
     const user = getParam(req, "user") as UserType;
 
-    const userService = getService("user");
+    const userService = getService(Services.USER);
 
     await userService.update(
       {
@@ -148,7 +138,7 @@ export const removeAvatar = asyncHandler(
   async (req: Request, res: Response) => {
     const user = getParam(req, "user") as UserType;
 
-    const userService = getService("user");
+    const userService = getService(Services.USER);
 
     await userService.update(
       {
@@ -169,7 +159,7 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
   const updatePayload = getParam(req.body, "payload");
   const user = getParam(req, "user") as UserType;
 
-  const userService = getService("user");
+  const userService = getService(Services.USER);
 
   await userService.update(
     {

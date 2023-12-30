@@ -5,8 +5,7 @@ import { StatusCodes } from "http-status-codes";
 import { getParam } from "@/utils/getParam";
 import { toObjectId } from "@/utils/toObjectId";
 import { getService } from "@/lib/container";
-import { DirectionType, UserType } from "@/types";
-import _ from "lodash";
+import { DirectionType, Services, UserType } from "@/types";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   const hash = getParam(req.body, "hash");
@@ -14,7 +13,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   const ads = getParam(req.body, "ads");
   const filter = getParam(req.body, "filter");
 
-  const directionService = getService("direction");
+  const directionService = getService(Services.DIRECTION);
 
   let direction = await directionService.findOne({
     hash,
@@ -36,8 +35,8 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 export const getList = asyncHandler(async (req: Request, res: Response) => {
   const user = getParam(req, "user") as UserType;
 
-  const adService = getService("ad");
-  const directionService = getService("direction");
+  const adService = getService(Services.AD);
+  const directionService = getService(Services.DIRECTION);
 
   const data = await directionService.aggregate([
     {
@@ -54,8 +53,8 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
   const directionId = getParam(req.params, "directionId");
   const user = getParam(req, "user") as UserType;
 
-  const adService = getService("ad");
-  const directionService = getService("direction");
+  const adService = getService(Services.AD);
+  const directionService = getService(Services.DIRECTION);
 
   const direction = (await directionService.findOne({
     _id: toObjectId(directionId),
@@ -120,12 +119,12 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
 
   const payload = { hash, user: toObjectId(user._id) };
 
-  const directionService = getService("direction");
+  const directionService = getService(Services.DIRECTION);
 
   const exists = await directionService.count(payload);
 
   if (exists) {
-    await directionService.remove(payload);
+    //await directionService.remove(payload);
   }
 
   return getResponse(res, {}, StatusCodes.OK);

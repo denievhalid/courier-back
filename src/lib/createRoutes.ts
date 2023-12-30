@@ -6,12 +6,10 @@ import deliveryRoutes from "@/routes/delivery";
 import directionRoutes from "@/routes/direction";
 import favoriteRoutes from "@/routes/favorite";
 import fileRoutes from "@/routes/file";
-import messageRoutes from "@/routes/message";
-import userRoutes from "@/routes/user";
 import { getEndpoint } from "@/utils/getEndpoint";
 import { errorHandler } from "@/middlewares/errorHandler";
-import type { Application } from "express";
 import { Routes } from "@/types";
+import type { Application } from "express";
 
 export const createRoutes = (app: Application) => {
   app.use(getEndpoint(Routes.ADS), adRoutes);
@@ -22,7 +20,5 @@ export const createRoutes = (app: Application) => {
   app.use(getEndpoint(Routes.DIRECTIONS), directionRoutes);
   app.use(getEndpoint(Routes.FAVORITES), favoriteRoutes);
   app.use(getEndpoint(Routes.FILES), fileRoutes);
-  app.use(getEndpoint(Routes.MESSAGES), messageRoutes);
-  app.use(getEndpoint(Routes.USERS), userRoutes);
   app.use(errorHandler);
 };

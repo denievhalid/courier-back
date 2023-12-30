@@ -5,9 +5,7 @@ import type { Request, Response } from "express";
 import { getService } from "@/lib/container";
 import { getParam } from "@/utils/getParam";
 import { PipelineStage } from "mongoose";
-import _ from "lodash";
-import { UserType } from "@/types";
-import { count } from "@/services/favorite";
+import { Services, UserType } from "@/types";
 import { toObjectId } from "@/utils/toObjectId";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
@@ -16,7 +14,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
   const payload = { ad: toObjectId(ad), user: toObjectId(user._id) };
 
-  const favoriteService = getService("favorite");
+  const favoriteService = getService(Services.FAVORITE);
 
   const exists = await favoriteService.exists(payload);
 
@@ -35,12 +33,12 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
 
   const payload = { ad: toObjectId(ad), user: toObjectId(user._id) };
 
-  const favoriteService = getService("favorite");
+  const favoriteService = getService(Services.FAVORITE);
 
   const exists = await favoriteService.exists(payload);
 
   if (exists) {
-    await favoriteService.remove(payload);
+    //await favoriteService.remove(payload);
   }
 
   const count = await favoriteService.count({ user: toObjectId(user._id) });
@@ -51,7 +49,7 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
 export const getList = asyncHandler(async (req: Request, res: Response) => {
   const user = getParam(req, "user") as UserType;
 
-  const favoriteService = getService("favorite");
+  const favoriteService = getService(Services.FAVORITE);
 
   const query: PipelineStage[] = [
     {
@@ -93,7 +91,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
     },
   ];
 
-  const data = await favoriteService.getList(query);
+  //const data = await favoriteService.getList(query);
 
-  return getResponse(res, { data }, StatusCodes.OK);
+  //return getResponse(res, { data }, StatusCodes.OK);
 });

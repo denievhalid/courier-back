@@ -1,80 +1,85 @@
-import AdModel from "@/models/ad";
-import BlockModel from "@/models/block";
-import ConversationModel from "@/models/conversation";
-import DeliveryModel from "@/models/delivery";
-import DirectionModel from "@/models/direction";
-import FavoriteModel from "@/models/favorite";
-import MessageModel from "@/models/message";
-import FileModel from "@/models/file";
-import OtpModel from "@/models/otp";
-import UserModel from "@/models/user";
-import * as AdService from "@/services/ad";
-import * as BlockService from "@/services/block";
-import * as ConversationService from "@/services/conversation";
-import * as FavoriteService from "@/services/favorite";
-import * as FileService from "@/services/file";
-import * as DeliveryService from "@/services/delivery";
-import * as DirectionService from "@/services/direction";
-import * as MessageService from "@/services/message";
-import * as OtpService from "@/services/otp";
-import * as TokenService from "@/services/token";
-import * as UserService from "@/services/user";
-import type { Model } from "mongoose";
+import {
+  AdModel,
+  BlockModel,
+  ConversationModel,
+  DeliveryModel,
+  DirectionModel,
+  FavoriteModel,
+  FileModel,
+  MessageModel,
+  OtpModel,
+  UserModel,
+} from "@/models";
+
 import { BaseService } from "@/services/base";
+import { Models, Services } from "@/types";
+import {
+  AdService,
+  BlockService,
+  ConversationService,
+  DeliveryService,
+  DirectionService,
+  FavoriteService,
+  FileService,
+  MessageService,
+  OtpService,
+  TokenService,
+  UserService,
+} from "@/services";
+import type { Model } from "mongoose";
 
 interface Container {
-  services: any;
-  models: any;
+  services: Map<Services, any>;
+  models: Map<Models, any>;
 }
 
 let container: Container | null = null;
-
-function registerServices(container: Container) {
-  container.services.set("ad", AdService);
-  container.services.set("block", BlockService);
-  container.services.set("conversation", ConversationService);
-  container.services.set("delivery", DeliveryService);
-  container.services.set("direction", DirectionService);
-  container.services.set("message", MessageService);
-  container.services.set("favorite", FavoriteService);
-  container.services.set("file", FileService);
-  container.services.set("message", MessageService);
-  container.services.set("otp", OtpService);
-  container.services.set("token", TokenService);
-  container.services.set("user", UserService);
-}
-
-function registerModels(container: Container) {
-  container.models.set("ad", AdModel);
-  container.models.set("block", BlockModel);
-  container.models.set("conversation", ConversationModel);
-  container.models.set("delivery", DeliveryModel);
-  container.models.set("direction", DirectionModel);
-  container.models.set("favorite", FavoriteModel);
-  container.models.set("message", MessageModel);
-  container.models.set("file", FileModel);
-  container.models.set("otp", OtpModel);
-  container.models.set("user", UserModel);
-}
 
 export const createContainer = () => {
   if (container) return container;
 
   container = {
-    models: new Map<string, Model<any>>(),
+    models: new Map(),
     services: new Map(),
   };
 
-  registerServices(container);
   registerModels(container);
+  registerServices(container);
 
   return container;
 };
 
-export const getService = <T extends BaseService>(name: string): T => {
-  return new (createContainer().services.get(name))();
+function registerServices(container: Container) {
+  container.services.set(Services.AD, new AdService());
+  container.services.set(Services.BLOCK, new BlockService());
+  container.services.set(Services.CONVERSATION, new ConversationService());
+  container.services.set(Services.DELIVERY, new DeliveryService());
+  container.services.set(Services.DIRECTION, new DirectionService());
+  container.services.set(Services.FAVORITE, new FavoriteService());
+  container.services.set(Services.FILE, new FileService());
+  container.services.set(Services.MESSAGE, new MessageService());
+  container.services.set(Services.OTP, OtpService);
+  container.services.set(Services.TOKEN, new TokenService());
+  container.services.set(Services.USER, new UserService());
+}
+
+function registerModels(container: Container) {
+  container.models.set(Models.AD, AdModel);
+  container.models.set(Models.BLOCK, BlockModel);
+  container.models.set(Models.CONVERSATION, ConversationModel);
+  container.models.set(Models.DELIVERY, DeliveryModel);
+  container.models.set(Models.DIRECTION, DirectionModel);
+  container.models.set(Models.FAVORITE, FavoriteModel);
+  container.models.set(Models.MESSAGE, MessageModel);
+  container.models.set(Models.FILE, FileModel);
+  container.models.set(Models.OTP, OtpModel);
+  container.models.set(Models.USER, UserModel);
+}
+
+export const getService = <T extends BaseService>(name: Services): T => {
+  return createContainer().services.get(name);
 };
 
-export const getModel = (name: string): Model<any> => {
-  return createContainer().models.get(name) as Model<any>;
+export const getModel = (name: Models): Model<unknown> => {
+  return createContainer().models.get(name);
 };

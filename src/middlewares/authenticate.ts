@@ -6,18 +6,20 @@ import { getService } from "@/lib/container";
 import { getEnv } from "@/utils/env";
 import { getUserAggregate } from "@/utils/aggregate";
 import { Services } from "@/types";
+import { Env } from "@/const";
 
 export const authenticate = asyncHandler(async (req, res, next) => {
   const token = getParam(req, "token");
 
-  if (!token) {
+  if (_.isEmpty(token)) {
     throw new InvalidCredentialsException();
   }
 
-  const tokenService = getService(Services.TOKEN);
-  const userService = getService("user");
-
-  const verified = tokenService.sign(token, getEnv("JWT_SECRET")) as {
+  // @ts-ignore
+  const verified = getService(Services.TOKEN).verify(
+    token,
+    getEnv(Env.JWT_SECRET)
+  ) as {
     phoneNumber: string;
   };
 
@@ -33,5 +35,5 @@ export const authenticate = asyncHandler(async (req, res, next) => {
 
   _.set(req, "user", _.first(user));
 
-  next();
+  return next();
 });

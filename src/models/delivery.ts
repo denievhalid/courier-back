@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import { DeliveryStatus } from "@/types";
+import { DeliveryStatus, Models } from "@/types";
 
 const schema = new Schema(
   {
@@ -29,4 +29,4 @@ const schema = new Schema(
   }
 );
 
-export default model("Delivery", schema);
+export default model(Models.DELIVERY, schema);

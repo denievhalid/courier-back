@@ -5,7 +5,7 @@ import type {
   PipelineStage,
   UpdateQuery,
   QueryOptions,
-  Query,
+  QueryWithHelpers,
 } from "mongoose";
 
 export class BaseService {
@@ -27,12 +27,12 @@ export class BaseService {
     return this.model.find(filter);
   }
 
-  async findOne<T>(filter: FilterQuery<T>) {
+  findOne<T>(filter: FilterQuery<T>) {
     return this.model.findOne(filter);
   }
 
   async exists<T>(filter: FilterQuery<T>): Promise<boolean> {
-    return Boolean(this.model.count(filter));
+    return Boolean(await this.model.count(filter));
   }
 
   async update<T>(filter: FilterQuery<T>, update: UpdateQuery<T>) {

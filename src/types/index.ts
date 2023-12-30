@@ -151,7 +151,9 @@ export enum Services {
   DELIVERY = "delivery",
   DIRECTION = "direction",
   FAVORITE = "favorite",
+  FILE = "file",
   MESSAGE = "message",
+  OTP = "otp",
   TOKEN = "token",
   USER = "user",
 }
@@ -195,6 +197,7 @@ export enum Models {
   FAVORITE = "favorite",
   FILE = "file",
   MESSAGE = "message",
+  OTP = "otp",
   TOKEN = "token",
   USER = "user",
 }

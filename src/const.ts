@@ -19,4 +19,5 @@ export enum SocketEvents {
 
 export enum Env {
   PORT = "port",
+  JWT_SECRET = "jwt_secret",
 }

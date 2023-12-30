@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import { AdStatus } from "@/types";
+import { AdStatus, Models } from "@/types";
 
 const schema = new Schema({
   title: {
@@ -69,4 +69,4 @@ const schema = new Schema({
   },
 });
 
-export default model("Ad", schema);
+export default model(Models.AD, schema);

@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import { Gender } from "@/types";
+import { Gender, Models } from "@/types";
 
 const schema = new Schema({
   avatar: {
@@ -33,4 +33,4 @@ const schema = new Schema({
   },
 });
 
-export default model("User", schema);
+export default model(Models.USER, schema);

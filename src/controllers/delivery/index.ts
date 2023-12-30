@@ -8,13 +8,12 @@ import { DeliveryStatus, Services } from "@/types";
 import type { NextFunction, Request, Response } from "express";
 import { toObjectId } from "@/utils/toObjectId";
 import { getAttributes } from "@/utils/getAttributes";
-import { SOCKET_EVENTS } from "@/const";
+import { SocketEvents } from "@/const";
 import { removeDelivery } from "./helpers";
 
 export const create = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const ad = getParam(req.body, "ad") as AdType;
-    const status = getParam(req.body, "status") as DeliveryStatus;
+    const ad = getParam(req, "ad") as AdType;
     const user = getParam(req, "user") as UserType;
 
     const deliveryService = getService(Services.DELIVERY);
@@ -26,11 +25,12 @@ export const create = asyncHandler(
     if (!alreadyExists) {
       await deliveryService.create({
         ...payload,
-        status,
+        status: DeliveryStatus.PENDING,
       });
     }
 
-    return next();
+    //return next();
+    return getResponse(res, {}, 201);
   }
 );
 
@@ -76,12 +76,12 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
   });
 
   io.to(`room${conversation?._id?.toString()}`).emit(
-    SOCKET_EVENTS.UPDATE_DELIVERY_STATUS,
+    SocketEvents.UPDATE_DELIVERY_STATUS,
     status
   );
 
   io.to(`room${conversation?._id?.toString()}`).emit(
-    SOCKET_EVENTS.UPDATE_AD_COURIER,
+    SocketEvents.UPDATE_AD_COURIER,
     courier
   );
 

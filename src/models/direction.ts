@@ -1,4 +1,5 @@
 import { model, Schema } from "mongoose";
+import { Models } from "@/types";
 
 const schema = new Schema({
   hash: {
@@ -20,4 +21,4 @@ const schema = new Schema({
   },
 });
 
-export default model("Direction", schema);
+export default model(Models.DIRECTION, schema);

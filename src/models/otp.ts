@@ -1,4 +1,5 @@
 import { model, Schema } from "mongoose";
+import { Models } from "@/types";
 
 const schema = new Schema({
   deadline: {
@@ -22,4 +23,4 @@ const schema = new Schema({
   },
 });
 
-export default model("Otp", schema);
+export default model(Models.OTP, schema);

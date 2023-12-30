@@ -1,9 +1,8 @@
 import { getService } from "@/lib/container";
+import { Services } from "@/types";
 
 export const getUserAggregate = (phoneNumber: number | string) => {
-  const userService = getService("user");
-
-  return userService.aggregate([
+  return getService(Services.USER).aggregate([
     {
       $match: {
         active: true,
