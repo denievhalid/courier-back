@@ -139,7 +139,6 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
     {
       $addFields: {
         user: { $first: "$user" },
-        cover: { $first: "$images" },
       },
     }
   );
