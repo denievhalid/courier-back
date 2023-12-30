@@ -13,16 +13,16 @@ export const initSocket = (app: Application, server: HttpServer) => {
     serveClient: false,
   });
 
-  app.use((req, res, next) => {
-    _.set(req, "io", io);
-    return next();
-  });
-
   io.on(SocketEvents.CONNECTION, (socket) => {
     socket.on(SocketEvents.JOIN_ROOM, socket.join);
     socket.on(SocketEvents.LEAVE_ROOM, socket.leave);
     socket.on(SocketEvents.TYPING, ({ room }: SocketJoinRoomType) => {
       socket.broadcast.to(room).emit(SocketEvents.TYPING);
     });
+  });
+
+  app.use((req, res, next) => {
+    _.set(req, "io", io);
+    next();
   });
 };
