@@ -16,7 +16,7 @@ export class MessageService extends BaseService {
     console.log("before", body);
     const message = (await messageService.create(body)) as MessageType;
 
-    console.log("afetr", message);
+    console.log("after");
 
     console.log(message);
 

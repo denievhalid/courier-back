@@ -39,7 +39,7 @@ export const create = asyncHandler(
       await messageService.send({
         ...req.body,
         message: "Вы оправили заявку на доставку",
-        conversation,
+        conversation: conversation._id,
         isSystemMessage: true,
         type: 2,
         systemAction: SystemActionCodes.DELIVERY_REQUESTED,
