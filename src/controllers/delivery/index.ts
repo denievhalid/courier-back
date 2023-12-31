@@ -15,7 +15,7 @@ export const create = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const ad = getParam(req, "ad") as AdType;
     const user = getParam(req, "user") as UserType;
-    const conversation = getParam(req.body, "conversation") as ConversationType;
+    const conversation = getParam(req, "conversation") as ConversationType;
 
     const deliveryService = getService(Services.DELIVERY);
     const messageService = getService(Services.MESSAGE);
