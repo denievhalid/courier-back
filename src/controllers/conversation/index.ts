@@ -13,7 +13,7 @@ import { getResponse } from "@/utils/getResponse";
 import { StatusCodes } from "http-status-codes";
 import { PipelineStage } from "mongoose";
 import { toObjectId } from "@/utils/toObjectId";
-import { getUserByConversationType } from "./utils";
+import { getConversationCompanion, getUserByConversationType } from "./utils";
 import { getMessagesListAggregate } from "./aggregate";
 import { ConversationTypes } from "./types";
 import _, { isEqual, set } from "lodash";
@@ -236,60 +236,57 @@ export const getConversationsList = asyncHandler(
 
 export const getMessagesList = asyncHandler(
   async (req: Request, res: Response) => {
-    //   const conversation = getParam(req, "conversation") as ConversationType;
-    //   const user = getParam(req, "user") as UserType;
-    //   const timeZone = getParam(req.query, "timeZone");
-    //   const blockService = getService(Services.BLOCK);
-    //   const messageService = getService(Services.MESSAGE);
-    //
-    //   const messages = await messageService.aggregate(
-    //     getMessagesListAggregate(conversation, user, timeZone)
-    //   );
-    //
-    //   const companion =
-    //     conversation.courier?._id.toString() === user._id.toString()
-    //       ? conversation?.adAuthor
-    //       : conversation?.courier;
-    //
-    //   // @ts-ignore
-    //   companion?.courier = isEqual(
-    //     conversation.ad.courier?._id.toString(),
-    //     companion?._id.toString()
-    //   );
-    //
-    //   const isBlocked = Boolean(
-    //     await blockService.count({
-    //       user: toObjectId(user._id),
-    //       blockedUser: toObjectId(companion?._id),
-    //     })
-    //   );
-    //
-    //   const canWrite = !Boolean(
-    //     await blockService.count({
-    //       blockedUser: toObjectId(user._id),
-    //       user: toObjectId(companion?._id),
-    //     })
-    //   );
-    //
-    //   const delivery = (
-    //     await getService(Services.DELIVERY).findOne({
-    //       ad: toObjectId(conversation.ad._id),
-    //       user: toObjectId(user._id),
-    //     })
-    //   )?.status;
-    //
-    //   const data = {
-    //     ad: conversation.ad,
-    //     adAuthor: conversation.adAuthor,
-    //     messages,
-    //     delivery,
-    //     isBlocked,
-    //     canWrite,
-    //     companion,
-    //     lastRequestedDeliveryMessage: conversation?.lastRequestedDeliveryMessage,
-    //   };
-    //
-    //   return getResponse(res, { data }, StatusCodes.OK);
+    const conversation = getParam(req, "conversation") as ConversationType;
+    const user = getParam(req, "user") as UserType;
+    const timeZone = getParam(req.query, "timeZone");
+    const blockService = getService(Services.BLOCK);
+    const messageService = getService(Services.MESSAGE);
+
+    const messages = await messageService.aggregate(
+      getMessagesListAggregate(conversation, user, timeZone)
+    );
+
+    const companion = getConversationCompanion(conversation, user);
+
+    // @ts-ignore
+    companion?.courier = isEqual(
+      conversation.ad.courier?._id.toString(),
+      companion?._id.toString()
+    );
+
+    const isBlocked = Boolean(
+      await blockService.count({
+        user: toObjectId(user._id),
+        blockedUser: toObjectId(companion?._id),
+      })
+    );
+
+    const canWrite = !Boolean(
+      await blockService.count({
+        blockedUser: toObjectId(user._id),
+        user: toObjectId(companion?._id),
+      })
+    );
+
+    const deliveryStatus = (
+      await getService(Services.DELIVERY).findOne({
+        ad: toObjectId(conversation.ad._id),
+        user: toObjectId(user._id),
+      })
+    )?.status;
+
+    const data = {
+      ad: conversation.ad,
+      adAuthor: conversation.adAuthor,
+      messages,
+      deliveryStatus,
+      isBlocked,
+      canWrite,
+      companion,
+      lastRequestedDeliveryMessage: conversation?.lastRequestedDeliveryMessage,
+    };
+
+    return getResponse(res, { data }, StatusCodes.OK);
   }
 );
 

@@ -1,11 +1,12 @@
 import { toObjectId } from "@/utils/toObjectId";
 import { ConversationType, UserType } from "@/types";
+import { PipelineStage } from "mongoose";
 
 export const getMessagesListAggregate = (
   conversation: ConversationType,
   user: UserType,
   timeZone: string
-) => {
+): PipelineStage[] => {
   let matchedObject: any = {
     conversation: toObjectId(conversation._id),
   };
