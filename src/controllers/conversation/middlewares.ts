@@ -92,7 +92,7 @@ export const useSocket = asyncHandler(async (req: Request, res: Response) => {
   const io = getParam(req, "io");
   const { message } = getParam(req, "payload");
   const conversation = getParam(req, "conversation") as ConversationType;
-
+  console.log(getParam(req, "payload"));
   emitSocket({
     io,
     event: SocketEvents.NEW_MESSAGE,

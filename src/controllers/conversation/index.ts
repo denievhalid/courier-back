@@ -52,8 +52,6 @@ export const createMessage = asyncHandler(
       ...req.body,
     })) as MessageType;
 
-    console.log(messageDoc, "messageDoc");
-
     const conversationUpdatedPayload: {
       lastRequestedDeliveryMessage?: MessageType | null;
       lastMessage: MessageType;
@@ -70,7 +68,7 @@ export const createMessage = asyncHandler(
     }
 
     await conversationService.update(
-      { _id: toObjectId(conversation!._id) },
+      { _id: toObjectId(conversation._id) },
       conversationUpdatedPayload
     );
 
