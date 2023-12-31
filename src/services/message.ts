@@ -11,6 +11,7 @@ export class MessageService extends BaseService {
   }
 
   async send(body: { [k: string]: unknown }) {
+    console.log(body, "bofy");
     const conversationService = getService(Services.CONVERSATION);
     const messageService = getService(Services.MESSAGE);
 
