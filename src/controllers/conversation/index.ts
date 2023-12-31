@@ -44,8 +44,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 export const createMessage = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const conversation = getParam(req, "conversation") as ConversationType;
-    const user = getParam(req, "user") as UserType;
-
+    console.log(req.body, "body");
     const conversationService = getService(Services.CONVERSATION);
     const messageService = getService(Services.MESSAGE);
 
