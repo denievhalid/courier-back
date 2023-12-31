@@ -47,6 +47,8 @@ export const create = asyncHandler(
     );
     _.set(req, "deliveryStatus", DeliveryStatus.PENDING);
 
+    console.log(12313);
+
     return next();
   }
 );
