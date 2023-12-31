@@ -19,6 +19,8 @@ export class MessageService extends BaseService {
       ...body,
     })) as MessageType;
 
+    console.log(message);
+
     const lastRequestedDeliveryMessage = this.isSystemMessage(message)
       ? message
       : null;
