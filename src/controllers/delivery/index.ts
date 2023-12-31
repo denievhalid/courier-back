@@ -121,19 +121,23 @@ export const remove = asyncHandler(
     });
 
     _.set(req, "deliveryStatus", null);
+    _.set(
+      req,
+      "payload",
+      // @ts-ignore
+      await messageService.send({
+        ...req.body,
+        message: "Вы отменили заявку на доставку",
+        conversation,
+        sender: user,
+        isSystemMessage: true,
+        type: 0,
+        systemAction: SystemActionCodes.DELIVERY_CANCELED,
+      })
+    );
+    _.set(req, "deliveryStatus", DeliveryStatus.PENDING);
 
     return next();
-
-    // await removeDelivery({
-    //   io,
-    //   ad,
-    //   user,
-    //   conversation,
-    //   shouldSendMessage: true,
-    //   byOwner,
-    // });
-
-    return getResponse(res, {}, StatusCodes.OK);
   }
 );
 
