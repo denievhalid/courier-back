@@ -134,7 +134,8 @@ export const createMessage = asyncHandler(
 
     _.set(req, "payload", {
       message,
-      ...req.body,
+      lastRequestedDeliveryMessage:
+        conversationUpdatedPayload?.lastRequestedDeliveryMessage?._id,
     });
 
     return next();
