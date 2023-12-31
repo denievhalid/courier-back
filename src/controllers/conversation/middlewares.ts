@@ -2,9 +2,13 @@ import { asyncHandler } from "@/utils/asyncHandler";
 import { Request, Response, NextFunction } from "express";
 import { getParam } from "@/utils/getParam";
 import { getService } from "@/lib/container";
-import { Services } from "@/types";
+import { ConversationType, Services, UserType } from "@/types";
 import { toObjectId } from "@/utils/toObjectId";
 import _ from "lodash";
+import { emitSocket } from "@/utils/socket";
+import { SocketEvents } from "@/const";
+import { getResponse } from "@/utils/getResponse";
+import { StatusCodes } from "http-status-codes";
 
 export const getConversationById = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -83,3 +87,20 @@ export const getConversationById = asyncHandler(
     return next();
   }
 );
+
+export const useSocket = asyncHandler(async (req: Request, res: Response) => {
+  const io = getParam(req, "io");
+  const { message } = getParam(req, "payload");
+  const conversation = getParam(req, "conversation") as ConversationType;
+
+  emitSocket({
+    io,
+    event: SocketEvents.NEW_MESSAGE,
+    room: `room${conversation?._id?.toString()}`,
+    data: {
+      message,
+    },
+  });
+
+  return getResponse(res, {}, StatusCodes.CREATED);
+});

@@ -1,11 +1,12 @@
 import { asyncHandler } from "@/utils/asyncHandler";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { getParam } from "@/utils/getParam";
 import {
   AdType,
   ConversationType,
   MessageType,
   Services,
+  SystemActionCodes,
   UserType,
 } from "@/types";
 import { getService } from "@/lib/container";
@@ -42,35 +43,104 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const createMessage = asyncHandler(
-  async (req: Request, res: Response) => {
-    const io = getParam(req, "io");
+  async (req: Request, res: Response, next: NextFunction) => {
     const conversation = getParam(req, "conversation") as ConversationType;
-
     const user = getParam(req, "user") as UserType;
 
-    const { message, type, isSystemMessage, systemAction, replayedMessage } =
-      getAttributes(req.body, [
-        "message",
-        "type",
-        "isSystemMessage",
-        "systemAction",
-        "replayedMessage",
-      ]);
+    const conversationService = getService(Services.CONVERSATION);
+    const messageService = getService(Services.MESSAGE);
 
-    const messageText = isSystemMessage ? "заявка" : message;
+    const messageDoc = (await messageService.create({
+      ...req.body,
+      sender: user,
+    })) as MessageType;
 
-    // const data = await createMessageHelper({
-    //   io,
-    //   user,
-    //   conversation,
-    //   message: messageText,
-    //   type,
-    //   isSystemMessage,
-    //   systemAction,
-    //   replayedMessage,
-    // });
+    const conversationUpdatedPayload: {
+      lastRequestedDeliveryMessage?: MessageType | null;
+      lastMessage: MessageType;
+    } = {
+      lastMessage: messageDoc,
+      lastRequestedDeliveryMessage: null,
+    };
 
-    //return getResponse(res, { data }, StatusCodes.CREATED);
+    if (
+      messageDoc.isSystemMessage &&
+      messageDoc.systemAction === SystemActionCodes.DELIVERY_REQUESTED
+    ) {
+      conversationUpdatedPayload.lastRequestedDeliveryMessage = messageDoc;
+    }
+
+    await conversationService.update(
+      { _id: toObjectId(conversation!._id) },
+      conversationUpdatedPayload
+    );
+
+    const message = _.first(
+      await messageService.aggregate([
+        {
+          $match: {
+            _id: toObjectId(messageDoc._id),
+          },
+        },
+        {
+          $lookup: {
+            from: "conversations",
+            localField: "conversation",
+            foreignField: "_id",
+            as: "conversation",
+          },
+        },
+        {
+          $lookup: {
+            from: "messages",
+            localField: "replayedMessage",
+            foreignField: "_id",
+            pipeline: [
+              {
+                $lookup: {
+                  from: "users",
+                  localField: "sender",
+                  foreignField: "_id",
+                  as: "sender",
+                },
+              },
+              {
+                $addFields: {
+                  sender: { $first: "$sender" },
+                },
+              },
+            ],
+            as: "replayedMessage",
+          },
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "sender",
+            foreignField: "_id",
+            as: "sender",
+          },
+        },
+        {
+          $project: {
+            sender: { $first: "$sender" },
+            message: 1,
+            conversation: { $first: "$conversation" },
+            systemAction: 1,
+            isSystemMessage: 1,
+            type: 1,
+            replayedMessage: { $first: "$replayedMessage" },
+          },
+        },
+      ])
+    );
+
+    _.set(req, "payload", {
+      message,
+      ...req.body,
+    });
+
+    return next();
   }
 );
 
