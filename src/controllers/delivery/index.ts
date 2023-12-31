@@ -112,9 +112,9 @@ export const remove = asyncHandler(
     const ad = getParam(req.params, "ad") as string;
     const conversation = getParam(req, "conversation") as ConversationType;
 
-    const deliveryService = getService(Services.DELIVERY);
+    const messageService = getService(Services.MESSAGE);
 
-    await deliveryService.remove({
+    await getService(Services.DELIVERY).remove({
       ad: toObjectId(ad),
       user: toObjectId(user._id),
     });
