@@ -18,7 +18,6 @@ import { getConversationCompanion, getUserByConversationType } from "./utils";
 import { getMessagesListAggregate } from "./aggregate";
 import { ConversationTypes } from "./types";
 import _, { isEqual, set } from "lodash";
-import { getAttributes } from "@/utils/getAttributes";
 import { removeDelivery } from "../delivery/helpers";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
