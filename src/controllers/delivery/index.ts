@@ -32,19 +32,6 @@ export const create = asyncHandler(
       await deliveryService.create(payload);
     }
 
-    console.log(
-      // @ts-ignore
-      await messageService.send({
-        ...req.body,
-        message: "Вы оправили заявку на доставку",
-        conversation,
-        isSystemMessage: true,
-        type: 2,
-        systemAction: SystemActionCodes.DELIVERY_REQUESTED,
-      }),
-      222
-    );
-
     _.set(
       req,
       "payload",
@@ -59,8 +46,6 @@ export const create = asyncHandler(
       })
     );
     _.set(req, "deliveryStatus", DeliveryStatus.PENDING);
-
-    console.log(12313);
 
     return next();
   }
