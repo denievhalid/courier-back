@@ -58,18 +58,18 @@ export const useSocket = asyncHandler(async (req: Request, res: Response) => {
 
   emitSocket({
     io,
-    event: SocketEvents.NEW_MESSAGE,
-    room: `room${conversation?._id?.toString()}`,
-    data: payload,
-  });
-
-  emitSocket({
-    io,
     event: SocketEvents.UPDATE_DELIVERY_STATUS,
     room: user._id?.toString(),
     data: {
       deliveryStatus,
     },
+  });
+
+  emitSocket({
+    io,
+    event: SocketEvents.NEW_MESSAGE,
+    room: `room${conversation?._id?.toString()}`,
+    data: payload,
   });
 
   return getResponse(res, {}, StatusCodes.CREATED);
