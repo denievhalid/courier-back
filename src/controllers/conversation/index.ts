@@ -51,8 +51,9 @@ export const createMessage = asyncHandler(
 
     const messageDoc = (await messageService.create({
       ...req.body,
-      sender: user,
     })) as MessageType;
+
+    console.log(messageDoc, "messageDoc");
 
     const conversationUpdatedPayload: {
       lastRequestedDeliveryMessage?: MessageType | null;
