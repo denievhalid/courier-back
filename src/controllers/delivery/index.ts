@@ -4,20 +4,21 @@ import { getParam } from "@/utils/getParam";
 import { getService } from "@/lib/container";
 import { StatusCodes } from "http-status-codes";
 import type { AdType, ConversationType, UserType } from "@/types";
-import { DeliveryStatus, Services } from "@/types";
+import { DeliveryStatus, Services, SystemActionCodes } from "@/types";
 import type { NextFunction, Request, Response } from "express";
 import { toObjectId } from "@/utils/toObjectId";
 import { getAttributes } from "@/utils/getAttributes";
 import { SocketEvents } from "@/const";
-import { removeDelivery } from "./helpers";
 import _ from "lodash";
 
 export const create = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const ad = getParam(req, "ad") as AdType;
     const user = getParam(req, "user") as UserType;
+    const conversation = getParam(req, "conversation") as ConversationType;
 
     const deliveryService = getService(Services.DELIVERY);
+    const messageService = getService(Services.MESSAGE);
 
     const payload = {
       ad: toObjectId(ad._id),
@@ -31,6 +32,19 @@ export const create = asyncHandler(
       await deliveryService.create(payload);
     }
 
+    _.set(
+      req,
+      "payload",
+      // @ts-ignore
+      await messageService.send({
+        ...req.body,
+        message: "Вы оправили заявку на доставку",
+        conversation,
+        isSystemMessage: true,
+        type: 2,
+        systemAction: SystemActionCodes.DELIVERY_REQUESTED,
+      })
+    );
     _.set(req, "deliveryStatus", DeliveryStatus.PENDING);
 
     return next();

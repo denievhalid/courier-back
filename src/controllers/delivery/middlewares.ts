@@ -1,7 +1,13 @@
 import { asyncHandler } from "@/utils/asyncHandler";
 import { NextFunction, Request, Response } from "express";
 import { getService } from "@/lib/container";
-import { AdType, DeliveryStatus, Services, UserType } from "@/types";
+import {
+  AdType,
+  ConversationType,
+  DeliveryStatus,
+  Services,
+  UserType,
+} from "@/types";
 import { getParam } from "@/utils/getParam";
 import { toObjectId } from "@/utils/toObjectId";
 import { getAttributes } from "@/utils/getAttributes";
@@ -47,6 +53,15 @@ export const useSocket = asyncHandler(async (req: Request, res: Response) => {
   const io = getParam(req, "io");
   const deliveryStatus = getParam(req, "deliveryStatus");
   const user = getParam(req, "user") as UserType;
+  const conversation = getParam(req, "conversation") as ConversationType;
+  const payload = getParam(req, "payload");
+
+  emitSocket({
+    io,
+    event: SocketEvents.NEW_MESSAGE,
+    room: `room${conversation?._id?.toString()}`,
+    data: payload,
+  });
 
   emitSocket({
     io,

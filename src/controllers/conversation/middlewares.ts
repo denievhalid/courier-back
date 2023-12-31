@@ -10,7 +10,7 @@ import { SocketEvents } from "@/const";
 import { getResponse } from "@/utils/getResponse";
 import { StatusCodes } from "http-status-codes";
 
-export const getConversationById = asyncHandler(
+export const useGetConversationById = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const id = getParam(req.params, "id") || getParam(req.body, "conversation");
 
@@ -92,7 +92,7 @@ export const useSocket = asyncHandler(async (req: Request, res: Response) => {
   const io = getParam(req, "io");
   const { message } = getParam(req, "payload");
   const conversation = getParam(req, "conversation") as ConversationType;
-  console.log(getParam(req, "payload"));
+
   emitSocket({
     io,
     event: SocketEvents.NEW_MESSAGE,

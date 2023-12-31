@@ -8,7 +8,7 @@ import {
   removeConversation,
 } from "@/controllers/conversation";
 import {
-  getConversationById,
+  useGetConversationById,
   useSocket,
 } from "@/controllers/conversation/middlewares";
 
@@ -16,18 +16,23 @@ const router = Router();
 
 router.get("/", authenticate, getConversationsList);
 router.post("/", authenticate, create);
-router.get("/:id/messages", authenticate, getConversationById, getMessagesList);
+router.get(
+  "/:id/messages",
+  authenticate,
+  useGetConversationById,
+  getMessagesList
+);
 router.post(
   "/:id/messages",
   authenticate,
-  getConversationById,
+  useGetConversationById,
   createMessage,
   useSocket
 );
 router.delete(
   "/:id/messages",
   authenticate,
-  getConversationById,
+  useGetConversationById,
   removeConversation
 );
 

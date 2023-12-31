@@ -6,7 +6,6 @@ import {
   ConversationType,
   MessageType,
   Services,
-  SystemActionCodes,
   UserType,
 } from "@/types";
 import { getService } from "@/lib/container";
@@ -14,11 +13,7 @@ import { getResponse } from "@/utils/getResponse";
 import { StatusCodes } from "http-status-codes";
 import { PipelineStage } from "mongoose";
 import { toObjectId } from "@/utils/toObjectId";
-import {
-  getConversationCompanion,
-  getMessageByIdAggregate,
-  getUserByConversationType,
-} from "./utils";
+import { getConversationCompanion, getUserByConversationType } from "./utils";
 import { getMessagesListAggregate } from "./aggregate";
 import { ConversationTypes } from "./types";
 import _, { isEqual, set } from "lodash";
@@ -47,37 +42,8 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
 export const createMessage = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const conversation = getParam(req, "conversation") as ConversationType;
-    const conversationService = getService(Services.CONVERSATION);
-    const messageService = getService(Services.MESSAGE);
-
-    const messageDoc = (await messageService.create({
-      ...req.body,
-    })) as MessageType;
-
-    const conversationUpdatedPayload = {
-      lastMessage: messageDoc,
-      lastRequestedDeliveryMessage:
-        messageDoc.isSystemMessage &&
-        messageDoc.systemAction === SystemActionCodes.DELIVERY_REQUESTED
-          ? messageDoc
-          : null,
-    };
-
-    await conversationService.update(
-      { _id: toObjectId(conversation._id) },
-      conversationUpdatedPayload
-    );
-
-    const message = _.first(
-      await messageService.aggregate(getMessageByIdAggregate(messageDoc?._id))
-    );
-
-    _.set(req, "payload", {
-      message,
-      lastRequestedDeliveryMessage:
-        conversationUpdatedPayload.lastRequestedDeliveryMessage?._id,
-    });
+    // @ts-ignore
+    _.set(req, "payload", await getService(Services.MESSAGE).send(req.body));
 
     return next();
   }
@@ -240,6 +206,7 @@ export const getConversationsList = asyncHandler(
         },
       },
     ]);
+
     return getResponse(res, { data }, StatusCodes.OK);
   }
 );

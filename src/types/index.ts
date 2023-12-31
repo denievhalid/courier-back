@@ -64,6 +64,7 @@ export type MessageType = {
   type?: number;
   isLiked?: number;
   replayedMessage?: MessageType;
+  conversation: ConversationType;
 };
 
 export type TCreateMessage = {
