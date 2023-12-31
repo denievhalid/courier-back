@@ -151,6 +151,7 @@ export const getConversationsList = asyncHandler(
     const match: PipelineStage.Match = {
       $match: {},
     };
+
     match.$match[getUserByConversationType[type]] = toObjectId(user._id);
 
     const data = await service.aggregate([

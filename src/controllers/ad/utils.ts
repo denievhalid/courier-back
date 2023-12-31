@@ -135,7 +135,7 @@ export const parseMatchParam = (param: string): any[] => {
 export const getListAggregateBuilder = (queryParams: { [k: string]: any }) => {
   const aggregateBuilder = AggregateBuilder.init();
 
-  if (queryParams.staus) {
+  if (queryParams.status) {
     aggregateBuilder.match({
       status: {
         $eq: queryParams.status,
