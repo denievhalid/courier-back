@@ -111,7 +111,6 @@ export const remove = asyncHandler(
     const user = getParam(req, "user") as UserType;
     const ad = getParam(req.params, "ad") as string;
     const conversation = getParam(req, "conversation") as ConversationType;
-    const byOwner = getParam(req.body, "byOwner");
 
     const deliveryService = getService(Services.DELIVERY);
 
@@ -135,7 +134,6 @@ export const remove = asyncHandler(
         systemAction: SystemActionCodes.DELIVERY_CANCELED,
       })
     );
-    _.set(req, "deliveryStatus", DeliveryStatus.PENDING);
 
     return next();
   }
