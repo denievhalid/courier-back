@@ -13,12 +13,10 @@ export class MessageService extends BaseService {
   async send(body: { [k: string]: unknown }) {
     const conversationService = getService(Services.CONVERSATION);
     const messageService = getService(Services.MESSAGE);
-    console.log("before");
-    const message = (await messageService.create({
-      ...body,
-    })) as MessageType;
+    console.log("before", body);
+    const message = (await messageService.create(body)) as MessageType;
 
-    console.log("afetr");
+    console.log("afetr", message);
 
     console.log(message);
 
