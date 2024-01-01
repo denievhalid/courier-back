@@ -91,7 +91,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
     },
   ];
 
-  //const data = await favoriteService.getList(query);
+  const data = await favoriteService.aggregate(query);
 
-  //return getResponse(res, { data }, StatusCodes.OK);
+  return getResponse(res, { data }, StatusCodes.OK);
 });
