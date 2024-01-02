@@ -111,7 +111,6 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
     "payload",
     // @ts-ignore
     await messageService.send({
-      ...req.body,
       message: "Вы отменили заявку на доставку",
       conversation,
       sender: user,
