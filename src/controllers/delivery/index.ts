@@ -106,19 +106,15 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
   const { systemAction: updatedSystemAction, type: updatedType } =
     handleUpdateDeliveryMessage(status);
 
-  _.set(
-    req,
-    "payload",
-    // @ts-ignore
-    await messageService.send({
-      message: "Вы отменили заявку на доставку",
-      conversation,
-      sender: user,
-      isSystemMessage: true,
-      type: updatedType,
-      systemAction: updatedSystemAction,
-    })
-  );
+  //@ts-ignore
+  await messageService.send({
+    message: "Вы отменили заявку на доставку",
+    conversation,
+    sender: courier,
+    isSystemMessage: true,
+    type: updatedType,
+    systemAction: updatedSystemAction,
+  });
 
   emitSocket({
     io,
