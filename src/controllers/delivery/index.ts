@@ -80,6 +80,7 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
   const conversationService = getService(Services.CONVERSATION);
   const deliveryService = getService(Services.DELIVERY);
   const adService = getService(Services.AD);
+  const messageService = getService(Services.MESSAGE);
 
   await deliveryService.update(
     {
