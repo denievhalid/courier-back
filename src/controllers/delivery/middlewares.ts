@@ -30,9 +30,6 @@ export const useGetAdMiddleware = asyncHandler(
 
     const adDoc = (await adService.findOne({
       _id: toObjectId(ad),
-      user: {
-        $ne: toObjectId(user._id),
-      },
     })) as AdType;
 
     if (!adDoc) {
