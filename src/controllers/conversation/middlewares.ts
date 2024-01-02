@@ -1,5 +1,5 @@
 import { asyncHandler } from "@/utils/asyncHandler";
-import { Request, Response, NextFunction } from "express";
+import { NextFunction, Request, Response } from "express";
 import { getParam } from "@/utils/getParam";
 import { getService } from "@/lib/container";
 import { ConversationType, Services, UserType } from "@/types";
@@ -9,6 +9,11 @@ import { emitSocket } from "@/utils/socket";
 import { SocketEvents } from "@/const";
 import { getResponse } from "@/utils/getResponse";
 import { StatusCodes } from "http-status-codes";
+import {
+  getConversationCompanion,
+  handleUnReadMessagesCount,
+} from "@/controllers/conversation/utils";
+import { ConversationTypes } from "@/controllers/conversation/types";
 
 export const useGetConversationById = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -90,8 +95,19 @@ export const useGetConversationById = asyncHandler(
 
 export const useSocket = asyncHandler(async (req: Request, res: Response) => {
   const io = getParam(req, "io");
+  const user = getParam(req, "user") as UserType;
   const { message } = getParam(req, "payload");
   const conversation = getParam(req, "conversation") as ConversationType;
+
+  const companion = getConversationCompanion(conversation, user);
+
+  const allMessages = await getService(Services.MESSAGE)
+    .find({ conversation: toObjectId(conversation?._id) })
+    // @ts-ignore
+    .sort({ createdAt: -1 })
+    .limit(100);
+
+  const unreadMessagesCount = handleUnReadMessagesCount(allMessages, companion);
 
   emitSocket({
     io,
@@ -101,6 +117,28 @@ export const useSocket = asyncHandler(async (req: Request, res: Response) => {
       message,
       lastRequestedDeliveryMessage:
         message?.conversation?.lastRequestedDeliveryMessage,
+    },
+  });
+
+  emitSocket({
+    io,
+    event: SocketEvents.UPDATE_CONVERSATION,
+    room: companion?._id?.toString(),
+    data: {
+      conversation: {
+        ...conversation,
+        lastMessage: message,
+        unreadMessagesCount,
+        companion: user,
+        cover: conversation?.ad?.images[0],
+        lastRequestedDeliveryMessage:
+          conversation?.lastRequestedDeliveryMessage?._id,
+      },
+      type:
+        JSON.stringify(conversation?.courier?._id) ===
+        JSON.stringify(companion?._id)
+          ? ConversationTypes.SENT
+          : ConversationTypes.INBOX,
     },
   });
 
