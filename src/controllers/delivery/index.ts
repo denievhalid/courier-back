@@ -73,7 +73,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
 
 export const update = asyncHandler(async (req: Request, res: Response) => {
   const io = getParam(req, "io");
-  const ad = getParam(req, "ad") as AdType;
+  const ad = getParam(req.body, "ad") as string;
   const user = getParam(req, "user") as UserType;
   const { courier, status } = getAttributes(req.body, ["courier", "status"]);
 
@@ -84,7 +84,7 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
 
   await deliveryService.update(
     {
-      ad: toObjectId(ad._id),
+      ad: toObjectId(ad),
       user: toObjectId(courier._id),
     },
     {
@@ -93,12 +93,12 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
   );
 
   const conversation = await conversationService.findOne({
-    ad: toObjectId(ad._id),
+    ad: toObjectId(ad),
   });
 
   await adService.update(
     {
-      _id: toObjectId(ad._id),
+      _id: toObjectId(ad),
     },
     { courier: status === DeliveryStatus.APPROVED ? courier : null }
   );
@@ -132,13 +132,13 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
   emitSocket({
     io,
     event: SocketEvents.UPDATE_DELIVERY_STATUS,
-    room: `room-ad-${ad?._id.toString()}`,
+    room: `room-ad-${ad?.toString()}`,
     data: {
       deliveryStatus: status,
     },
   });
 
-  io.to(`room-ad-${ad?._id.toString()}`).emit(
+  io.to(`room-ad-${ad?.toString()}`).emit(
     SocketEvents.UPDATE_AD_COURIER,
     courier
   );
