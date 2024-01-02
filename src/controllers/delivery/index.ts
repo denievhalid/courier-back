@@ -123,6 +123,15 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
     courier
   );
 
+  emitSocket({
+    io,
+    event: SocketEvents.UPDATE_AD_COURIER,
+    room: `room-ad-${ad?._id.toString()}`,
+    data: {
+      courier,
+    },
+  });
+
   return getResponse(res, {});
 });
 
