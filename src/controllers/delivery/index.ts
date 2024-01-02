@@ -98,7 +98,16 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
   emitSocket({
     io,
     event: SocketEvents.UPDATE_DELIVERY_STATUS,
-    room: `${companion?._id?.toString()}`,
+    room: `room${conversation?._id?.toString()}`,
+    data: {
+      deliveryStatus: status,
+    },
+  });
+
+  emitSocket({
+    io,
+    event: SocketEvents.UPDATE_DELIVERY_STATUS,
+    room: `room-ad-${ad?._id.toString()}`,
     data: {
       deliveryStatus: status,
     },
@@ -109,7 +118,7 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
   //   { status }
   // );
 
-  io.to(`${companion?._id?.toString()}`).emit(
+  io.to(`room${conversation?._id?.toString()}`).emit(
     SocketEvents.UPDATE_AD_COURIER,
     courier
   );
