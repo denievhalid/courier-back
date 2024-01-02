@@ -70,11 +70,8 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
 
 export const update = asyncHandler(async (req: Request, res: Response) => {
   const io = getParam(req, "io");
-  const { ad, courier, status } = getAttributes(req.body, [
-    "ad",
-    "courier",
-    "status",
-  ]);
+  const ad = getParam(req, "ad") as AdType;
+  const { courier, status } = getAttributes(req.body, ["courier", "status"]);
 
   const conversationService = getService(Services.CONVERSATION);
   const deliveryService = getService(Services.DELIVERY);
