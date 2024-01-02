@@ -50,7 +50,7 @@ export const useSocket = asyncHandler(async (req: Request, res: Response) => {
   const io = getParam(req, "io");
   const deliveryStatus = getParam(req, "deliveryStatus");
   const user = getParam(req, "user") as UserType;
-  const conversation = getParam(req, "conversation") as ConversationType;
+  const conversation = getParam(req.body, "conversation") as string;
   const payload = getParam(req, "payload");
 
   emitSocket({
@@ -65,7 +65,7 @@ export const useSocket = asyncHandler(async (req: Request, res: Response) => {
   emitSocket({
     io,
     event: SocketEvents.NEW_MESSAGE,
-    room: `room${conversation?._id?.toString()}`,
+    room: `room${conversation?.toString()}`,
     data: payload,
   });
 

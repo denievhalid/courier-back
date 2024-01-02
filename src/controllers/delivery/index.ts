@@ -71,85 +71,87 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
   return getResponse(res, { data }, StatusCodes.OK);
 });
 
-export const update = asyncHandler(async (req: Request, res: Response) => {
-  const io = getParam(req, "io");
-  const ad = getParam(req.body, "ad") as string;
-  const user = getParam(req, "user") as UserType;
-  const { courier, status } = getAttributes(req.body, ["courier", "status"]);
+export const update = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const io = getParam(req, "io");
+    const ad = getParam(req.body, "ad") as string;
+    const user = getParam(req, "user") as UserType;
+    const { courier, status } = getAttributes(req.body, ["courier", "status"]);
 
-  const conversationService = getService(Services.CONVERSATION);
-  const deliveryService = getService(Services.DELIVERY);
-  const adService = getService(Services.AD);
-  const messageService = getService(Services.MESSAGE);
+    const conversationService = getService(Services.CONVERSATION);
+    const deliveryService = getService(Services.DELIVERY);
+    const adService = getService(Services.AD);
+    const messageService = getService(Services.MESSAGE);
 
-  await deliveryService.update(
-    {
+    await deliveryService.update(
+      {
+        ad: toObjectId(ad),
+        user: toObjectId(courier._id),
+      },
+      {
+        status,
+      }
+    );
+
+    const conversation = await conversationService.findOne({
       ad: toObjectId(ad),
-      user: toObjectId(courier._id),
-    },
-    {
-      status,
-    }
-  );
+    });
 
-  const conversation = await conversationService.findOne({
-    ad: toObjectId(ad),
-  });
+    await adService.update(
+      {
+        _id: toObjectId(ad),
+      },
+      { courier: status === DeliveryStatus.APPROVED ? courier : null }
+    );
 
-  await adService.update(
-    {
-      _id: toObjectId(ad),
-    },
-    { courier: status === DeliveryStatus.APPROVED ? courier : null }
-  );
+    const { systemAction: updatedSystemAction, type: updatedType } =
+      handleUpdateDeliveryMessage(status);
 
-  const { systemAction: updatedSystemAction, type: updatedType } =
-    handleUpdateDeliveryMessage(status);
+    _.set(
+      req,
+      "payload",
+      // @ts-ignore
+      await messageService.send({
+        message: "Вы отменили заявку на доставку",
+        conversation,
+        sender: courier,
+        isSystemMessage: true,
+        type: updatedType,
+        systemAction: updatedSystemAction,
+      })
+    );
 
-  _.set(
-    req,
-    "payload",
-    // @ts-ignore
-    await messageService.send({
-      message: "Вы отменили заявку на доставку",
-      conversation,
-      sender: courier,
-      isSystemMessage: true,
-      type: updatedType,
-      systemAction: updatedSystemAction,
-    })
-  );
+    emitSocket({
+      io,
+      event: SocketEvents.UPDATE_DELIVERY_STATUS,
+      room: `room${conversation?._id?.toString()}`,
+      data: {
+        deliveryStatus: status,
+      },
+    });
 
-  emitSocket({
-    io,
-    event: SocketEvents.UPDATE_DELIVERY_STATUS,
-    room: `room${conversation?._id?.toString()}`,
-    data: {
-      deliveryStatus: status,
-    },
-  });
+    emitSocket({
+      io,
+      event: SocketEvents.UPDATE_DELIVERY_STATUS,
+      room: `room-ad-${ad?.toString()}`,
+      data: {
+        deliveryStatus: status,
+      },
+    });
 
-  emitSocket({
-    io,
-    event: SocketEvents.UPDATE_DELIVERY_STATUS,
-    room: `room-ad-${ad?.toString()}`,
-    data: {
-      deliveryStatus: status,
-    },
-  });
+    io.to(`room-ad-${ad?.toString()}`).emit(
+      SocketEvents.UPDATE_AD_COURIER,
+      courier
+    );
 
-  io.to(`room-ad-${ad?.toString()}`).emit(
-    SocketEvents.UPDATE_AD_COURIER,
-    courier
-  );
+    io.to(`room${conversation?._id?.toString()}`).emit(
+      SocketEvents.UPDATE_AD_COURIER,
+      courier
+    );
 
-  io.to(`room${conversation?._id?.toString()}`).emit(
-    SocketEvents.UPDATE_AD_COURIER,
-    courier
-  );
-
-  return getResponse(res, {});
-});
+    return next();
+  }
+);
 
 export const remove = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
