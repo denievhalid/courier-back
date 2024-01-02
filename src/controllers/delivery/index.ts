@@ -11,6 +11,7 @@ import { getAttributes } from "@/utils/getAttributes";
 import { SocketEvents } from "@/const";
 import _ from "lodash";
 import { emitSocket } from "@/utils/socket";
+import { getConversationCompanion } from "@/controllers/conversation/utils";
 
 export const create = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -72,6 +73,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
 export const update = asyncHandler(async (req: Request, res: Response) => {
   const io = getParam(req, "io");
   const ad = getParam(req, "ad") as AdType;
+  const user = getParam(req, "user") as UserType;
   const { courier, status } = getAttributes(req.body, ["courier", "status"]);
 
   const conversationService = getService(Services.CONVERSATION);
@@ -91,10 +93,12 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
     ad: toObjectId(ad._id),
   });
 
+  const companion = getConversationCompanion(conversation, user);
+
   emitSocket({
     io,
     event: SocketEvents.UPDATE_DELIVERY_STATUS,
-    room: `room${conversation?._id?.toString()}`,
+    room: `${companion?._id?.toString()}`,
     data: {
       deliveryStatus: status,
     },
