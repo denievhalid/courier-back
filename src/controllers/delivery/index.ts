@@ -137,12 +137,20 @@ export const remove = asyncHandler(
     const ad = getParam(req.params, "ad") as string;
     const conversation = getParam(req, "conversation") as ConversationType;
 
+    const adService = getService(Services.AD);
     const messageService = getService(Services.MESSAGE);
 
     await getService(Services.DELIVERY).remove({
       ad: toObjectId(ad),
       user: toObjectId(user._id),
     });
+
+    await adService.update(
+      {
+        _id: toObjectId(ad),
+      },
+      { courier: null }
+    );
 
     _.set(req, "deliveryStatus", null);
     _.set(
