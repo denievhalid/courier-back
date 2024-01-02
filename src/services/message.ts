@@ -16,13 +16,8 @@ export class MessageService extends BaseService {
 
     const message = (await messageService.create(body)) as MessageType;
 
-    console.log(message, "message");
-
-    const lastRequestedDeliveryMessage = this.isSystemMessage(message)
-      ? message
-      : null;
-
-    console.log(lastRequestedDeliveryMessage, "lastRequestedDeliveryMessage");
+    const lastRequestedDeliveryMessage =
+      this.handleLastRequestedDeliveryMessage(message);
 
     await conversationService.update(
       { _id: toObjectId(message?.conversation?._id) },
@@ -40,9 +35,11 @@ export class MessageService extends BaseService {
     };
   }
 
-  isSystemMessage({ isSystemMessage, systemAction }: MessageType) {
-    return (
-      isSystemMessage && systemAction === SystemActionCodes.DELIVERY_REQUESTED
-    );
+  handleLastRequestedDeliveryMessage(message: MessageType) {
+    const { isSystemMessage, systemAction } = message;
+    if (isSystemMessage) {
+      if (systemAction === SystemActionCodes.DELIVERY_REQUESTED) return message;
+      return null;
+    }
   }
 }
