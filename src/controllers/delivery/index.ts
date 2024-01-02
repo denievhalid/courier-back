@@ -135,14 +135,20 @@ export const remove = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const user = getParam(req, "user") as UserType;
     const ad = getParam(req.params, "ad") as string;
+    const byOwner = getParam(req.body, "byOwner");
     const conversation = getParam(req, "conversation") as ConversationType;
 
     const adService = getService(Services.AD);
+
+    const adObject = await adService.findOne({
+      _id: toObjectId(ad),
+    });
+
     const messageService = getService(Services.MESSAGE);
 
     await getService(Services.DELIVERY).remove({
       ad: toObjectId(ad),
-      user: toObjectId(user._id),
+      user: byOwner ? toObjectId(adObject?.courier) : toObjectId(user._id),
     });
 
     await adService.update(
