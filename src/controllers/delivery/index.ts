@@ -118,19 +118,15 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
   //   { status }
   // );
 
-  io.to(`room${conversation?._id?.toString()}`).emit(
+  io.to(`room-ad-${ad?._id.toString()}`).emit(
     SocketEvents.UPDATE_AD_COURIER,
     courier
   );
 
-  emitSocket({
-    io,
-    event: SocketEvents.UPDATE_AD_COURIER,
-    room: `room-ad-${ad?._id.toString()}`,
-    data: {
-      courier,
-    },
-  });
+  io.to(`room${conversation?._id?.toString()}`).emit(
+    SocketEvents.UPDATE_AD_COURIER,
+    courier
+  );
 
   return getResponse(res, {});
 });
