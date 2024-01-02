@@ -17,7 +17,7 @@ import { ConversationTypes } from "@/controllers/conversation/types";
 
 export const useGetConversationById = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const id = getParam(req.params, "id") || getParam(req.body, "conversation");
+    const id = getParam(req.body, "conversation");
 
     const service = getService(Services.CONVERSATION);
 
