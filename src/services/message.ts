@@ -13,16 +13,16 @@ export class MessageService extends BaseService {
   async send(body: { [k: string]: unknown }) {
     const conversationService = getService(Services.CONVERSATION);
     const messageService = getService(Services.MESSAGE);
-    console.log("before", body);
+
     const message = (await messageService.create(body)) as MessageType;
 
-    console.log("after");
-
-    console.log(message);
+    console.log(message, "message");
 
     const lastRequestedDeliveryMessage = this.isSystemMessage(message)
       ? message
       : null;
+
+    console.log(lastRequestedDeliveryMessage, "lastRequestedDeliveryMessage");
 
     await conversationService.update(
       { _id: toObjectId(message?.conversation?._id) },
