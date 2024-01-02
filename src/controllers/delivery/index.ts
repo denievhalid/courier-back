@@ -10,6 +10,7 @@ import { toObjectId } from "@/utils/toObjectId";
 import { getAttributes } from "@/utils/getAttributes";
 import { SocketEvents } from "@/const";
 import _ from "lodash";
+import { emitSocket } from "@/utils/socket";
 
 export const create = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -90,10 +91,19 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
     ad: toObjectId(ad._id),
   });
 
-  io.to(`room${conversation?._id?.toString()}`).emit(
-    SocketEvents.UPDATE_DELIVERY_STATUS,
-    status
-  );
+  emitSocket({
+    io,
+    event: SocketEvents.UPDATE_DELIVERY_STATUS,
+    room: `room${conversation?._id?.toString()}`,
+    data: {
+      deliveryStatus: status,
+    },
+  });
+
+  // io.to(`room${conversation?._id?.toString()}`).emit(
+  //   SocketEvents.UPDATE_DELIVERY_STATUS,
+  //   { status }
+  // );
 
   io.to(`room${conversation?._id?.toString()}`).emit(
     SocketEvents.UPDATE_AD_COURIER,
