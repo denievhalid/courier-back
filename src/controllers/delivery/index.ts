@@ -12,6 +12,7 @@ import { SocketEvents } from "@/const";
 import _ from "lodash";
 import { emitSocket } from "@/utils/socket";
 import { getConversationCompanion } from "@/controllers/conversation/utils";
+import { handleUpdateDeliveryMessage } from "./consts";
 
 export const create = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -93,7 +94,23 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
     ad: toObjectId(ad._id),
   });
 
-  const companion = getConversationCompanion(conversation, user);
+  const { systemAction: updatedSystemAction, type: updatedType } =
+    handleUpdateDeliveryMessage(status);
+
+  _.set(
+    req,
+    "payload",
+    // @ts-ignore
+    await messageService.send({
+      ...req.body,
+      message: "Вы отменили заявку на доставку",
+      conversation,
+      sender: user,
+      isSystemMessage: true,
+      type: updatedType,
+      systemAction: updatedSystemAction,
+    })
+  );
 
   emitSocket({
     io,
