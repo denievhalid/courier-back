@@ -35,8 +35,12 @@ export class BaseService {
     return Boolean(await this.model.count(filter));
   }
 
-  async update<T>(filter: FilterQuery<T>, update: UpdateQuery<T>) {
-    return this.model.findOneAndUpdate(filter, update);
+  async update<T>(
+    filter: FilterQuery<T>,
+    update: UpdateQuery<T>,
+    options?: QueryOptions
+  ) {
+    return this.model.findOneAndUpdate(filter, update, options);
   }
 
   async remove<T>(filter: FilterQuery<T>, options?: QueryOptions<T>) {

@@ -329,3 +329,27 @@ export const removeConversation = asyncHandler(
     return getResponse(res, {}, StatusCodes.OK);
   }
 );
+
+export const updateMessageReadStatus = asyncHandler(
+  async (req: Request, res: Response) => {
+    const id = getParam(req.params, "id");
+    const user = getParam(req, "user") as UserType;
+
+    const messageService = getService(Services.MESSAGE);
+
+    await messageService.update(
+      {
+        sender: {
+          $ne: toObjectId(user._id),
+        },
+        conversation: toObjectId(id),
+      },
+      {
+        ...req.body,
+      },
+      { sort: { createdAt: -1 } }
+    );
+
+    return getResponse(res, {}, StatusCodes.OK);
+  }
+);

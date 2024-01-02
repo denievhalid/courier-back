@@ -6,6 +6,7 @@ import {
   getConversationsList,
   getMessagesList,
   removeConversation,
+  updateMessageReadStatus,
 } from "@/controllers/conversation";
 import {
   useGetConversationById,
@@ -22,6 +23,7 @@ router.get(
   useGetConversationById,
   getMessagesList
 );
+router.patch("/read/:id", authenticate, updateMessageReadStatus);
 router.post(
   "/:id/messages",
   authenticate,
