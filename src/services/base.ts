@@ -23,7 +23,7 @@ export class BaseService {
     return this.model.create(payload);
   }
 
-  async find<T>(filter: FilterQuery<T>) {
+  find<T>(filter: FilterQuery<T>) {
     return this.model.find(filter);
   }
 
