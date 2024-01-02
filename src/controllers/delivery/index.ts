@@ -79,6 +79,7 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
 
   const conversationService = getService(Services.CONVERSATION);
   const deliveryService = getService(Services.DELIVERY);
+  const adService = getService(Services.AD);
 
   await deliveryService.update(
     {
@@ -93,6 +94,13 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
   const conversation = await conversationService.findOne({
     ad: toObjectId(ad._id),
   });
+
+  await adService.update(
+    {
+      _id: toObjectId(ad._id),
+    },
+    { courier: status === DeliveryStatus.APPROVED ? courier : null }
+  );
 
   const { systemAction: updatedSystemAction, type: updatedType } =
     handleUpdateDeliveryMessage(status);
