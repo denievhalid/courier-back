@@ -61,7 +61,6 @@ export const useSocket = asyncHandler(async (req: Request, res: Response) => {
       deliveryStatus,
     },
   });
-
   emitSocket({
     io,
     event: SocketEvents.NEW_MESSAGE,

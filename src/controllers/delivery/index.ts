@@ -83,6 +83,10 @@ export const update = asyncHandler(
     const adService = getService(Services.AD);
     const messageService = getService(Services.MESSAGE);
 
+    const updatedCourier = status === DeliveryStatus.APPROVED ? courier : null;
+    const { systemAction: updatedSystemAction, type: updatedType } =
+      handleUpdateDeliveryMessage(status);
+
     await deliveryService.update(
       {
         ad: toObjectId(ad),
@@ -101,11 +105,8 @@ export const update = asyncHandler(
       {
         _id: toObjectId(ad),
       },
-      { courier: status === DeliveryStatus.APPROVED ? courier : null }
+      { courier: updatedCourier }
     );
-
-    const { systemAction: updatedSystemAction, type: updatedType } =
-      handleUpdateDeliveryMessage(status);
 
     _.set(
       req,
@@ -141,12 +142,12 @@ export const update = asyncHandler(
 
     io.to(`room-ad-${ad?.toString()}`).emit(
       SocketEvents.UPDATE_AD_COURIER,
-      courier
+      updatedCourier
     );
 
     io.to(`room${conversation?._id?.toString()}`).emit(
       SocketEvents.UPDATE_AD_COURIER,
-      courier
+      updatedCourier
     );
 
     return next();
