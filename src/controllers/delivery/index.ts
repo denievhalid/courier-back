@@ -170,7 +170,9 @@ export const remove = asyncHandler(
         sender: user,
         isSystemMessage: true,
         type: 0,
-        systemAction: SystemActionCodes.DELIVERY_CANCELED,
+        systemAction: byOwner
+          ? SystemActionCodes.DELIVERY_CANCELED_BY_OWNER
+          : SystemActionCodes.DELIVERY_CANCELED,
       })
     );
 
