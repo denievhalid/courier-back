@@ -109,7 +109,7 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
   //   { status }
   // );
 
-  io.to(`${conversation?._id?.toString()}`).emit(
+  io.to(`${companion?._id?.toString()}`).emit(
     SocketEvents.UPDATE_AD_COURIER,
     courier
   );
