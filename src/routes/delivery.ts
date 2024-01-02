@@ -18,7 +18,7 @@ router.post(
   useSocket
 );
 router.get("/", authenticate, getByAdId);
-router.patch("/", authenticate, useGetAdMiddleware, update);
+router.patch("/", authenticate, useGetAdMiddleware, update, useSocket);
 router.delete("/:ad", authenticate, useGetConversationById, remove, useSocket);
 
 export default router;
