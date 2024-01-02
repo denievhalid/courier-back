@@ -99,6 +99,8 @@ export const useSocket = asyncHandler(async (req: Request, res: Response) => {
     room: `room${conversation?._id?.toString()}`,
     data: {
       message,
+      lastRequestedDeliveryMessage:
+        message?.conversation?.lastRequestedDeliveryMessage,
     },
   });
 
