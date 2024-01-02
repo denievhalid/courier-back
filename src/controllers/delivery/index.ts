@@ -113,11 +113,6 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
     },
   });
 
-  // io.to(`room${conversation?._id?.toString()}`).emit(
-  //   SocketEvents.UPDATE_DELIVERY_STATUS,
-  //   { status }
-  // );
-
   io.to(`room-ad-${ad?._id.toString()}`).emit(
     SocketEvents.UPDATE_AD_COURIER,
     courier
@@ -133,6 +128,7 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
 
 export const remove = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    const io = getParam(req, "io");
     const user = getParam(req, "user") as UserType;
     const ad = getParam(req.params, "ad") as string;
     const byOwner = getParam(req.body, "byOwner");
@@ -174,6 +170,34 @@ export const remove = asyncHandler(
           ? SystemActionCodes.DELIVERY_CANCELED_BY_OWNER
           : SystemActionCodes.DELIVERY_CANCELED,
       })
+    );
+
+    emitSocket({
+      io,
+      event: SocketEvents.UPDATE_DELIVERY_STATUS,
+      room: `room${conversation?._id?.toString()}`,
+      data: {
+        deliveryStatus: DeliveryStatus.REJECTED,
+      },
+    });
+
+    emitSocket({
+      io,
+      event: SocketEvents.UPDATE_DELIVERY_STATUS,
+      room: `room-ad-${ad?.toString()}`,
+      data: {
+        deliveryStatus: DeliveryStatus.REJECTED,
+      },
+    });
+
+    io.to(`room-ad-${ad?.toString()}`).emit(
+      SocketEvents.UPDATE_AD_COURIER,
+      null
+    );
+
+    io.to(`room${conversation?._id?.toString()}`).emit(
+      SocketEvents.UPDATE_AD_COURIER,
+      null
     );
 
     return next();
