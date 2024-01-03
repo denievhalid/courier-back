@@ -158,11 +158,14 @@ export const remove = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const io = getParam(req, "io");
     const user = getParam(req, "user") as UserType;
-    const ad = getParam(req.params, "ad") as string;
     const byOwner = getParam(req.body, "byOwner");
     const conversation = getParam(req, "conversation") as ConversationType;
+    const ad = conversation.ad._id.toString();
 
+    const userService = getService(Services.USER);
     const adService = getService(Services.AD);
+
+    const courier = await userService.findOne({ _id: conversation.courier });
 
     const adObject = await adService.findOne({
       _id: toObjectId(ad),
@@ -191,12 +194,10 @@ export const remove = asyncHandler(
         ...req.body,
         message: "Вы отменили заявку на доставку",
         conversation,
-        sender: user,
+        sender: byOwner ? courier : user,
         isSystemMessage: true,
         type: 0,
-        systemAction: byOwner
-          ? SystemActionCodes.DELIVERY_CANCELED_BY_OWNER
-          : SystemActionCodes.DELIVERY_CANCELED,
+        systemAction: SystemActionCodes.DELIVERY_CANCELED,
       })
     );
 

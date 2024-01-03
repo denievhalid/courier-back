@@ -12,6 +12,7 @@ import {
   useGetConversationById,
   useSocket,
 } from "@/controllers/conversation/middlewares";
+import { remove } from "@/controllers/delivery";
 
 const router = Router();
 
@@ -35,6 +36,7 @@ router.delete(
   "/:id/messages",
   authenticate,
   useGetConversationById,
+  remove,
   removeConversation
 );
 

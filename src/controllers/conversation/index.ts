@@ -274,16 +274,6 @@ export const removeConversation = asyncHandler(
     const user = getParam(req, "user") as UserType;
 
     const conversationService = getService(Services.CONVERSATION);
-    const userService = getService(Services.USER);
-    const courier = await userService.findOne({ _id: conversation.courier });
-
-    await removeDelivery({
-      io,
-      ad: conversation.ad._id.toString(),
-      user: courier,
-      conversation,
-      shouldSendMessage: true,
-    });
 
     const handlepushOrSet = () => {
       if (Number(conversation?.deleted?.length)) {
