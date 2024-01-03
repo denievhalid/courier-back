@@ -6,6 +6,7 @@ import {
   ConversationType,
   MessageType,
   Services,
+  TDeletedConversationType,
   UserType,
 } from "@/types";
 import { getService } from "@/lib/container";
@@ -270,15 +271,22 @@ export const getMessagesList = asyncHandler(
 export const removeConversation = asyncHandler(
   async (req: Request, res: Response) => {
     const io = getParam(req, "io");
-    const conversation = getParam(req, "conversation") as ConversationType;
+    const conversationFromParam = getParam(
+      req,
+      "conversation"
+    ) as ConversationType;
     const user = getParam(req, "user") as UserType;
 
     const conversationService = getService(Services.CONVERSATION);
+    const conversation = await conversationService.findOne({
+      _id: toObjectId(conversationFromParam._id),
+    });
 
     const handlepushOrSet = () => {
       if (Number(conversation?.deleted?.length)) {
         const isAlreadyDeletedIndex = conversation?.deleted?.findIndex(
-          (e) => e.forUser.toString() === user._id.toString()
+          (e: TDeletedConversationType) =>
+            e.forUser.toString() === user._id.toString()
         );
 
         if (isAlreadyDeletedIndex !== -1) {

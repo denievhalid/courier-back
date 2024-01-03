@@ -37,7 +37,8 @@ router.delete(
   authenticate,
   useGetConversationById,
   remove,
-  removeConversation
+  removeConversation,
+  useSocket
 );
 
 export default router;
