@@ -1,9 +1,24 @@
 import { BaseService } from "@/services/base";
 import { getModel, getService } from "@/lib/container";
-import { MessageType, Models, Services, SystemActionCodes } from "@/types";
+import {
+  MessageType,
+  Models,
+  Services,
+  SystemActionCodes,
+  TNotificationData,
+  UserType,
+} from "@/types";
 import { toObjectId } from "@/utils/toObjectId";
 import _ from "lodash";
-import { getMessageByIdAggregate } from "@/controllers/conversation/utils";
+import {
+  getConversationCompanion,
+  getMessageByIdAggregate,
+} from "@/controllers/conversation/utils";
+import {
+  getSystemMessageText,
+  handlePushNotification,
+  handleSystemMessageNotificationText,
+} from "./notification";
 
 export class MessageService extends BaseService {
   constructor() {
@@ -26,6 +41,27 @@ export class MessageService extends BaseService {
         lastRequestedDeliveryMessage,
       }
     );
+
+    const companion = getConversationCompanion(
+      message?.conversation,
+      message.sender
+    ) as UserType;
+
+    const messageText = message?.isSystemMessage
+      ? handleSystemMessageNotificationText(message?.systemAction)
+      : message?.message;
+
+    const notificationData: TNotificationData = {
+      screen: "Message",
+      params: { conversationId: message?.conversation?._id },
+    };
+    companion?.notificationTokens &&
+      handlePushNotification(
+        companion?.notificationTokens,
+        message.sender.firstname,
+        notificationData,
+        messageText
+      );
 
     return {
       message: _.first(

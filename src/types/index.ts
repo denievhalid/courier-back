@@ -213,3 +213,8 @@ export type EmitSocketType = {
     [k: string]: unknown;
   };
 };
+
+export type TMessageBlock = {
+  isSystemMessage: boolean;
+  text?: string;
+};

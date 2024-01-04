@@ -1,4 +1,9 @@
-import { MessageType, SystemActionCodes, TNotificationData } from "@/types";
+import {
+  MessageType,
+  SystemActionCodes,
+  TMessageBlock,
+  TNotificationData,
+} from "@/types";
 import {
   Expo,
   ExpoPushMessage,
@@ -31,6 +36,27 @@ export const getSystemMessageText = (
   }
 };
 
+export const handleSystemMessageNotificationText = (
+  systemAction?: SystemActionCodes
+) => {
+  switch (systemAction) {
+    case SystemActionCodes.DELIVERY_REQUESTED:
+      return "У вас новая заявка на доставку";
+    case SystemActionCodes.DELIVERY_CONFIRMED:
+      return "Ваша заявка согласована";
+    case SystemActionCodes.DELIVERY_CANCELED:
+      return "Заявка отменена курьером";
+    case SystemActionCodes.DELIVERY_CANCELED_BY_OWNER:
+      return "Вам отказали в доставке";
+    case SystemActionCodes.DELIVERY_COMPLETED:
+      return "Доставка выполнена, пожалуйста, подтвердите";
+    case SystemActionCodes.DELIVERY_RECEIVED:
+      return "Ваша доставка завершена";
+    default:
+      return "У вас новое сообщение";
+  }
+};
+
 export const handleSystemMessageByUserType = (
   systemAction: SystemActionCodes,
   userName: string,
@@ -59,7 +85,7 @@ export const handlePushNotification = (
     messages.push({
       to: notificationToken,
       sound: "default",
-      title: sender + " - " + "find courier",
+      title: sender,
       body: messageText,
       data: notificationData,
     });
