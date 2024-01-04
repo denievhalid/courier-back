@@ -26,7 +26,7 @@ export const initSocket = (app: Application, server: HttpServer) => {
       socket.broadcast.to(room).emit(SocketEvents.TYPING);
     });
 
-    console.log(socket.room);
+    console.log(socket.rooms);
   });
 
   app.use((req, res, next) => {
