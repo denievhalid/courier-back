@@ -143,7 +143,7 @@ export const update = asyncHandler(
       {
         event: SocketEvents.UPDATE_AD_COURIER,
         room: `room${conversation?._id?.toString()}`,
-        data: updatedCourier,
+        data: { courier: updatedCourier },
       },
       {
         event: SocketEvents.UPDATE_DELIVERY_STATUS,
@@ -155,7 +155,7 @@ export const update = asyncHandler(
       {
         event: SocketEvents.UPDATE_AD_COURIER,
         room: `room-ad-${ad?._id?.toString()}`,
-        data: updatedCourier,
+        data: { courier: updatedCourier },
       },
       {
         event: SocketEvents.NEW_MESSAGE,
