@@ -18,9 +18,11 @@ export const initSocket = (app: Application, server: HttpServer) => {
   io.on(SocketEvents.CONNECTION, (socket) => {
     socket.on(SocketEvents.JOIN_ROOM, ({ room }: SocketJoinRoomType) => {
       socket.join(room);
+      console.log(socket.rooms);
     });
-    socket.on(SocketEvents.LEAVE_ROOM, ({ room }) => {
+    socket.on(SocketEvents.LEAVE_ROOM, ({ room }: SocketJoinRoomType) => {
       socket.leave(room);
+      console.log(socket.rooms);
     });
     socket.on(SocketEvents.TYPING, ({ room }: SocketJoinRoomType) => {
       socket.broadcast.to(room).emit(SocketEvents.TYPING);
