@@ -1,6 +1,7 @@
 import { BaseService } from "@/services/base";
 import { getModel, getService } from "@/lib/container";
 import {
+  ConversationType,
   MessageType,
   Models,
   Services,
@@ -43,8 +44,8 @@ export class MessageService extends BaseService {
     );
 
     const companion = getConversationCompanion(
-      message?.conversation,
-      message.sender
+      body?.conversation as ConversationType,
+      body.sender as UserType
     ) as UserType;
 
     const messageText = message?.isSystemMessage
@@ -55,6 +56,7 @@ export class MessageService extends BaseService {
       screen: "Message",
       params: { conversationId: message?.conversation?._id },
     };
+
     companion?.notificationTokens &&
       handlePushNotification(
         companion?.notificationTokens,
