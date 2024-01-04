@@ -288,10 +288,10 @@ export const getMessagesList = asyncHandler(
     );
 
     const companion = getConversationCompanion(conversation, user) as UserType;
-    console.log(companion, "companion");
+    console.log(conversation.ad, "conversation.ad");
     // @ts-ignore
     companion?.courier = isEqual(
-      conversation.ad.courier?._id.toString(),
+      conversation.courier?._id.toString(),
       companion?._id.toString()
     );
 
