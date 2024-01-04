@@ -172,6 +172,7 @@ export const remove = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const user = getParam(req, "user") as UserType;
     const byOwner = getParam(req.body, "byOwner");
+    const ad = getParam(req.body, "ad") as AdType;
     const conversation = getParam(req.body, "conversation") as ConversationType;
 
     const adService = getService(Services.AD);
@@ -179,24 +180,22 @@ export const remove = asyncHandler(
     const messageService = getService<MessageService>(Services.MESSAGE);
     const userService = getService(Services.USER);
 
-    const adId: string = conversation.ad._id.toString();
-
     const courier = (await userService.findOne({
       _id: conversation.courier,
     })) as UserType;
 
     const adDoc = await adService.findOne({
-      _id: toObjectId(adId),
+      _id: toObjectId(ad._id),
     });
 
     await deliveryService.remove({
-      ad: toObjectId(adId),
+      ad: toObjectId(ad._id),
       user: toObjectId(byOwner ? adDoc?.courier : user._id),
     });
 
     await adService.update(
       {
-        _id: toObjectId(adId),
+        _id: toObjectId(ad._id),
       },
       { courier: null }
     );

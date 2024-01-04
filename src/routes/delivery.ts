@@ -12,6 +12,6 @@ const router = Router();
 router.post("/", authenticate, create);
 router.get("/", authenticate, getByAdId);
 router.patch("/", authenticate, update);
-router.delete("/:ad", authenticate, useGetConversationById, remove);
+router.delete("/", authenticate, remove);
 
 export default router;
