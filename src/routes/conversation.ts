@@ -29,16 +29,8 @@ router.post(
   "/:id/messages",
   authenticate,
   useGetConversationById,
-  createMessage,
-  useSocket
+  createMessage
 );
-router.delete(
-  "/:id/messages",
-  authenticate,
-  useGetConversationById,
-  remove,
-  removeConversation,
-  useSocket
-);
+router.delete("/:id/messages", authenticate, useGetConversationById, remove);
 
 export default router;
