@@ -83,14 +83,16 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
 export const update = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const ad = getParam(req.body, "ad") as AdType;
-    const { courier, status } = getAttributes(req.body, ["courier", "status"]);
+    const courier = getParam(req.body, "courier") as UserType;
+    const status = getParam(req.body, "status") as DeliveryStatus;
 
+    const adService = getService(Services.AD);
     const conversationService = getService(Services.CONVERSATION);
     const deliveryService = getService(Services.DELIVERY);
-    const adService = getService(Services.AD);
     const messageService = getService<MessageService>(Services.MESSAGE);
 
     const updatedCourier = status === DeliveryStatus.APPROVED ? courier : null;
+
     const { systemAction: updatedSystemAction, type: updatedType } =
       handleUpdateDeliveryMessage(status);
 
@@ -104,16 +106,19 @@ export const update = asyncHandler(
       }
     );
 
-    const conversation = (await conversationService.findOne({
-      ad: toObjectId(ad._id),
-    })) as ConversationType;
-
     await adService.update(
       {
         _id: toObjectId(ad._id),
       },
-      { courier: updatedCourier }
+      { courier: updatedCourier },
+      {
+        new: true,
+      }
     );
+
+    const conversation = (await conversationService.findOne({
+      ad: toObjectId(ad._id),
+    })) as ConversationType;
 
     const message = await messageService.send({
       message: "Вы отменили заявку на доставку",
