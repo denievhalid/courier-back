@@ -99,7 +99,7 @@ export const useSocket = asyncHandler(async (req: Request, res: Response) => {
   const { message } = getParam(req, "payload");
   const conversation = getParam(req, "conversation") as ConversationType;
 
-  const companion = getConversationCompanion(conversation, user);
+  const companion = getConversationCompanion(conversation, user) as UserType;
 
   const allMessages = await getService(Services.MESSAGE)
     .find({ conversation: toObjectId(conversation?._id) })
