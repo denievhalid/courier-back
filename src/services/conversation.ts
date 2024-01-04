@@ -28,7 +28,7 @@ export class ConversationService extends BaseService {
                 from: "users",
                 localField: "courier",
                 foreignField: "_id",
-                as: "courier",
+                as: "adCourier",
               },
             },
           ],
@@ -67,7 +67,7 @@ export class ConversationService extends BaseService {
         $addFields: {
           ad: {
             cover: { $first: "$ad.images" },
-            adCourier: { $first: "$ad.courier" },
+            courier: { $first: "$ad.adCourier" },
           },
         },
       },
