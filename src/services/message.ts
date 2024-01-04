@@ -26,7 +26,7 @@ export class MessageService extends BaseService {
     super(getModel(Models.MESSAGE));
   }
 
-  async send(body: Record<string, unknown>) {
+  async send(body: Record<string, any>) {
     const conversationService = getService(Services.CONVERSATION);
     const messageService = getService(Services.MESSAGE);
 
@@ -60,7 +60,7 @@ export class MessageService extends BaseService {
     companion?.notificationTokens &&
       handlePushNotification(
         companion?.notificationTokens,
-        message.sender.firstname,
+        body.sender.firstname,
         notificationData,
         messageText
       );
