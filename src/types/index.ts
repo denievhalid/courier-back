@@ -106,6 +106,8 @@ export enum DeliveryStatus {
   APPROVED = "approved",
   PENDING = "pending",
   REJECTED = "rejected",
+  COMPLETED = "completed",
+  RECEIVED = "received",
 }
 
 export enum MessageStatus {
