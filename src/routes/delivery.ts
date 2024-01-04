@@ -1,11 +1,6 @@
 import { Router } from "express";
 import { create, remove, update, getByAdId } from "@/controllers/delivery";
 import { authenticate } from "@/middlewares/authenticate";
-import {
-  useGetAdMiddleware,
-  useSocket,
-} from "@/controllers/delivery/middlewares";
-import { useGetConversationById } from "@/controllers/conversation/middlewares";
 
 const router = Router();
 

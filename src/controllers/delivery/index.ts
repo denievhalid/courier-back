@@ -46,7 +46,7 @@ export const create = asyncHandler(
     SocketService.emitBatch([
       {
         event: SocketEvents.NEW_MESSAGE,
-        room: `room${conversation?.toString()}`,
+        room: `room${conversation?._id?.toString()}`,
         data: message,
       },
       {
@@ -104,9 +104,9 @@ export const update = asyncHandler(
       }
     );
 
-    const conversation = await conversationService.findOne({
+    const conversation = (await conversationService.findOne({
       ad: toObjectId(ad._id),
-    });
+    })) as ConversationType;
 
     await adService.update(
       {
@@ -147,19 +147,19 @@ export const update = asyncHandler(
       },
       {
         event: SocketEvents.UPDATE_DELIVERY_STATUS,
-        room: `room-ad-${ad?.toString()}`,
+        room: `room-ad-${ad?._id?.toString()}`,
         data: {
           deliveryStatus: status,
         },
       },
       {
         event: SocketEvents.UPDATE_AD_COURIER,
-        room: `room-ad-${ad?.toString()}`,
+        room: `room-ad-${ad?._id?.toString()}`,
         data: updatedCourier,
       },
       {
         event: SocketEvents.NEW_MESSAGE,
-        room: `room${conversation?.toString()}`,
+        room: `room${conversation?._id?.toString()}`,
         data: message,
       },
     ]);
@@ -214,14 +214,14 @@ export const remove = asyncHandler(
     SocketService.emitBatch([
       {
         event: SocketEvents.UPDATE_DELIVERY_STATUS,
-        room: user._id?.toString(),
+        room: user?._id?.toString(),
         data: {
           deliveryStatus: null,
         },
       },
       {
         event: SocketEvents.NEW_MESSAGE,
-        room: `room${conversation?.toString()}`,
+        room: `room${conversation?._id?.toString()}`,
         data: message,
       },
     ]);
