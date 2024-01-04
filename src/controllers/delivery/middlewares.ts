@@ -44,28 +44,3 @@ export const useGetAdMiddleware = asyncHandler(
     return next();
   }
 );
-
-export const useSocket = asyncHandler(async (req: Request, res: Response) => {
-  const io = getParam(req, "io");
-  const deliveryStatus = getParam(req, "deliveryStatus");
-  const user = getParam(req, "user") as UserType;
-  const conversation = getParam(req.body, "conversation") as string;
-  const payload = getParam(req, "payload");
-
-  // emitSocket({
-  //   io,
-  //   event: SocketEvents.UPDATE_DELIVERY_STATUS,
-  //   room: user._id?.toString(),
-  //   data: {
-  //     deliveryStatus,
-  //   },
-  // });
-  // emitSocket({
-  //   io,
-  //   event: SocketEvents.NEW_MESSAGE,
-  //   room: `room${conversation?.toString()}`,
-  //   data: payload,
-  // });
-
-  return getResponse(res, {}, StatusCodes.CREATED);
-});

@@ -145,17 +145,18 @@ export const update = asyncHandler(
           deliveryStatus: status,
         },
       },
-      {
-        event: SocketEvents.UPDATE_AD_COURIER,
-        room: `room${conversation?._id?.toString()}`,
-        data: { courier: updatedCourier },
-      },
+
       {
         event: SocketEvents.UPDATE_DELIVERY_STATUS,
         room: `room-ad-${ad?._id?.toString()}`,
         data: {
           deliveryStatus: status,
         },
+      },
+      {
+        event: SocketEvents.UPDATE_AD_COURIER,
+        room: `room${conversation?._id?.toString()}`,
+        data: { courier: updatedCourier },
       },
       {
         event: SocketEvents.UPDATE_AD_COURIER,
@@ -228,6 +229,11 @@ export const remove = asyncHandler(
         event: SocketEvents.NEW_MESSAGE,
         room: `room${conversation?._id?.toString()}`,
         data: message,
+      },
+      {
+        event: SocketEvents.UPDATE_AD_COURIER,
+        room: `room${conversation?._id?.toString()}`,
+        data: { courier: null },
       },
     ]);
 
