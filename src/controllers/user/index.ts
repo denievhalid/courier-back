@@ -42,24 +42,13 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
   const userExists = await userService.exists(payload);
 
-  console.log(111);
-
   if (userExists) {
     throw new Error("Пользователь уже существует");
   }
 
-  console.log(222);
-
-  const tokenService = getService(Services.TOKEN);
-
   await userService.create(attributes);
 
   const user = await getUserAggregate(attributes.phoneNumber);
-
-  // const accessToken = tokenService.create(
-  //   { phoneNumber: attributes.phoneNumber },
-  //   getEnv(Env.JWT_SECRET)
-  // );
 
   return getResponse(
     res,

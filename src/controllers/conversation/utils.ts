@@ -12,9 +12,9 @@ export const getConversationCompanion = (
   conversation: ConversationType,
   user: UserType
 ) =>
-  conversation.courier?._id.toString() === user._id.toString()
+  conversation?.ad?.courier?._id?.toString() === user._id.toString()
     ? conversation?.adAuthor
-    : conversation?.courier;
+    : conversation?.ad?.courier;
 
 export const handleUnReadMessagesCount = (
   messages: MessageType[],

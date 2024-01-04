@@ -54,7 +54,7 @@ export const createMessage = asyncHandler(
     const user = getParam(req, "user") as UserType;
     const conversation = getParam(req.body, "conversation") as ConversationType;
 
-    const companion = getConversationCompanion(conversation, user);
+    const companion = getConversationCompanion(conversation, user) as UserType;
 
     const messageService = getService<MessageService>(Services.MESSAGE);
     const { message } = await messageService.send(req.body);
@@ -70,8 +70,6 @@ export const createMessage = asyncHandler(
 
     const lastRequestedDeliveryMessage =
       message?.conversation?.lastRequestedDeliveryMessage;
-
-    console.log(conversation?.ad, "images");
 
     SocketService.emitBatch([
       {
@@ -289,7 +287,7 @@ export const getMessagesList = asyncHandler(
       getMessagesListAggregate(conversation, user, timeZone)
     );
 
-    const companion = getConversationCompanion(conversation, user);
+    const companion = getConversationCompanion(conversation, user) as UserType;
 
     // @ts-ignore
     companion?.courier = isEqual(

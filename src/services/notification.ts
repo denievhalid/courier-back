@@ -100,7 +100,6 @@ export const handlePushNotification = (
     for (let chunk of receiptIdChunks) {
       try {
         let receipts = await expo.getPushNotificationReceiptsAsync(chunk);
-        console.log(receipts);
 
         for (let receiptId in receipts) {
           let { status, details } = receipts[receiptId];
