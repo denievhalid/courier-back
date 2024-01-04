@@ -14,11 +14,17 @@ import { getResponse } from "@/utils/getResponse";
 import { StatusCodes } from "http-status-codes";
 import { PipelineStage } from "mongoose";
 import { toObjectId } from "@/utils/toObjectId";
-import { getConversationCompanion, getUserByConversationType } from "./utils";
+import {
+  getConversationCompanion,
+  getUserByConversationType,
+  handleUnReadMessagesCount,
+} from "./utils";
 import { getMessagesListAggregate } from "./aggregate";
 import { ConversationTypes } from "./types";
 import _, { isEqual, set } from "lodash";
-import { socket } from "@/middlewares/socket";
+import { MessageService } from "@/services";
+import { SocketService } from "@/services/socket";
+import { SocketEvents } from "@/const";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   const ad = getParam(req.body, "ad") as AdType;
@@ -42,13 +48,57 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const createMessage = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    // @ts-ignore
-    const message = await getService(Services.MESSAGE).send(req.body);
+  async (req: Request, res: Response) => {
+    const messageService = getService<MessageService>(Services.MESSAGE);
+    const conversation = getParam(req, "conversation") as ConversationType;
+    const { message } = await messageService.send(req.body);
+    const user = getParam(req, "user") as UserType;
 
-    //_.set(req, "payload", await getService(Services.MESSAGE).send(req.body));
+    const companion = getConversationCompanion(conversation, user);
 
-    //return next();
+    const allMessages = await getService(Services.MESSAGE)
+      .find({ conversation: toObjectId(conversation?._id) })
+      .sort({ createdAt: -1 })
+      .limit(100);
+
+    const unreadMessagesCount = handleUnReadMessagesCount(
+      allMessages,
+      companion
+    );
+
+    SocketService.emitBatch([
+      {
+        event: SocketEvents.NEW_MESSAGE,
+        room: `room${conversation?._id?.toString()}`,
+        data: {
+          message,
+          lastRequestedDeliveryMessage:
+            message?.conversation?.lastRequestedDeliveryMessage,
+        },
+      },
+      {
+        event: SocketEvents.UPDATE_CONVERSATION,
+        room: companion?._id?.toString(),
+        data: {
+          conversation: {
+            ...conversation,
+            lastMessage: message,
+            unreadMessagesCount,
+            companion: user,
+            cover: conversation?.ad?.images[0],
+            lastRequestedDeliveryMessage:
+              conversation?.lastRequestedDeliveryMessage?._id,
+          },
+          type:
+            JSON.stringify(conversation?.courier?._id) ===
+            JSON.stringify(companion?._id)
+              ? ConversationTypes.SENT
+              : ConversationTypes.INBOX,
+        },
+      },
+    ]);
+
+    return getResponse(res, {}, StatusCodes.CREATED);
   }
 );
 
