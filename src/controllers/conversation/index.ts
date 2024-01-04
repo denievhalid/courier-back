@@ -21,7 +21,7 @@ import {
 } from "./utils";
 import { getMessagesListAggregate } from "./aggregate";
 import { ConversationTypes } from "./types";
-import { isEqual, set } from "lodash";
+import _, { isEqual, set } from "lodash";
 import { ConversationService, MessageService } from "@/services";
 import { SocketService } from "@/services/socket";
 import { SocketEvents } from "@/const";
@@ -91,7 +91,7 @@ export const createMessage = asyncHandler(
             lastMessage: message,
             unreadMessagesCount,
             companion: user,
-            //cover: conversation?.ad?.images[0],
+            cover: _.first(conversation?.ad?.images),
             lastRequestedDeliveryMessage,
           },
           type:
