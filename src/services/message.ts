@@ -10,7 +10,7 @@ export class MessageService extends BaseService {
     super(getModel(Models.MESSAGE));
   }
 
-  async send(body: { [k: string]: unknown }) {
+  async send(body: Record<string, unknown>) {
     const conversationService = getService(Services.CONVERSATION);
     const messageService = getService(Services.MESSAGE);
 

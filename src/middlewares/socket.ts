@@ -4,12 +4,14 @@ import { SocketEvents } from "@/const";
 import { Application } from "express";
 import type { Server as HttpServer } from "http";
 
+let io: Server;
+
 type SocketJoinRoomType = {
   room: string;
 };
 
 export const initSocket = (app: Application, server: HttpServer) => {
-  const io = new Server(server, {
+  io = new Server(server, {
     serveClient: false,
   });
 
@@ -28,3 +30,7 @@ export const initSocket = (app: Application, server: HttpServer) => {
     next();
   });
 };
+
+export const getRoomName = (room: string) => {};
+
+export { io as socket };

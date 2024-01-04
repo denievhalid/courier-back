@@ -14,11 +14,10 @@ router.post(
   authenticate,
   useGetAdMiddleware,
   useGetConversationById,
-  create,
-  useSocket
+  create
 );
 router.get("/", authenticate, getByAdId);
-router.patch("/", authenticate, update, useSocket);
-router.delete("/:ad", authenticate, useGetConversationById, remove, useSocket);
+router.patch("/", authenticate, update);
+router.delete("/:ad", authenticate, useGetConversationById, remove);
 
 export default router;

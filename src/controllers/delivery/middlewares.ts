@@ -16,7 +16,6 @@ import {
   CourierExistsException,
 } from "@/exceptions/forbidden";
 import _, { isObject } from "lodash";
-import { emitSocket } from "@/utils/socket";
 import { SocketEvents } from "@/const";
 import { getResponse } from "@/utils/getResponse";
 import { StatusCodes } from "http-status-codes";
@@ -53,20 +52,20 @@ export const useSocket = asyncHandler(async (req: Request, res: Response) => {
   const conversation = getParam(req.body, "conversation") as string;
   const payload = getParam(req, "payload");
 
-  emitSocket({
-    io,
-    event: SocketEvents.UPDATE_DELIVERY_STATUS,
-    room: user._id?.toString(),
-    data: {
-      deliveryStatus,
-    },
-  });
-  emitSocket({
-    io,
-    event: SocketEvents.NEW_MESSAGE,
-    room: `room${conversation?.toString()}`,
-    data: payload,
-  });
+  // emitSocket({
+  //   io,
+  //   event: SocketEvents.UPDATE_DELIVERY_STATUS,
+  //   room: user._id?.toString(),
+  //   data: {
+  //     deliveryStatus,
+  //   },
+  // });
+  // emitSocket({
+  //   io,
+  //   event: SocketEvents.NEW_MESSAGE,
+  //   room: `room${conversation?.toString()}`,
+  //   data: payload,
+  // });
 
   return getResponse(res, {}, StatusCodes.CREATED);
 });

@@ -5,7 +5,6 @@ import { getService } from "@/lib/container";
 import { ConversationType, Services, UserType } from "@/types";
 import { toObjectId } from "@/utils/toObjectId";
 import _ from "lodash";
-import { emitSocket } from "@/utils/socket";
 import { SocketEvents } from "@/const";
 import { getResponse } from "@/utils/getResponse";
 import { StatusCodes } from "http-status-codes";
@@ -103,44 +102,43 @@ export const useSocket = asyncHandler(async (req: Request, res: Response) => {
 
   const allMessages = await getService(Services.MESSAGE)
     .find({ conversation: toObjectId(conversation?._id) })
-    // @ts-ignore
     .sort({ createdAt: -1 })
     .limit(100);
 
   const unreadMessagesCount = handleUnReadMessagesCount(allMessages, companion);
 
-  emitSocket({
-    io,
-    event: SocketEvents.NEW_MESSAGE,
-    room: `room${conversation?._id?.toString()}`,
-    data: {
-      message,
-      lastRequestedDeliveryMessage:
-        message?.conversation?.lastRequestedDeliveryMessage,
-    },
-  });
-
-  emitSocket({
-    io,
-    event: SocketEvents.UPDATE_CONVERSATION,
-    room: companion?._id?.toString(),
-    data: {
-      conversation: {
-        ...conversation,
-        lastMessage: message,
-        unreadMessagesCount,
-        companion: user,
-        cover: conversation?.ad?.images[0],
-        lastRequestedDeliveryMessage:
-          conversation?.lastRequestedDeliveryMessage?._id,
-      },
-      type:
-        JSON.stringify(conversation?.courier?._id) ===
-        JSON.stringify(companion?._id)
-          ? ConversationTypes.SENT
-          : ConversationTypes.INBOX,
-    },
-  });
+  // emitSocket({
+  //   io,
+  //   event: SocketEvents.NEW_MESSAGE,
+  //   room: `room${conversation?._id?.toString()}`,
+  //   data: {
+  //     message,
+  //     lastRequestedDeliveryMessage:
+  //       message?.conversation?.lastRequestedDeliveryMessage,
+  //   },
+  // });
+  //
+  // emitSocket({
+  //   io,
+  //   event: SocketEvents.UPDATE_CONVERSATION,
+  //   room: companion?._id?.toString(),
+  //   data: {
+  //     conversation: {
+  //       ...conversation,
+  //       lastMessage: message,
+  //       unreadMessagesCount,
+  //       companion: user,
+  //       cover: conversation?.ad?.images[0],
+  //       lastRequestedDeliveryMessage:
+  //         conversation?.lastRequestedDeliveryMessage?._id,
+  //     },
+  //     type:
+  //       JSON.stringify(conversation?.courier?._id) ===
+  //       JSON.stringify(companion?._id)
+  //         ? ConversationTypes.SENT
+  //         : ConversationTypes.INBOX,
+  //   },
+  // });
 
   return getResponse(res, {}, StatusCodes.CREATED);
 });

@@ -18,7 +18,7 @@ import { getConversationCompanion, getUserByConversationType } from "./utils";
 import { getMessagesListAggregate } from "./aggregate";
 import { ConversationTypes } from "./types";
 import _, { isEqual, set } from "lodash";
-import { removeDelivery } from "../delivery/helpers";
+import { socket } from "@/middlewares/socket";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   const ad = getParam(req.body, "ad") as AdType;
@@ -44,9 +44,11 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 export const createMessage = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     // @ts-ignore
-    _.set(req, "payload", await getService(Services.MESSAGE).send(req.body));
+    const message = await getService(Services.MESSAGE).send(req.body);
 
-    return next();
+    //_.set(req, "payload", await getService(Services.MESSAGE).send(req.body));
+
+    //return next();
   }
 );
 

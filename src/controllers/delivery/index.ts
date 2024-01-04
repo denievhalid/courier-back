@@ -10,9 +10,10 @@ import { toObjectId } from "@/utils/toObjectId";
 import { getAttributes } from "@/utils/getAttributes";
 import { SocketEvents } from "@/const";
 import _ from "lodash";
-import { emitSocket } from "@/utils/socket";
 import { getConversationCompanion } from "@/controllers/conversation/utils";
 import { handleUpdateDeliveryMessage } from "./consts";
+import { MessageService } from "@/services";
+import { SocketService } from "@/services/socket";
 
 export const create = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -21,7 +22,7 @@ export const create = asyncHandler(
     const conversation = getParam(req, "conversation") as ConversationType;
 
     const deliveryService = getService(Services.DELIVERY);
-    const messageService = getService(Services.MESSAGE);
+    const messageService = getService<MessageService>(Services.MESSAGE);
 
     const payload = {
       ad: toObjectId(ad._id),
@@ -29,46 +30,56 @@ export const create = asyncHandler(
       user: toObjectId(user._id),
     };
 
-    const alreadyExists = await deliveryService.exists(payload);
+    const deliveryDoc = await deliveryService.exists(payload);
 
-    if (!alreadyExists) {
+    if (!deliveryDoc) {
       await deliveryService.create(payload);
     }
 
-    _.set(
-      req,
-      "payload",
-      // @ts-ignore
-      await messageService.send({
-        ...req.body,
-        message: "Вы оправили заявку на доставку",
-        conversation,
-        sender: user,
-        isSystemMessage: true,
-        type: 2,
-        systemAction: SystemActionCodes.DELIVERY_REQUESTED,
-      })
-    );
-    _.set(req, "deliveryStatus", DeliveryStatus.PENDING);
+    const message = await messageService.send({
+      message: "Вы оправили заявку на доставку",
+      conversation,
+      sender: user,
+      isSystemMessage: true,
+      type: 2,
+      systemAction: SystemActionCodes.DELIVERY_REQUESTED,
+    });
 
-    return next();
+    SocketService.emitBatch([
+      {
+        event: SocketEvents.NEW_MESSAGE,
+        room: `room${conversation?.toString()}`,
+        data: message,
+      },
+      {
+        event: SocketEvents.UPDATE_DELIVERY_STATUS,
+        room: user._id?.toString(),
+        data: {
+          deliveryStatus: DeliveryStatus.PENDING,
+        },
+      },
+    ]);
+
+    return getResponse(res, {}, StatusCodes.CREATED);
   }
 );
 
 export const getList = asyncHandler(async (req: Request, res: Response) => {
   const user = getParam(req, "user") as UserType;
 
-  const directionService = getService(Services.DIRECTION);
-
-  const data = await directionService.aggregate([
+  return getResponse(
+    res,
     {
-      $match: {
-        user: toObjectId(user._id),
-      },
+      data: await getService(Services.DIRECTION).aggregate([
+        {
+          $match: {
+            user: toObjectId(user._id),
+          },
+        },
+      ]),
     },
-  ]);
-
-  return getResponse(res, { data }, StatusCodes.OK);
+    StatusCodes.OK
+  );
 });
 
 export const update = asyncHandler(
@@ -81,7 +92,7 @@ export const update = asyncHandler(
     const conversationService = getService(Services.CONVERSATION);
     const deliveryService = getService(Services.DELIVERY);
     const adService = getService(Services.AD);
-    const messageService = getService(Services.MESSAGE);
+    const messageService = getService<MessageService>(Services.MESSAGE);
 
     const updatedCourier = status === DeliveryStatus.APPROVED ? courier : null;
     const { systemAction: updatedSystemAction, type: updatedType } =
@@ -108,74 +119,74 @@ export const update = asyncHandler(
       { courier: updatedCourier }
     );
 
-    _.set(
-      req,
-      "payload",
-      // @ts-ignore
-      await messageService.send({
-        message: "Вы отменили заявку на доставку",
-        conversation,
-        sender: courier,
-        isSystemMessage: true,
-        type: updatedType,
-        systemAction: updatedSystemAction,
-      })
-    );
-
-    emitSocket({
-      io,
-      event: SocketEvents.UPDATE_DELIVERY_STATUS,
-      room: `room${conversation?._id?.toString()}`,
-      data: {
-        deliveryStatus: status,
-      },
+    const message = await messageService.send({
+      message: "Вы отменили заявку на доставку",
+      conversation,
+      sender: courier,
+      isSystemMessage: true,
+      type: updatedType,
+      systemAction: updatedSystemAction,
     });
 
-    emitSocket({
-      io,
-      event: SocketEvents.UPDATE_DELIVERY_STATUS,
-      room: `room-ad-${ad?.toString()}`,
-      data: {
-        deliveryStatus: status,
+    SocketService.emitBatch([
+      {
+        event: SocketEvents.UPDATE_DELIVERY_STATUS,
+        room: `room${conversation?._id?.toString()}`,
+        data: {
+          deliveryStatus: status,
+        },
       },
-    });
+      {
+        event: SocketEvents.UPDATE_AD_COURIER,
+        room: `room${conversation?._id?.toString()}`,
+        data: updatedCourier,
+      },
+      {
+        event: SocketEvents.UPDATE_DELIVERY_STATUS,
+        room: `room-ad-${ad?.toString()}`,
+        data: {
+          deliveryStatus: status,
+        },
+      },
+      {
+        event: SocketEvents.UPDATE_DELIVERY_STATUS,
+        room: `room-ad-${ad?.toString()}`,
+        data: updatedCourier,
+      },
+      {
+        event: SocketEvents.NEW_MESSAGE,
+        room: `room${conversation?.toString()}`,
+        data: message,
+      },
+    ]);
 
-    io.to(`room-ad-${ad?.toString()}`).emit(
-      SocketEvents.UPDATE_AD_COURIER,
-      updatedCourier
-    );
-
-    io.to(`room${conversation?._id?.toString()}`).emit(
-      SocketEvents.UPDATE_AD_COURIER,
-      updatedCourier
-    );
-
-    return next();
+    return getResponse(res, {}, StatusCodes.CREATED);
   }
 );
 
 export const remove = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const io = getParam(req, "io");
     const user = getParam(req, "user") as UserType;
     const byOwner = getParam(req.body, "byOwner");
     const conversation = getParam(req, "conversation") as ConversationType;
     const ad = conversation.ad._id.toString();
 
-    const userService = getService(Services.USER);
     const adService = getService(Services.AD);
+    const deliveryService = getService(Services.DELIVERY);
+    const messageService = getService<MessageService>(Services.MESSAGE);
+    const userService = getService(Services.USER);
 
-    const courier = await userService.findOne({ _id: conversation.courier });
+    const courier = (await userService.findOne({
+      _id: conversation.courier,
+    })) as UserType;
 
-    const adObject = await adService.findOne({
+    const adDoc = await adService.findOne({
       _id: toObjectId(ad),
     });
 
-    const messageService = getService(Services.MESSAGE);
-
-    await getService(Services.DELIVERY).remove({
+    await deliveryService.remove({
       ad: toObjectId(ad),
-      user: byOwner ? toObjectId(adObject?.courier) : toObjectId(user._id),
+      user: toObjectId(byOwner ? adDoc?.courier : user._id),
     });
 
     await adService.update(
@@ -185,53 +196,33 @@ export const remove = asyncHandler(
       { courier: null }
     );
 
-    _.set(req, "deliveryStatus", null);
-    _.set(
-      req,
-      "payload",
-      // @ts-ignore
-      await messageService.send({
-        ...req.body,
-        message: "Вы отменили заявку на доставку",
-        conversation,
-        sender: byOwner ? courier : user,
-        isSystemMessage: true,
-        type: 0,
-        systemAction: byOwner
-          ? SystemActionCodes.DELIVERY_CANCELED_BY_OWNER
-          : SystemActionCodes.DELIVERY_CANCELED,
-      })
-    );
-
-    emitSocket({
-      io,
-      event: SocketEvents.UPDATE_DELIVERY_STATUS,
-      room: `room${conversation?._id?.toString()}`,
-      data: {
-        deliveryStatus: DeliveryStatus.REJECTED,
-      },
+    const message = await messageService.send({
+      message: "Вы отменили заявку на доставку",
+      conversation,
+      sender: byOwner ? courier : user,
+      isSystemMessage: true,
+      type: 0,
+      systemAction: byOwner
+        ? SystemActionCodes.DELIVERY_CANCELED_BY_OWNER
+        : SystemActionCodes.DELIVERY_CANCELED,
     });
 
-    emitSocket({
-      io,
-      event: SocketEvents.UPDATE_DELIVERY_STATUS,
-      room: `room-ad-${ad?.toString()}`,
-      data: {
-        deliveryStatus: DeliveryStatus.REJECTED,
+    SocketService.emitBatch([
+      {
+        event: SocketEvents.UPDATE_DELIVERY_STATUS,
+        room: user._id?.toString(),
+        data: {
+          deliveryStatus: null,
+        },
       },
-    });
+      {
+        event: SocketEvents.NEW_MESSAGE,
+        room: `room${conversation?.toString()}`,
+        data: message,
+      },
+    ]);
 
-    io.to(`room-ad-${ad?.toString()}`).emit(
-      SocketEvents.UPDATE_AD_COURIER,
-      null
-    );
-
-    io.to(`room${conversation?._id?.toString()}`).emit(
-      SocketEvents.UPDATE_AD_COURIER,
-      null
-    );
-
-    return next();
+    return getResponse(res);
   }
 );
 
