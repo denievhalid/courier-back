@@ -67,7 +67,6 @@ export class ConversationService extends BaseService {
         $addFields: {
           ad: {
             cover: { $first: "$ad.images" },
-            courier: { $first: "$ad.adCourier" },
           },
         },
       },
