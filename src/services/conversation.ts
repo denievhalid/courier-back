@@ -44,10 +44,19 @@ export class ConversationService extends BaseService {
         },
       },
       {
+        $lookup: {
+          from: "users",
+          localField: "courier",
+          foreignField: "_id",
+          as: "courier",
+        },
+      },
+      {
         $project: {
           _id: 1,
           ad: { $first: "$ad" },
           adAuthor: { $first: "$adAuthor" },
+          courier: { $first: "$courier" },
           cover: 1,
           lastRequestedDeliveryMessage: 1,
           deleted: 1,
@@ -58,7 +67,7 @@ export class ConversationService extends BaseService {
         $addFields: {
           ad: {
             cover: { $first: "$ad.images" },
-            courier: { $first: "$ad.courier" },
+            adCourier: { $first: "$ad.courier" },
           },
         },
       },
