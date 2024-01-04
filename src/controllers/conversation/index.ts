@@ -1,5 +1,5 @@
 import { asyncHandler } from "@/utils/asyncHandler";
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import { getParam } from "@/utils/getParam";
 import {
   AdType,
@@ -21,7 +21,7 @@ import {
 } from "./utils";
 import { getMessagesListAggregate } from "./aggregate";
 import { ConversationTypes } from "./types";
-import _, { isEqual, set } from "lodash";
+import { isEqual, set } from "lodash";
 import { MessageService } from "@/services";
 import { SocketService } from "@/services/socket";
 import { SocketEvents } from "@/const";
@@ -270,11 +270,16 @@ export const getConversationsList = asyncHandler(
 export const getMessagesList = asyncHandler(
   async (req: Request, res: Response) => {
     const user = getParam(req, "user") as UserType;
-    const conversation = getParam(req.body, "conversation") as ConversationType;
+    const conversationId = getParam(req.param, "conversationId") as string;
     const timeZone = getParam(req.query, "timeZone");
 
     const blockService = getService(Services.BLOCK);
+    const conversationService = getService(Services.CONVERSATION);
     const messageService = getService(Services.MESSAGE);
+
+    const conversation = (await conversationService.findOne({
+      _id: toObjectId(conversationId),
+    })) as ConversationType;
 
     const messages = await messageService.aggregate(
       getMessagesListAggregate(conversation, user, timeZone)
