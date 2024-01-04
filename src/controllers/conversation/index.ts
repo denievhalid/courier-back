@@ -288,12 +288,6 @@ export const getMessagesList = asyncHandler(
     );
 
     const companion = getConversationCompanion(conversation, user) as UserType;
-    console.log(conversation.ad, "conversation.ad");
-    // @ts-ignore
-    companion?.courier = isEqual(
-      conversation.courier?._id.toString(),
-      companion?._id.toString()
-    );
 
     const isBlocked = Boolean(
       await blockService.count({
