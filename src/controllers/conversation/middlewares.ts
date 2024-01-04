@@ -92,6 +92,7 @@ export const useGetConversationById = asyncHandler(
   }
 );
 
+// Не Актуален
 export const useSocket = asyncHandler(async (req: Request, res: Response) => {
   const io = getParam(req, "io");
   const user = getParam(req, "user") as UserType;

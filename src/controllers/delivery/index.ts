@@ -15,9 +15,9 @@ import type { NextFunction, Request, Response } from "express";
 
 export const create = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const ad = getParam(req, "ad") as AdType;
     const user = getParam(req, "user") as UserType;
-    const conversation = getParam(req, "conversation") as ConversationType;
+    const ad = getParam(req.body, "ad") as AdType;
+    const conversation = getParam(req.body, "conversation") as ConversationType;
 
     const deliveryService = getService(Services.DELIVERY);
     const messageService = getService<MessageService>(Services.MESSAGE);
@@ -82,9 +82,7 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
 
 export const update = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const io = getParam(req, "io");
-    const ad = getParam(req.body, "ad") as string;
-    const user = getParam(req, "user") as UserType;
+    const ad = getParam(req.body, "ad") as AdType;
     const { courier, status } = getAttributes(req.body, ["courier", "status"]);
 
     const conversationService = getService(Services.CONVERSATION);
@@ -98,7 +96,7 @@ export const update = asyncHandler(
 
     await deliveryService.update(
       {
-        ad: toObjectId(ad),
+        ad: toObjectId(ad._id),
         user: toObjectId(courier._id),
       },
       {
@@ -107,12 +105,12 @@ export const update = asyncHandler(
     );
 
     const conversation = await conversationService.findOne({
-      ad: toObjectId(ad),
+      ad: toObjectId(ad._id),
     });
 
     await adService.update(
       {
-        _id: toObjectId(ad),
+        _id: toObjectId(ad._id),
       },
       { courier: updatedCourier }
     );
@@ -126,6 +124,14 @@ export const update = asyncHandler(
       systemAction: updatedSystemAction,
     });
 
+    /*
+    отправляем 5 события в сокетах:
+    1- меняем статус доставки на страницы чата
+    2- меняем статус доставки на страницы обьявления
+    3- меняем курьер для обьявления на страницы чата
+    4- меняем курьер для обьявления на страницы обьявления
+    4- отправим новое сообщение
+    */
     SocketService.emitBatch([
       {
         event: SocketEvents.UPDATE_DELIVERY_STATUS,
@@ -147,7 +153,7 @@ export const update = asyncHandler(
         },
       },
       {
-        event: SocketEvents.UPDATE_DELIVERY_STATUS,
+        event: SocketEvents.UPDATE_AD_COURIER,
         room: `room-ad-${ad?.toString()}`,
         data: updatedCourier,
       },
@@ -166,30 +172,31 @@ export const remove = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const user = getParam(req, "user") as UserType;
     const byOwner = getParam(req.body, "byOwner");
-    const conversation = getParam(req, "conversation") as ConversationType;
-    const ad = conversation.ad._id.toString();
+    const conversation = getParam(req.body, "conversation") as ConversationType;
 
     const adService = getService(Services.AD);
     const deliveryService = getService(Services.DELIVERY);
     const messageService = getService<MessageService>(Services.MESSAGE);
     const userService = getService(Services.USER);
 
+    const adId: string = conversation.ad._id.toString();
+
     const courier = (await userService.findOne({
       _id: conversation.courier,
     })) as UserType;
 
     const adDoc = await adService.findOne({
-      _id: toObjectId(ad),
+      _id: toObjectId(adId),
     });
 
     await deliveryService.remove({
-      ad: toObjectId(ad),
+      ad: toObjectId(adId),
       user: toObjectId(byOwner ? adDoc?.courier : user._id),
     });
 
     await adService.update(
       {
-        _id: toObjectId(ad),
+        _id: toObjectId(adId),
       },
       { courier: null }
     );
@@ -226,12 +233,12 @@ export const remove = asyncHandler(
 
 export const getByAdId = asyncHandler(async (req: Request, res: Response) => {
   const user = getParam(req, "user") as UserType;
-  const { ad } = getAttributes(req.body, ["ad"]);
+  const adId = getParam(req.body, "ad") as string;
 
   const deliveryService = getService(Services.DELIVERY);
 
   const delivery = await deliveryService.findOne({
-    ad: toObjectId(ad),
+    ad: toObjectId(adId),
     user: toObjectId(user._id),
   });
 

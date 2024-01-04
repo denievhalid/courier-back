@@ -9,13 +9,7 @@ import { useGetConversationById } from "@/controllers/conversation/middlewares";
 
 const router = Router();
 
-router.post(
-  "/",
-  authenticate,
-  useGetAdMiddleware,
-  useGetConversationById,
-  create
-);
+router.post("/", authenticate, create);
 router.get("/", authenticate, getByAdId);
 router.patch("/", authenticate, update);
 router.delete("/:ad", authenticate, useGetConversationById, remove);

@@ -26,37 +26,39 @@ import { MessageService } from "@/services";
 import { SocketService } from "@/services/socket";
 import { SocketEvents } from "@/const";
 
-export const create = asyncHandler(async (req: Request, res: Response) => {
-  const ad = getParam(req.body, "ad") as AdType;
-  const user = getParam(req, "user") as UserType;
+export const createConversation = asyncHandler(
+  async (req: Request, res: Response) => {
+    const ad = getParam(req.body, "ad") as AdType;
+    const user = getParam(req, "user") as UserType;
 
-  const service = getService(Services.CONVERSATION);
+    const service = getService(Services.CONVERSATION);
 
-  const payload = {
-    ad: toObjectId(ad?._id),
-    adAuthor: toObjectId(ad?.user?._id),
-    courier: toObjectId(user._id),
-  };
+    const payload = {
+      ad: toObjectId(ad?._id),
+      adAuthor: toObjectId(ad?.user?._id),
+      courier: toObjectId(user._id),
+    };
 
-  let conversation = await service.findOne(payload);
+    let conversation = await service.findOne(payload);
 
-  if (!conversation) {
-    conversation = await service.create(payload);
+    if (!conversation) {
+      conversation = await service.create(payload);
+    }
+
+    return getResponse(res, { data: conversation }, StatusCodes.CREATED);
   }
-
-  return getResponse(res, { data: conversation }, StatusCodes.CREATED);
-});
+);
 
 export const createMessage = asyncHandler(
   async (req: Request, res: Response) => {
-    const messageService = getService<MessageService>(Services.MESSAGE);
-    const conversation = getParam(req, "conversation") as ConversationType;
-    const { message } = await messageService.send(req.body);
     const user = getParam(req, "user") as UserType;
+    const conversation = getParam(req.body, "conversation") as ConversationType;
 
     const companion = getConversationCompanion(conversation, user);
 
-    const allMessages = await getService(Services.MESSAGE)
+    const messageService = getService<MessageService>(Services.MESSAGE);
+    const { message } = await messageService.send(req.body);
+    const allMessages = await messageService
       .find({ conversation: toObjectId(conversation?._id) })
       .sort({ createdAt: -1 })
       .limit(100);
@@ -66,14 +68,16 @@ export const createMessage = asyncHandler(
       companion
     );
 
+    const lastRequestedDeliveryMessage =
+      message?.conversation?.lastRequestedDeliveryMessage;
+
     SocketService.emitBatch([
       {
         event: SocketEvents.NEW_MESSAGE,
         room: `room${conversation?._id?.toString()}`,
         data: {
           message,
-          lastRequestedDeliveryMessage:
-            message?.conversation?.lastRequestedDeliveryMessage,
+          lastRequestedDeliveryMessage,
         },
       },
       {
@@ -86,8 +90,7 @@ export const createMessage = asyncHandler(
             unreadMessagesCount,
             companion: user,
             cover: conversation?.ad?.images[0],
-            lastRequestedDeliveryMessage:
-              conversation?.lastRequestedDeliveryMessage?._id,
+            lastRequestedDeliveryMessage,
           },
           type:
             JSON.stringify(conversation?.courier?._id) ===
@@ -104,8 +107,8 @@ export const createMessage = asyncHandler(
 
 export const getConversationsList = asyncHandler(
   async (req: Request, res: Response) => {
-    const type = getParam(req.query, "type") as ConversationTypes;
     const user = getParam(req, "user") as UserType;
+    const type = getParam(req.query, "type") as ConversationTypes;
     const service = getService(Services.CONVERSATION);
 
     const match: PipelineStage.Match = {
@@ -266,9 +269,10 @@ export const getConversationsList = asyncHandler(
 
 export const getMessagesList = asyncHandler(
   async (req: Request, res: Response) => {
-    const conversation = getParam(req, "conversation") as ConversationType;
     const user = getParam(req, "user") as UserType;
+    const conversation = getParam(req.body, "conversation") as ConversationType;
     const timeZone = getParam(req.query, "timeZone");
+
     const blockService = getService(Services.BLOCK);
     const messageService = getService(Services.MESSAGE);
 
