@@ -317,6 +317,7 @@ export const getMessagesList = asyncHandler(
     const data = {
       ad: conversation.ad,
       adAuthor: conversation.adAuthor,
+      conversation,
       messages,
       deliveryStatus,
       isBlocked,
