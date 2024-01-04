@@ -71,6 +71,8 @@ export const createMessage = asyncHandler(
     const lastRequestedDeliveryMessage =
       message?.conversation?.lastRequestedDeliveryMessage;
 
+    console.log(conversation?.ad, "images");
+
     SocketService.emitBatch([
       {
         event: SocketEvents.NEW_MESSAGE,
@@ -89,7 +91,7 @@ export const createMessage = asyncHandler(
             lastMessage: message,
             unreadMessagesCount,
             companion: user,
-            cover: conversation?.ad?.images[0],
+            //cover: conversation?.ad?.images[0],
             lastRequestedDeliveryMessage,
           },
           type:
@@ -272,7 +274,7 @@ export const getMessagesList = asyncHandler(
     const user = getParam(req, "user") as UserType;
     const conversationId = getParam(req.params, "conversationId") as string;
     const timeZone = getParam(req.query, "timeZone");
-    console.log(conversationId, "conversationId");
+
     const blockService = getService(Services.BLOCK);
     const conversationService = getService(Services.CONVERSATION);
     const messageService = getService(Services.MESSAGE);
@@ -281,6 +283,7 @@ export const getMessagesList = asyncHandler(
       .findOne({
         _id: toObjectId(conversationId),
       })
+      .populate("ad")
       .populate("courier")) as ConversationType;
 
     const messages = await messageService.aggregate(

@@ -5,7 +5,7 @@ const schema = new Schema(
   {
     ad: {
       type: Schema.Types.ObjectId,
-      ref: "Ad",
+      ref: Models.AD,
       required: true,
     },
     adAuthor: {
