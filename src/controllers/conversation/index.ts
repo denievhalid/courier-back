@@ -22,7 +22,7 @@ import {
 import { getMessagesListAggregate } from "./aggregate";
 import { ConversationTypes } from "./types";
 import { isEqual, set } from "lodash";
-import { MessageService } from "@/services";
+import { ConversationService, MessageService } from "@/services";
 import { SocketService } from "@/services/socket";
 import { SocketEvents } from "@/const";
 
@@ -276,15 +276,14 @@ export const getMessagesList = asyncHandler(
     const timeZone = getParam(req.query, "timeZone");
 
     const blockService = getService(Services.BLOCK);
-    const conversationService = getService(Services.CONVERSATION);
+    const conversationService = getService<ConversationService>(
+      Services.CONVERSATION
+    );
     const messageService = getService(Services.MESSAGE);
 
-    const conversation = (await conversationService
-      .findOne({
-        _id: toObjectId(conversationId),
-      })
-      .populate("ad")
-      .populate("courier")) as ConversationType;
+    const conversation = (await conversationService.getById(
+      conversationId
+    )) as ConversationType;
 
     const messages = await messageService.aggregate(
       getMessagesListAggregate(conversation, user, timeZone)
