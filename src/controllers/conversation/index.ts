@@ -277,9 +277,11 @@ export const getMessagesList = asyncHandler(
     const conversationService = getService(Services.CONVERSATION);
     const messageService = getService(Services.MESSAGE);
 
-    const conversation = (await conversationService.findOne({
-      _id: toObjectId(conversationId),
-    })) as ConversationType;
+    const conversation = (await conversationService
+      .findOne({
+        _id: toObjectId(conversationId),
+      })
+      .populate("courier")) as ConversationType;
 
     const messages = await messageService.aggregate(
       getMessagesListAggregate(conversation, user, timeZone)
