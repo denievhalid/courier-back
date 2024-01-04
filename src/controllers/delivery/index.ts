@@ -85,6 +85,7 @@ export const update = asyncHandler(
     const ad = getParam(req.body, "ad") as AdType;
     const courier = getParam(req.body, "courier") as UserType;
     const status = getParam(req.body, "status") as DeliveryStatus;
+    const user = getParam(req, "user") as UserType;
 
     const adService = getService(Services.AD);
     const conversationService = getService(Services.CONVERSATION);
@@ -121,9 +122,9 @@ export const update = asyncHandler(
     })) as ConversationType;
 
     const message = await messageService.send({
-      message: "Вы отменили заявку на доставку",
+      message: "*",
       conversation,
-      sender: courier,
+      sender: DeliveryStatus.RECEIVED === status ? user : courier,
       isSystemMessage: true,
       type: updatedType,
       systemAction: updatedSystemAction,
