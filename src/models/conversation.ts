@@ -15,7 +15,7 @@ const schema = new Schema(
     },
     courier: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: Models.USER,
       required: true,
     },
     lastMessage: {

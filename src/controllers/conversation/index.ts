@@ -272,7 +272,7 @@ export const getMessagesList = asyncHandler(
     const user = getParam(req, "user") as UserType;
     const conversationId = getParam(req.params, "conversationId") as string;
     const timeZone = getParam(req.query, "timeZone");
-
+    console.log(conversationId, "conversationId");
     const blockService = getService(Services.BLOCK);
     const conversationService = getService(Services.CONVERSATION);
     const messageService = getService(Services.MESSAGE);
