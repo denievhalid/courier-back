@@ -33,7 +33,9 @@ export const getUserAggregate = (phoneNumber: number | string) => {
         pipeline: [
           {
             $match: {
-              status: DeliveryStatus.RECEIVED,
+              status: {
+                $in: [DeliveryStatus.RECEIVED, DeliveryStatus.APPROVED],
+              },
             },
           },
         ],
