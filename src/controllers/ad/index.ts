@@ -221,9 +221,9 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const remove = asyncHandler(async (req: Request, res: Response) => {
-  const id = getParam(req.params, "id");
-
-  await getService(Services.AD).remove(id);
+  await getService(Services.AD).remove({
+    _id: toObjectId(getParam(req.params, "id")),
+  });
 
   return getResponse(res, {}, StatusCodes.NO_CONTENT);
 });
