@@ -22,9 +22,7 @@ export const initSocket = (app: Application, server: HttpServer) => {
   });
 
   io.on(SocketEvents.CONNECTION, (socket) => {
-    console.log("connect");
     socket.on(SocketEvents.JOIN_ROOM, ({ room }: SocketJoinRoomType) => {
-      console.log("join room");
       socket.join(room);
     });
     socket.on(SocketEvents.LEAVE_ROOM, ({ room }: SocketJoinRoomType) => {
@@ -33,8 +31,6 @@ export const initSocket = (app: Application, server: HttpServer) => {
     socket.on(SocketEvents.TYPING, ({ room }: SocketJoinRoomType) => {
       socket.broadcast.to(room).emit(SocketEvents.TYPING);
     });
-
-    socket.on(SocketEvents.DISCONNECT, () => {});
   });
 
   app.use((req, res, next) => {
