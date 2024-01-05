@@ -221,12 +221,12 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
 
 export const getDeliveredAds = asyncHandler(
   async (req: Request, res: Response) => {
-    const user = getParam(req.body, "user") as UserType;
+    const userId = getParam(req.params, "userId") as string;
 
     const data = await getService(Services.DELIVERY).aggregate([
       {
         $match: {
-          user: toObjectId(user._id),
+          user: toObjectId(userId),
         },
       },
       {

@@ -13,7 +13,7 @@ import { getUser } from "@/middlewares/getUser";
 const router = Router();
 
 router.get("/", getUser, getList);
-router.get("/delivered", authenticate, getDeliveredAds);
+router.get("/delivered/:userId", authenticate, getDeliveredAds);
 router.get("/:id", getUser, getById);
 router.post("/", authenticate, create);
 router.patch("/:id", authenticate, update);
