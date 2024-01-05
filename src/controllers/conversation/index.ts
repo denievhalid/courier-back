@@ -330,14 +330,15 @@ export const removeConversation = asyncHandler(
   async (req: Request, res: Response) => {
     const io = getParam(req, "io");
     const conversationFromParam = getParam(
-      req,
-      "conversation"
-    ) as ConversationType;
+      req.params,
+      "conversationId"
+    ) as string;
+
     const user = getParam(req, "user") as UserType;
 
     const conversationService = getService(Services.CONVERSATION);
     const conversation = await conversationService.findOne({
-      _id: toObjectId(conversationFromParam._id),
+      _id: toObjectId(conversationFromParam),
     });
 
     const handlepushOrSet = () => {

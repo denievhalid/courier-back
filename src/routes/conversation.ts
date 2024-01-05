@@ -16,6 +16,6 @@ router.post("/", authenticate, createConversation);
 router.get("/:conversationId/messages", authenticate, getMessagesList);
 router.patch("/read/:id", authenticate, updateMessageReadStatus);
 router.post("/:id/messages", authenticate, createMessage);
-router.delete("/:id/messages", authenticate, removeConversation);
+router.delete("/:conversationId/messages", authenticate, removeConversation);
 
 export default router;
