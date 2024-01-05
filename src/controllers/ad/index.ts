@@ -5,7 +5,7 @@ import { getAttributes, getListAggregateBuilder } from "@/controllers/ad/utils";
 import _ from "lodash";
 import { getService } from "@/lib/container";
 import { getParam } from "@/utils/getParam";
-import { PipelineStage } from "mongoose";
+import mongoose, { PipelineStage } from "mongoose";
 import { createAdSchema } from "@/controllers/ad/validation";
 import { DeliveryStatus, Services, UserType } from "@/types";
 import { StatusCodes } from "http-status-codes";
@@ -221,15 +221,12 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
 
 export const getDeliveredAds = asyncHandler(
   async (req: Request, res: Response) => {
-    //const user = getParam(req.body, "user") as UserType;
+    const user = getParam(req.body, "user") as UserType;
 
     const data = await getService(Services.DELIVERY).aggregate([
       {
         $match: {
-          user: toObjectId("65858409c4ec71562eedc33f"),
-          status: {
-            $nin: [DeliveryStatus.PENDING],
-          },
+          user: toObjectId(user._id),
         },
       },
       {
@@ -241,12 +238,20 @@ export const getDeliveredAds = asyncHandler(
         },
       },
       {
-        $group: {
-          _id: {},
+        $unwind: "$ad",
+      },
+      {
+        $facet: {
+          ended: [{ $match: { status: { $in: [DeliveryStatus.RECEIVED] } } }],
+          active: [{ $match: { status: { $nin: [DeliveryStatus.RECEIVED] } } }],
         },
       },
       {
-        $unwind: "$ad",
+        $project: {
+          ended: 1,
+          active: 1,
+          deliveriesCount: { $size: "$ended" },
+        },
       },
     ]);
 
