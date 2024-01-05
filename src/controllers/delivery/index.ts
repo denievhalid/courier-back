@@ -97,6 +97,11 @@ export const update = asyncHandler(
     const { systemAction: updatedSystemAction, type: updatedType } =
       handleUpdateDeliveryMessage(status);
 
+    const conversation = (await conversationService.findOne({
+      ad: toObjectId(ad._id),
+      courier: toObjectId(courier._id),
+    })) as ConversationType;
+
     await deliveryService.update(
       {
         ad: toObjectId(ad._id),
@@ -116,10 +121,6 @@ export const update = asyncHandler(
         new: true,
       }
     );
-
-    const conversation = (await conversationService.findOne({
-      ad: toObjectId(ad._id),
-    })) as ConversationType;
 
     const message = await messageService.send({
       message: "*",
