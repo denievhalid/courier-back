@@ -1,5 +1,5 @@
 import { getService } from "@/lib/container";
-import { Services } from "@/types";
+import { DeliveryStatus, Services } from "@/types";
 
 export const getUserAggregate = (phoneNumber: number | string) => {
   return getService(Services.USER).aggregate([
@@ -27,9 +27,16 @@ export const getUserAggregate = (phoneNumber: number | string) => {
     },
     {
       $lookup: {
-        from: "delivery",
+        from: "deliveries",
         localField: "_id",
         foreignField: "user",
+        pipeline: [
+          {
+            $match: {
+              status: DeliveryStatus.RECEIVED,
+            },
+          },
+        ],
         as: "deliveries",
       },
     },
