@@ -12,8 +12,6 @@ export const getConversationCompanion = (
   conversation: ConversationType,
   user: UserType
 ) => {
-  console.log(conversation, "conv");
-
   return conversation?.adAuthor?._id?.toString() === user._id.toString()
     ? conversation?.courier
     : conversation?.adAuthor;

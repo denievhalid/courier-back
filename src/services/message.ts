@@ -54,7 +54,7 @@ export class MessageService extends BaseService {
 
     const notificationData: TNotificationData = {
       screen: "Message",
-      params: { conversationId: message?.conversation?._id },
+      params: { conversationId: body?.conversation._id },
     };
 
     companion?.notificationTokens &&
