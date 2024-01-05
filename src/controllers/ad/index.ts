@@ -17,17 +17,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
   const user = getParam(req, "user") as UserType;
 
-  const attributes = _.pick(req.body, [
-    "title",
-    "startDate",
-    "endDate",
-    "to",
-    "price",
-    "from",
-    "images",
-    "weight",
-    "comment",
-  ]);
+  const attributes = req.body;
 
   if (attributes.startDate) {
     attributes.startDate = new Date(attributes.startDate);
