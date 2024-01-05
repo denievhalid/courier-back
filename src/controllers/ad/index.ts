@@ -7,10 +7,9 @@ import { getService } from "@/lib/container";
 import { getParam } from "@/utils/getParam";
 import { PipelineStage } from "mongoose";
 import { createAdSchema } from "@/controllers/ad/validation";
-import { Services, UserType } from "@/types";
+import { DeliveryStatus, Services, UserType } from "@/types";
 import { StatusCodes } from "http-status-codes";
 import { toObjectId } from "@/utils/toObjectId";
-import { AggregateBuilder } from "@/lib/builder";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   await createAdSchema.validate(req.body, { abortEarly: false });
@@ -219,6 +218,41 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
     StatusCodes.OK
   );
 });
+
+export const getDeliveredAds = asyncHandler(
+  async (req: Request, res: Response) => {
+    //const user = getParam(req.body, "user") as UserType;
+
+    const data = await getService(Services.DELIVERY).aggregate([
+      {
+        $match: {
+          user: toObjectId("65858409c4ec71562eedc33f"),
+          status: {
+            $nin: [DeliveryStatus.PENDING],
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "ads",
+          localField: "ad",
+          foreignField: "_id",
+          as: "ad",
+        },
+      },
+      {
+        $group: {
+          _id: {},
+        },
+      },
+      {
+        $unwind: "$ad",
+      },
+    ]);
+
+    return getResponse(res, { data });
+  }
+);
 
 export const remove = asyncHandler(async (req: Request, res: Response) => {
   await getService(Services.AD).remove({
