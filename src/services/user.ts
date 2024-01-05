@@ -7,11 +7,4 @@ export class UserService extends BaseService {
   constructor() {
     super(getModel(Models.USER));
   }
-
-  async getDeliveriesCount(user: UserType) {
-    return getService(Services.DELIVERY).count({
-      status: DeliveryStatus.RECEIVED,
-      user: toObjectId(user._id),
-    });
-  }
 }
