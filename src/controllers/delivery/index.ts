@@ -92,7 +92,7 @@ export const update = asyncHandler(
     const deliveryService = getService(Services.DELIVERY);
     const messageService = getService<MessageService>(Services.MESSAGE);
 
-    const updatedCourier = status === DeliveryStatus.APPROVED ? courier : null;
+    const updatedCourier = status !== DeliveryStatus.REJECTED ? courier : null;
 
     const { systemAction: updatedSystemAction, type: updatedType } =
       handleUpdateDeliveryMessage(status);
