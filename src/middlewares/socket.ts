@@ -25,6 +25,10 @@ export const initSocket = (app: Application, server: HttpServer) => {
     socket.on(SocketEvents.TYPING, ({ room }: SocketJoinRoomType) => {
       socket.broadcast.to(room).emit(SocketEvents.TYPING);
     });
+
+    socket.on(SocketEvents.DISCONNECT, () => {
+      console.log("disconnect");
+    });
   });
 
   app.use((req, res, next) => {
