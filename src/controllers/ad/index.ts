@@ -222,8 +222,22 @@ export const getList = asyncHandler(async (req: Request, res: Response) => {
 export const getDeliveredAds = asyncHandler(
   async (req: Request, res: Response) => {
     const userId = getParam(req.params, "userId") as string;
+    const user = getParam(req, "user") as UserType;
 
-    const data = await getService(Services.DELIVERY).aggregate([
+    const person = await getService(Services.USER)
+      .findOne({
+        _id: toObjectId(userId),
+      })
+      .lean();
+
+    const isBlocked = Boolean(
+      await getService(Services.BLOCK).count({
+        user: toObjectId(user._id),
+        blockedUser: toObjectId(userId),
+      })
+    );
+
+    const docs = await getService(Services.DELIVERY).aggregate([
       {
         $match: {
           user: toObjectId(userId),
@@ -255,7 +269,17 @@ export const getDeliveredAds = asyncHandler(
       },
     ]);
 
-    return getResponse(res, { data });
+    const data = _.first(docs) as object;
+
+    return getResponse(res, {
+      data: {
+        ...data,
+        user: {
+          ...person,
+          isBlocked,
+        },
+      },
+    });
   }
 );
 
