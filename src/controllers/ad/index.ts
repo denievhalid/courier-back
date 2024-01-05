@@ -284,8 +284,14 @@ export const getDeliveredAds = asyncHandler(
 );
 
 export const remove = asyncHandler(async (req: Request, res: Response) => {
+  const id = getParam(req.params, "id");
+
   await getService(Services.AD).remove({
-    _id: toObjectId(getParam(req.params, "id")),
+    _id: toObjectId(id),
+  });
+
+  await getService(Services.FAVORITE).removeAll({
+    ad: toObjectId(id),
   });
 
   return getResponse(res, {}, StatusCodes.NO_CONTENT);

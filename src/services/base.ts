@@ -47,6 +47,10 @@ export class BaseService {
     return this.model.findOneAndRemove(filter, options);
   }
 
+  async removeAll<T>(filter: FilterQuery<T>, options?: QueryOptions<T>) {
+    return this.model.deleteMany(filter, options);
+  }
+
   async count<T>(filter: FilterQuery<T>): Promise<number> {
     return this.model.countDocuments(filter);
   }
