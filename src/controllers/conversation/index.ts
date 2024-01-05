@@ -306,7 +306,7 @@ export const getMessagesList = asyncHandler(
     const deliveryStatus = (
       await getService(Services.DELIVERY).findOne({
         ad: toObjectId(conversation.ad._id),
-        user: toObjectId(user._id),
+        user: toObjectId(conversation?.courier?._id),
       })
     )?.status;
 

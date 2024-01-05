@@ -12,7 +12,7 @@ export const getConversationCompanion = (
   conversation: ConversationType,
   user: UserType
 ) => {
-  return conversation?.adAuthor?._id?.toString() === user._id.toString()
+  return conversation?.adAuthor?._id?.toString() === user?._id?.toString()
     ? conversation?.courier
     : conversation?.adAuthor;
 };
