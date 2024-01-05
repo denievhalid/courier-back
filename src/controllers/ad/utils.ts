@@ -136,9 +136,12 @@ export const getListAggregateBuilder = (queryParams: { [k: string]: any }) => {
   const aggregateBuilder = AggregateBuilder.init();
 
   if (queryParams.status) {
+    if (!_.isArray(queryParams.status)) {
+      queryParams.status = [queryParams.status];
+    }
     aggregateBuilder.match({
       status: {
-        $eq: queryParams.status,
+        $in: queryParams.status,
       },
     });
   }
