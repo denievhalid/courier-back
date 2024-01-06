@@ -52,10 +52,10 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
   const count = await blockService.count(payload);
 
   if (count) {
-    // await blockService.remove({
-    //   blockedUser: toObjectId(blockedUser._id),
-    //   user: toObjectId(user._id),
-    // });
+    await blockService.remove({
+      blockedUser: toObjectId(blockedUser._id),
+      user: toObjectId(user._id),
+    });
   }
 
   return getResponse(
