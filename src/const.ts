@@ -6,6 +6,7 @@ export const DataType = {
 export enum SocketEvents {
   CONNECTION = "connection",
   DISCONNECT = "disconnect",
+  BLOCK_USER = "blockUser",
   NEW_CONVERSATION = "newConversation",
   UPDATE_CONVERSATION = "updateConversation",
   NEW_MESSAGE = "newMessage",
