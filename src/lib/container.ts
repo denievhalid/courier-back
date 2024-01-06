@@ -58,7 +58,7 @@ function registerServices(container: Container) {
   container.services.set(Services.FAVORITE, new FavoriteService());
   container.services.set(Services.FILE, new FileService());
   container.services.set(Services.MESSAGE, new MessageService());
-  container.services.set(Services.OTP, OtpService);
+  container.services.set(Services.OTP, new OtpService());
   container.services.set(Services.TOKEN, new TokenService());
   container.services.set(Services.USER, new UserService());
 }
