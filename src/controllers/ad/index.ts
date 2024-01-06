@@ -291,3 +291,11 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
 
   return getResponse(res, {}, StatusCodes.NO_CONTENT);
 });
+
+export const updateByBot = asyncHandler(async (req: Request, res: Response) => {
+  const _id = getParam(req.params, "id");
+
+  await getService(Services.AD).update({ _id }, req.body);
+
+  return getResponse(res);
+});
