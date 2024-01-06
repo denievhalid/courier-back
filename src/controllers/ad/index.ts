@@ -128,27 +128,22 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
     {
       $lookup: {
         from: "conversations",
-        localField: "_id",
-        foreignField: "ad",
-        as: "conversation",
         pipeline: [
           {
             $match: {
-              $or: [
+              $and: [
+                { ad: toObjectId(id) },
                 {
-                  sender: {
-                    $eq: toObjectId(user._id),
-                  },
-                },
-                {
-                  courier: {
-                    $eq: toObjectId(user._id),
-                  },
+                  $or: [
+                    { adAuthor: toObjectId(user._id) },
+                    { courier: toObjectId(user._id) },
+                  ],
                 },
               ],
             },
           },
         ],
+        as: "conversation",
       },
     },
     {
