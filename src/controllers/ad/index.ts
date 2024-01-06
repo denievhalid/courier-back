@@ -250,6 +250,11 @@ export const getDeliveredAds = asyncHandler(
         $unwind: "$ad",
       },
       {
+        $addFields: {
+          "ad.cover": { $first: "$ad.images" },
+        },
+      },
+      {
         $facet: {
           ended: [{ $match: { status: { $in: [DeliveryStatus.RECEIVED] } } }],
           active: [{ $match: { status: { $nin: [DeliveryStatus.RECEIVED] } } }],
