@@ -3,6 +3,7 @@ import { Models, OtpType } from "@/types";
 import { getModel } from "@/lib/container";
 import dayjs from "dayjs";
 import _ from "lodash";
+import { BaseService } from "@/services/base";
 
 export const options = {
   digits: 4,
@@ -14,7 +15,11 @@ authenticator.options = {
   epoch: options.epoch,
 };
 
-export class OtpService {
+export class OtpService extends BaseService {
+  constructor() {
+    super(getModel(Models.OTP));
+  }
+
   generateOtp() {
     const secret = authenticator.generateSecret();
     const otp = authenticator.generate(secret);
@@ -23,17 +28,6 @@ export class OtpService {
       otp,
       secret,
     };
-  }
-
-  create(payload: OtpType) {
-    return getModel(Models.OTP).create(payload);
-  }
-
-  findOne(payload: OtpType) {
-    return getModel(Models.OTP).findOne(payload);
-  }
-  remove({ phoneNumber }: OtpType) {
-    return getModel(Models.OTP).findOneAndRemove({ phoneNumber });
   }
 
   verify(otp: string, secret: string) {

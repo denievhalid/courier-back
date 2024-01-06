@@ -4,7 +4,11 @@ import { Models } from "@/types";
 
 import jwt from "jsonwebtoken";
 
-export class TokenService {
+export class TokenService extends BaseService {
+  constructor() {
+    super(getModel(Models.TOKEN));
+  }
+
   sign(payload: Record<string, any>, secret: string) {
     return jwt.sign(payload, secret);
   }
