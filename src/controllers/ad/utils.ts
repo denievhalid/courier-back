@@ -154,17 +154,13 @@ export const getListAggregateBuilder = (queryParams: { [k: string]: any }) => {
 
   if (queryParams.from) {
     aggregateBuilder.match({
-      $match: {
-        from: queryParams.from,
-      },
+      from: queryParams.from,
     });
   }
 
   if (queryParams.to) {
     aggregateBuilder.match({
-      $match: {
-        to: queryParams.to,
-      },
+      to: queryParams.to,
     });
   }
 
@@ -223,8 +219,6 @@ export const getListAggregateBuilder = (queryParams: { [k: string]: any }) => {
       cover: { $first: "$images" },
       user: { $first: "$user" },
     });
-
-  console.log(aggregateBuilder.build(), "aggregateBuilder.build()");
 
   return aggregateBuilder.build();
 };
