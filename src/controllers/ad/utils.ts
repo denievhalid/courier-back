@@ -224,5 +224,7 @@ export const getListAggregateBuilder = (queryParams: { [k: string]: any }) => {
       user: { $first: "$user" },
     });
 
+  console.log(aggregateBuilder.build(), "aggregateBuilder.build()");
+
   return aggregateBuilder.build();
 };
