@@ -12,6 +12,7 @@ import { Services, UserType } from "@/types";
 import { getFilename } from "@/controllers/file/utils";
 import { getUserAggregate } from "@/utils/aggregate";
 import { toObjectId } from "@/utils/toObjectId";
+import { DeliveryService, UserService } from "@/services";
 
 export const me = asyncHandler(async (req: Request, res: Response) => {
   return getResponse(

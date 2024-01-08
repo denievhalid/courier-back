@@ -8,7 +8,7 @@ import { toObjectId } from "@/utils/toObjectId";
 import { getAttributes } from "@/utils/getAttributes";
 import { SocketEvents } from "@/const";
 import { handleUpdateDeliveryMessage } from "./consts";
-import { MessageService } from "@/services";
+import { DeliveryService, MessageService } from "@/services";
 import { SocketService } from "@/services/socket";
 import type { AdType, ConversationType, UserType } from "@/types";
 import type { NextFunction, Request, Response } from "express";
@@ -59,6 +59,24 @@ export const create = asyncHandler(
     ]);
 
     return getResponse(res, {}, StatusCodes.CREATED);
+  }
+);
+
+export const getDeliveriesCount = asyncHandler(
+  async (req: Request, res: Response) => {
+    const user = getParam(req, "user") as UserType;
+
+    const deliveriesCount = await getService<DeliveryService>(
+      Services.DELIVERY
+    ).getDeliveriesCount(user);
+
+    return getResponse(
+      res,
+      {
+        data: deliveriesCount,
+      },
+      StatusCodes.OK
+    );
   }
 );
 
