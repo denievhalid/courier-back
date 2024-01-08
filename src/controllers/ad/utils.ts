@@ -200,28 +200,6 @@ export const getListAggregateBuilder = (queryParams: { [k: string]: any }) => {
         from: "users",
         localField: "user",
         foreignField: "_id",
-        pipeline: [
-          {
-            $lookup: {
-              from: "deliveries",
-              localField: "_id",
-              foreignField: "user",
-              pipeline: [
-                {
-                  $match: {
-                    status: DeliveryStatus.RECEIVED,
-                  },
-                },
-              ],
-              as: "deliveries",
-            },
-          },
-          {
-            $addFields: {
-              deliveries: { $size: "$deliveries" },
-            },
-          },
-        ],
         as: "user",
       },
     ])

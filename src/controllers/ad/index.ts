@@ -111,8 +111,15 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
           {
             $lookup: {
               from: "deliveries",
-              localField: "user",
+              localField: "_id",
               foreignField: "user",
+              pipeline: [
+                {
+                  $match: {
+                    status: DeliveryStatus.RECEIVED,
+                  },
+                },
+              ],
               as: "deliveries",
             },
           },
