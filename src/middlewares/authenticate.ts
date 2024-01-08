@@ -7,6 +7,7 @@ import { getEnv } from "@/utils/env";
 import { getUserAggregate } from "@/utils/aggregate";
 import { Services } from "@/types";
 import { Env } from "@/const";
+import { TokenService } from "@/services";
 
 export const authenticate = asyncHandler(async (req, res, next) => {
   const token = getParam(req, "token");
@@ -15,8 +16,7 @@ export const authenticate = asyncHandler(async (req, res, next) => {
     throw new InvalidCredentialsException();
   }
 
-  // @ts-ignore
-  const verified = getService(Services.TOKEN).verify(
+  const verified = getService<TokenService>(Services.TOKEN).verify(
     token,
     getEnv(Env.JWT_SECRET)
   ) as {

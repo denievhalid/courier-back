@@ -5,6 +5,7 @@ import * as mongoose from "mongoose";
 import { isValidObjectId } from "@/utils/isValidObjectId";
 import { toObjectId } from "@/utils/toObjectId";
 import { AggregateBuilder } from "@/lib/builder";
+import { DeliveryStatus } from "@/types";
 
 const dateSet = new Set(["startDate", "endDate"]);
 
@@ -199,6 +200,28 @@ export const getListAggregateBuilder = (queryParams: { [k: string]: any }) => {
         from: "users",
         localField: "user",
         foreignField: "_id",
+        pipeline: [
+          {
+            $lookup: {
+              from: "deliveries",
+              localField: "_id",
+              foreignField: "user",
+              pipeline: [
+                {
+                  $match: {
+                    status: DeliveryStatus.RECEIVED,
+                  },
+                },
+              ],
+              as: "deliveries",
+            },
+          },
+          {
+            $addFields: {
+              deliveries: { $size: "$deliveries" },
+            },
+          },
+        ],
         as: "user",
       },
     ])
